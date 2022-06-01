@@ -7,18 +7,18 @@ go
 
 CREATE TABLE [Address]
 ( 
-	[IdA]                integer  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdA]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[Street]             varchar(50)  NOT NULL ,
 	[Number]             integer  NOT NULL ,
 	[Xcoord]             integer  NOT NULL ,
 	[Ycoord]             integer  NOT NULL ,
-	[IdC]                integer  NOT NULL 
+	[IdC]                bigint  NOT NULL 
 )
 go
 
 CREATE TABLE [City]
 ( 
-	[IdC]                integer  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdC]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[Name]               varchar(50)  NOT NULL ,
 	[PostalCode]         varchar(20)  NOT NULL 
 )
