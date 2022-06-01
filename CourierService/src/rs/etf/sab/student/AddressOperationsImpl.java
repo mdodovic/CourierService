@@ -77,7 +77,7 @@ public class AddressOperationsImpl implements AddressOperations {
     public boolean deleteAdress(int idAddress) {
 
         String deleteAddressByIdQuery = "DELETE FROM [dbo].[Address] " 
-                                        + " WHERE IdC = ?; ";
+                                        + " WHERE IdA = ?; ";
 
         try(PreparedStatement ps = connection.prepareStatement(deleteAddressByIdQuery);) {           
             ps.setInt(1, idAddress);
