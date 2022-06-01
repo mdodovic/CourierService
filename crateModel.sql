@@ -41,7 +41,7 @@ go
 
 CREATE TABLE [Stockroom]
 ( 
-	[IdS]                bigint  NOT NULL ,
+	[IdS]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdA]                bigint  NOT NULL 
 )
 go
@@ -70,6 +70,10 @@ go
 
 ALTER TABLE [Stockroom]
 	ADD CONSTRAINT [XPKStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
+go
+
+ALTER TABLE [Stockroom]
+	ADD CONSTRAINT [XAK1Stockroom] UNIQUE ([IdA]  ASC)
 go
 
 ALTER TABLE [VehicleStockroom]
