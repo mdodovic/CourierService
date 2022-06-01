@@ -15,7 +15,7 @@ public class StudentMain {
         DriveOperation driveOperation = null;
         GeneralOperations generalOperations = new GeneralOperationsImpl();
         PackageOperations packageOperations = null;
-        StockroomOperations stockroomOperations = null;
+        StockroomOperations stockroomOperations = new StockroomOperationsImpl();
         UserOperations userOperations = null;
         VehicleOperations vehicleOperations = null;
 
