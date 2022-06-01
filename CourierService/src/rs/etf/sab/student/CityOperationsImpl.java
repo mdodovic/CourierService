@@ -145,7 +145,7 @@ public class CityOperationsImpl implements CityOperations {
         System.out.println(cityOperations.deleteCity(vaSameNameId));
         System.out.println(cityOperations.deleteCity(-1));
         
-        System.out.println(cityOperations.deleteCity(new String[] {"Beograd", "Novi Sad", "Zrenjanin"}));
+        System.out.println(cityOperations.deleteCity(new String[] {"Valjevo", "Novi Sad", "Zrenjanin"}));
         
     }
     

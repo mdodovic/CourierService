@@ -7,6 +7,10 @@ package rs.etf.sab.student;
 
 import com.sun.istack.internal.NotNull;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
@@ -22,7 +26,29 @@ public class AddressOperationsImpl implements AddressOperations {
     
     @Override
     public int insertAddress(@NotNull String street, int number, int cityId, int xCord, int yCord) {
-        return 0;
+        
+        String insertAddressQuery = "INSERT INTO [dbo].[Address] " +
+                                    "       (Street, Number, Xcoord, Ycoord, IdC) \n" +
+                                    "   VALUES (?, ?, ?, ?, ?) ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(insertAddressQuery, Statement.RETURN_GENERATED_KEYS);) {           
+            ps.setString(1, street);
+            ps.setInt(2, number);
+            ps.setInt(3, xCord);
+            ps.setInt(4, yCord);
+            ps.setLong(5, cityId);
+
+            ps.executeUpdate();
+            try(ResultSet rs = ps.getGeneratedKeys()){
+                if(rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return -1;
     }
 
     @Override
@@ -59,8 +85,9 @@ public class AddressOperationsImpl implements AddressOperations {
         int bgId = cityOperations.insertCity("Beograd", "11000");        
         
         AddressOperations addressOperations = new AddressOperationsImpl();
-        addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
+        int addressId = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
         
+        System.out.println(addressId);
     }
     
 }
