@@ -71,8 +71,41 @@ public class StockroomOperationsImpl implements StockroomOperations {
     }
 
     @Override
-    public boolean deleteStockroom(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteStockroom(int idStockroom) {
+        
+//        String emptyStockroomCheckQuery = "SELECT IdS " +
+//                                        "	FROM [dbo].[PackageStockroom] " +
+//                                        "	WHERE IdS = ? " +
+//                                        "   UNION " +
+//                                        "  SELECT IdS " +
+//                                        "	FROM [dbo].[VehicleStockroom] " +
+//                                        "	WHERE IdS = ?; ";
+
+        String deleteStockroomByIdQuery = "DELETE FROM [dbo].[Stockroom] " 
+                                        + " WHERE IdS = ?; ";
+        
+
+        try(/*PreparedStatement psCheck = connection.prepareStatement(emptyStockroomCheckQuery);           */
+            PreparedStatement psDelete = connection.prepareStatement(deleteStockroomByIdQuery);) {           
+//            psCheck.setLong(1, idStockroom);
+//            psCheck.setLong(2, idStockroom);
+            
+//            try(ResultSet rsCheck = psCheck.executeQuery()){
+//                if(rsCheck.next()) {
+//                    return false;
+//                } else {            
+                    psDelete.setLong(1, idStockroom);
+                    int numberOfDeletedStockrooms = psDelete.executeUpdate();
+                    return numberOfDeletedStockrooms != 0;                                        
+//                }
+//            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
+        
     }
 
     @Override
@@ -124,8 +157,8 @@ public class StockroomOperationsImpl implements StockroomOperations {
         System.out.println(stockroomBg1AgainId);
         int stockroomBgAgainId = stockroomOperations.insertStockroom(addressBg2Id);
         System.out.println(stockroomBgAgainId);
-//        int stockroomVaId = stockroomOperations.insertStockroom(addressVa1Id);
-//        System.out.println(stockroomVaId);
+        int stockroomVaId = stockroomOperations.insertStockroom(addressVa1Id);
+        System.out.println(stockroomVaId);
         
         List<Integer> listOfIdS = stockroomOperations.getAllStockrooms();
         System.out.println(listOfIdS.size()); // 4
@@ -133,6 +166,9 @@ public class StockroomOperationsImpl implements StockroomOperations {
             System.out.print(i + " ");
         }
         System.out.println();
+        
+        System.out.println(stockroomOperations.deleteStockroom(stockroomVaId));
+        System.out.println(stockroomOperations.deleteStockroom(stockroomVaId));
         
         
     }
