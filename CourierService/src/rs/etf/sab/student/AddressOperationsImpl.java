@@ -5,8 +5,12 @@
  */
 package rs.etf.sab.student;
 
+import com.sun.istack.internal.NotNull;
+import java.sql.Connection;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
+import rs.etf.sab.operations.CityOperations;
+import rs.etf.sab.operations.GeneralOperations;
 
 /**
  *
@@ -14,9 +18,11 @@ import rs.etf.sab.operations.AddressOperations;
  */
 public class AddressOperationsImpl implements AddressOperations {
 
+    private final Connection connection = DB.getInstance().getConnection();
+    
     @Override
-    public int insertAddress(String string, int i, int i1, int i2, int i3) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int insertAddress(@NotNull String street, int number, int cityId, int xCord, int yCord) {
+        return 0;
     }
 
     @Override
@@ -42,6 +48,19 @@ public class AddressOperationsImpl implements AddressOperations {
     @Override
     public List<Integer> getAllAddressesFromCity(int i) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public static void main(String[] args) {
+
+        GeneralOperations generalOperations = new GeneralOperationsImpl();
+        generalOperations.eraseAll();
+        
+        CityOperations cityOperations = new CityOperationsImpl();
+        int bgId = cityOperations.insertCity("Beograd", "11000");        
+        
+        AddressOperations addressOperations = new AddressOperationsImpl();
+        addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
+        
     }
     
 }
