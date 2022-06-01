@@ -72,10 +72,6 @@ ALTER TABLE [Stockroom]
 	ADD CONSTRAINT [XPKStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
 go
 
-ALTER TABLE [Stockroom]
-	ADD CONSTRAINT [XAK1Stockroom] UNIQUE ([IdA]  ASC)
-go
-
 ALTER TABLE [VehicleStockroom]
 	ADD CONSTRAINT [XPKVehicleStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
 go

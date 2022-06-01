@@ -10,6 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,21 +30,40 @@ public class StockroomOperationsImpl implements StockroomOperations {
 
     @Override
     public int insertStockroom(int address) {
-
+        
+        String stockroomInCityQuery = "SELECT S.IdS " +
+                                      "     FROM [dbo].[Stockroom] S " +
+                                      "         INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA) " +
+                                      "     WHERE A.IdC = ( " +
+                                      "                     SELECT C.IdC " +
+                                      "                         FROM [dbo].[City] C " +
+                                      "                             INNER JOIN [dbo].[Address] A on (C.IdC = A.IdC) " +
+                                      "                         WHERE A.IdA = ? " +
+                                      "                   ) ;"; 
+        
         String insertAddressQuery = "INSERT INTO [dbo].[Stockroom] (IdA) " +
                                                             " VALUES (?);  ";
         
-        try(PreparedStatement ps = connection.prepareStatement(insertAddressQuery, Statement.RETURN_GENERATED_KEYS);) {           
-            ps.setLong(1, address);
-            ps.executeUpdate();
-            try(ResultSet rs = ps.getGeneratedKeys()){
-                if(rs.next()) {
-                    return rs.getInt(1);
+        try(PreparedStatement psCheck = connection.prepareStatement(stockroomInCityQuery);           
+            PreparedStatement psInsert = connection.prepareStatement(insertAddressQuery, Statement.RETURN_GENERATED_KEYS);) {           
+            psCheck.setLong(1, address);
+            try(ResultSet rsCheck = psCheck.executeQuery()){
+                if(rsCheck.next()) {
+                    return -1;
+                } else {            
+                    psInsert.setLong(1, address);
+                    psInsert.executeUpdate();
+
+                    try(ResultSet rsInsert = psInsert.getGeneratedKeys()){
+                        if(rsInsert.next()) {
+                            return rsInsert.getInt(1);
+                        }
+                    }
                 }
             }
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return -1;
 
@@ -62,7 +82,25 @@ public class StockroomOperationsImpl implements StockroomOperations {
 
     @Override
     public List<Integer> getAllStockrooms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdCQuery = "SELECT IdS "
+                                + " FROM [dbo].[Stockroom]; ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllIdCQuery)){
+            
+            while(rs.next()){
+                listOfIds.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfIds;
+
     }
    
     public static void main(String[] args) {
@@ -71,19 +109,30 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
         CityOperations cityOperations = new CityOperationsImpl();
         int bgId = cityOperations.insertCity("Beograd", "11000");        
-        int niId = cityOperations.insertCity("Nis", "700000");        
+        int vaId = cityOperations.insertCity("Valjevo", "14000");        
         
         AddressOperations addressOperations = new AddressOperationsImpl();        
         int addressBg1Id = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
         int addressBg2Id = addressOperations.insertAddress("Kraljice Natalije", 37, bgId, 30, 30);        
-        int addressNi1Id = addressOperations.insertAddress("Vojvode Stepe", 73, niId, 100, 100);        
+        int addressVa1Id = addressOperations.insertAddress("Petnicka", 20, vaId, 5, 5);        
 
         StockroomOperations stockroomOperations = new StockroomOperationsImpl();
         
-        int stockroomBg1Id = stockroomOperations.insertStockroom(addressBg1Id);
-        System.out.println(stockroomBg1Id);
+        int stockroomBgId = stockroomOperations.insertStockroom(addressBg1Id);
+        System.out.println(stockroomBgId);
         int stockroomBg1AgainId = stockroomOperations.insertStockroom(addressBg1Id);
         System.out.println(stockroomBg1AgainId);
+        int stockroomBgAgainId = stockroomOperations.insertStockroom(addressBg2Id);
+        System.out.println(stockroomBgAgainId);
+//        int stockroomVaId = stockroomOperations.insertStockroom(addressVa1Id);
+//        System.out.println(stockroomVaId);
+        
+        List<Integer> listOfIdS = stockroomOperations.getAllStockrooms();
+        System.out.println(listOfIdS.size()); // 4
+        for (int i: listOfIdS) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
         
         
     }
