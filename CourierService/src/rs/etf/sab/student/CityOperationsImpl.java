@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -60,7 +61,23 @@ public class CityOperationsImpl implements CityOperations {
 
     @Override
     public List<Integer> getAllCities() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdCQuery = "SELECT IdC FROM [dbo].[City]; ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllIdCQuery)){
+            
+            while(rs.next()){
+                listOfIds.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfIds;
+
     }
     
     public static void main(String[] args) {
@@ -68,6 +85,15 @@ public class CityOperationsImpl implements CityOperations {
         
         int bgId = cityOperations.insertCity("Beograd", "11000");
         int vaId = cityOperations.insertCity("Valjevo", "14000");
+        
+        System.out.println(bgId);
+        System.out.println(vaId);
+        
+        List<Integer> listOfIdC = cityOperations.getAllCities();
+        
+        for (int i: listOfIdC) {
+            System.out.println(i);
+        }
         
     }
     
