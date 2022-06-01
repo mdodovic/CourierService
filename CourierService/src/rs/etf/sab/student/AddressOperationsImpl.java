@@ -90,8 +90,28 @@ public class AddressOperationsImpl implements AddressOperations {
     }
 
     @Override
-    public List<Integer> getAllAddressesFromCity(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getAllAddressesFromCity(int idCity) {
+        
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdAFromCityQuery = "SELECT IdA "
+                                        + " FROM [dbo].[Address] "
+                                        + " WHERE IdC = ?";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllIdAFromCityQuery);) {           
+            
+            ps.setInt(1, idCity);
+            try(ResultSet rs = ps.executeQuery()){
+            
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return listOfIds;
     }
     
     public static void main(String[] args) {
@@ -114,16 +134,18 @@ public class AddressOperationsImpl implements AddressOperations {
         System.out.println(addressMissingCityId);
         
         List<Integer> listOfIdA = addressOperations.getAllAddresses();
-        System.out.println(listOfIdA.size()); // 2
+        System.out.println(listOfIdA.size()); // 3
         for (int i: listOfIdA) {
             System.out.print(i + " ");
         }
+        System.out.println();
 
         List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
         System.out.println(listOfVaIdA.size()); // 1
         for (int i: listOfVaIdA) {
             System.out.print(i + " ");
         }
+        System.out.println();
 
     }
     
