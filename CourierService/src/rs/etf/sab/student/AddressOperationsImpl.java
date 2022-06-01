@@ -74,8 +74,21 @@ public class AddressOperationsImpl implements AddressOperations {
     }
 
     @Override
-    public boolean deleteAdress(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteAdress(int idAddress) {
+
+        String deleteAddressByIdQuery = "DELETE FROM [dbo].[Address] " 
+                                        + " WHERE IdC = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(deleteAddressByIdQuery);) {           
+            ps.setInt(1, idAddress);
+
+            int numberOfDeletedAddresses = ps.executeUpdate();
+            return numberOfDeletedAddresses != 0;
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return false;
+
     }
 
     @Override
@@ -174,7 +187,8 @@ public class AddressOperationsImpl implements AddressOperations {
         System.out.println(deletedExistingAddressesCount);
         int deletedMissingAddressesCount = addressOperations.deleteAddresses("Petnicka", 20);
         System.out.println(deletedMissingAddressesCount);
-        
+        System.out.println(addressOperations.deleteAdress(sameAddressInDifferentCity));
+        System.out.println(addressOperations.deleteAdress(addressBg1Id));
         
     }
     
