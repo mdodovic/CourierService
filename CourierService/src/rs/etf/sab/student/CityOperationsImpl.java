@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import rs.etf.sab.operations.CityOperations;
+import rs.etf.sab.operations.*;
 
 /**
  *
@@ -23,7 +23,7 @@ import rs.etf.sab.operations.CityOperations;
  */
 public class CityOperationsImpl implements CityOperations {
     
-    private Connection connection = DB.getInstance().getConnection();
+    private final Connection connection = DB.getInstance().getConnection();
 
     @Override
     public int insertCity(@NotNull String name, String postalCode) {
@@ -56,7 +56,7 @@ public class CityOperationsImpl implements CityOperations {
 
     @Override
     public boolean deleteCity(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
@@ -81,6 +81,10 @@ public class CityOperationsImpl implements CityOperations {
     }
     
     public static void main(String[] args) {
+        
+        GeneralOperations generalOperations = new GeneralOperationsImpl();
+        generalOperations.eraseAll();
+        
         CityOperations cityOperations = new CityOperationsImpl();
         
         int bgId = cityOperations.insertCity("Beograd", "11000");        
@@ -99,7 +103,7 @@ public class CityOperationsImpl implements CityOperations {
         System.out.println(vaSamePostalCodeId); // -1
         
         List<Integer> listOfIdC = cityOperations.getAllCities();
-        // 1 2 3
+        System.out.println(listOfIdC.size()); // 3
         for (int i: listOfIdC) {
             System.out.print(i + " ");
         }
