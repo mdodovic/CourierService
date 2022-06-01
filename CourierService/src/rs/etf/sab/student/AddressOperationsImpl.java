@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
@@ -68,7 +69,24 @@ public class AddressOperationsImpl implements AddressOperations {
 
     @Override
     public List<Integer> getAllAddresses() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdAQuery = "SELECT IdA "
+                                + " FROM [dbo].[Address]; ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllIdAQuery)){
+            
+            while(rs.next()){
+                listOfIds.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfIds;
     }
 
     @Override
@@ -83,11 +101,30 @@ public class AddressOperationsImpl implements AddressOperations {
         
         CityOperations cityOperations = new CityOperationsImpl();
         int bgId = cityOperations.insertCity("Beograd", "11000");        
+        int vaId = cityOperations.insertCity("Valjevo", "14000");        
         
         AddressOperations addressOperations = new AddressOperationsImpl();
-        int addressId = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
+        int addressBg1Id = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
+        System.out.println(addressBg1Id);
+        int addressBg2Id = addressOperations.insertAddress("Kraljice Natalije", 37, bgId, 100, 100);        
+        System.out.println(addressBg2Id);
+        int addressVa1Id = addressOperations.insertAddress("Petnicka", 20, vaId, 5, 5);        
+        System.out.println(addressVa1Id);
+        int addressMissingCityId = addressOperations.insertAddress("Koste Abrasevica", 39, -1, 1, 1);        
+        System.out.println(addressMissingCityId);
         
-        System.out.println(addressId);
+        List<Integer> listOfIdA = addressOperations.getAllAddresses();
+        System.out.println(listOfIdA.size()); // 2
+        for (int i: listOfIdA) {
+            System.out.print(i + " ");
+        }
+
+        List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
+        System.out.println(listOfVaIdA.size()); // 1
+        for (int i: listOfVaIdA) {
+            System.out.print(i + " ");
+        }
+
     }
     
 }
