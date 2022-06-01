@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 public class DB {
     private static final String username="sa";
     private static final String password="matija";
-    private static final String database="Trznicentar";
+    private static final String database="CourierService";
     private static final int port=1433;
     private static final String server="localhost";
 
