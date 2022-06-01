@@ -102,16 +102,18 @@ public class AddressOperationsImpl implements AddressOperations {
             
             ps.setInt(1, idCity);
             try(ResultSet rs = ps.executeQuery()){
-            
+                
                 while(rs.next()){
                     listOfIds.add(rs.getInt(1));
                 }
+                if(!listOfIds.isEmpty())
+                    return listOfIds;
             }
         } catch (SQLException ex) {
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         
-        return listOfIds;
+        return null;
     }
     
     public static void main(String[] args) {
@@ -146,6 +148,10 @@ public class AddressOperationsImpl implements AddressOperations {
             System.out.print(i + " ");
         }
         System.out.println();
+        
+        List<Integer> listOfMissingCityIdA = addressOperations.getAllAddressesFromCity(-1);
+        System.out.println(listOfMissingCityIdA); // null
+        
 
     }
     
