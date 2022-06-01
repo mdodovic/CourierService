@@ -42,7 +42,7 @@ public class CityOperationsImpl implements CityOperations {
             }
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return -1;
     }
@@ -73,7 +73,7 @@ public class CityOperationsImpl implements CityOperations {
             }
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
 
         return listOfIds;
@@ -83,16 +83,25 @@ public class CityOperationsImpl implements CityOperations {
     public static void main(String[] args) {
         CityOperations cityOperations = new CityOperationsImpl();
         
-        int bgId = cityOperations.insertCity("Beograd", "11000");
+        int bgId = cityOperations.insertCity("Beograd", "11000");        
+        System.out.println(bgId); // 1
+
         int vaId = cityOperations.insertCity("Valjevo", "14000");
-        
-        System.out.println(bgId);
-        System.out.println(vaId);
+        System.out.println(vaId); // 2
+
+        int vaBothSameId = cityOperations.insertCity("Valjevo", "14000");
+        System.out.println(vaBothSameId); // -1
+ 
+        int vaSameNameId = cityOperations.insertCity("Valjevo_2", "14000");
+        System.out.println(vaSameNameId); // 3
+
+        int vaSamePostalCodeId = cityOperations.insertCity("Valjevo", "14011");
+        System.out.println(vaSamePostalCodeId); // -1
         
         List<Integer> listOfIdC = cityOperations.getAllCities();
-        
+        // 1 2 3
         for (int i: listOfIdC) {
-            System.out.println(i);
+            System.out.print(i + " ");
         }
         
     }
