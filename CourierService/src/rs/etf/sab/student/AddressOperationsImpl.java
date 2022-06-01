@@ -53,8 +53,24 @@ public class AddressOperationsImpl implements AddressOperations {
     }
 
     @Override
-    public int deleteAddresses(String string, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int deleteAddresses(@NotNull String name, int number) {
+        
+        String deleteCityByNameAndNumberQuery = "DELETE FROM [dbo].[Address] " +
+                    "	WHERE Street LIKE ? " +
+                    "       AND Number = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(deleteCityByNameAndNumberQuery);) {           
+            ps.setString(1, name);
+            ps.setInt(2, number);
+
+            int numberOfDeletedAddresses = ps.executeUpdate();
+            return numberOfDeletedAddresses;
+
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return 0;        
+        
     }
 
     @Override
@@ -96,7 +112,7 @@ public class AddressOperationsImpl implements AddressOperations {
         
         String getAllIdAFromCityQuery = "SELECT IdA "
                                         + " FROM [dbo].[Address] "
-                                        + " WHERE IdC = ?";
+                                        + " WHERE IdC = ?; ";
 
         try(PreparedStatement ps = connection.prepareStatement(getAllIdAFromCityQuery);) {           
             
@@ -134,9 +150,11 @@ public class AddressOperationsImpl implements AddressOperations {
         System.out.println(addressVa1Id);
         int addressMissingCityId = addressOperations.insertAddress("Koste Abrasevica", 39, -1, 1, 1);        
         System.out.println(addressMissingCityId);
+        int sameAddressInDifferentCity = addressOperations.insertAddress("Petnicka", 20, bgId, 5, 5);           
+        System.out.println(sameAddressInDifferentCity);
         
         List<Integer> listOfIdA = addressOperations.getAllAddresses();
-        System.out.println(listOfIdA.size()); // 3
+        System.out.println(listOfIdA.size()); // 4
         for (int i: listOfIdA) {
             System.out.print(i + " ");
         }
@@ -151,8 +169,13 @@ public class AddressOperationsImpl implements AddressOperations {
         
         List<Integer> listOfMissingCityIdA = addressOperations.getAllAddressesFromCity(-1);
         System.out.println(listOfMissingCityIdA); // null
-        
 
+        int deletedExistingAddressesCount = addressOperations.deleteAddresses("Petnicka", 20);
+        System.out.println(deletedExistingAddressesCount);
+        int deletedMissingAddressesCount = addressOperations.deleteAddresses("Petnicka", 20);
+        System.out.println(deletedMissingAddressesCount);
+        
+        
     }
     
 }
