@@ -7,7 +7,7 @@ go
 
 CREATE TABLE [Address]
 ( 
-	[IdA]                integer  NOT NULL ,
+	[IdA]                integer  IDENTITY ( 1,1 )  NOT NULL ,
 	[Street]             varchar(50)  NOT NULL ,
 	[Number]             integer  NOT NULL ,
 	[Xcoord]             integer  NOT NULL ,
