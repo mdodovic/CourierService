@@ -2,6 +2,9 @@
 DROP TABLE [VehicleStockroom]
 go
 
+DROP TABLE [Vehicle]
+go
+
 DROP TABLE [PackageStockroom]
 go
 
@@ -15,9 +18,6 @@ DROP TABLE [Admin]
 go
 
 DROP TABLE [Courier]
-go
-
-DROP TABLE [Vehicle]
 go
 
 DROP TABLE [CourierRequest]
@@ -80,7 +80,8 @@ go
 
 CREATE TABLE [PackageStockroom]
 ( 
-	[IdS]                bigint  NOT NULL 
+	[IdS]                bigint  NOT NULL ,
+	[IdPS]               bigint  NOT NULL 
 )
 go
 
@@ -120,7 +121,9 @@ go
 
 CREATE TABLE [VehicleStockroom]
 ( 
-	[IdS]                bigint  NOT NULL 
+	[IdVS]               bigint  NOT NULL ,
+	[IdS]                bigint  NOT NULL ,
+	[IdV]                bigint  NOT NULL 
 )
 go
 
@@ -169,7 +172,7 @@ ALTER TABLE [Customer]
 go
 
 ALTER TABLE [PackageStockroom]
-	ADD CONSTRAINT [XPKPackagesStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
+	ADD CONSTRAINT [XPKPackagesStockroom] PRIMARY KEY  CLUSTERED ([IdPS] ASC)
 go
 
 ALTER TABLE [Stockroom]
@@ -193,7 +196,7 @@ ALTER TABLE [Vehicle]
 go
 
 ALTER TABLE [VehicleStockroom]
-	ADD CONSTRAINT [XPKVehicleStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
+	ADD CONSTRAINT [XPKVehicleStockroom] PRIMARY KEY  CLUSTERED ([IdVS] ASC)
 go
 
 
@@ -233,8 +236,8 @@ go
 
 
 ALTER TABLE [PackageStockroom]
-	ADD CONSTRAINT [R_11] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
-		ON DELETE CASCADE
+	ADD CONSTRAINT [FK_Stockroom_PackageStockroom] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
+		ON DELETE NO ACTION
 		ON UPDATE CASCADE
 go
 
@@ -254,7 +257,13 @@ go
 
 
 ALTER TABLE [VehicleStockroom]
-	ADD CONSTRAINT [R_10] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
-		ON DELETE CASCADE
+	ADD CONSTRAINT [FK_Stockroom_VehicleStockroom] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+go
+
+ALTER TABLE [VehicleStockroom]
+	ADD CONSTRAINT [FK_Vehicle_VehicleStockroom] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
+		ON DELETE NO ACTION
 		ON UPDATE CASCADE
 go
