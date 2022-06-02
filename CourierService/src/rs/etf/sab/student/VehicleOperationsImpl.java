@@ -106,8 +106,8 @@ public class VehicleOperationsImpl implements VehicleOperations {
     }
 
     @Override
-    public boolean parkVehicle(String string, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean parkVehicle(@NotNull String licencePlateNumbers, int idStockroom) {
+        // TODO: check if the vehicle is currently used!!!
     }
     
     
