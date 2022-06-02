@@ -8,6 +8,15 @@ go
 DROP TABLE [Stockroom]
 go
 
+DROP TABLE [Customer]
+go
+
+DROP TABLE [Admin]
+go
+
+DROP TABLE [Courier]
+go
+
 DROP TABLE [User]
 go
 
@@ -28,11 +37,29 @@ CREATE TABLE [Address]
 )
 go
 
+CREATE TABLE [Admin]
+( 
+	[IdU]                bigint  NOT NULL 
+)
+go
+
 CREATE TABLE [City]
 ( 
 	[IdC]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[Name]               varchar(50)  NOT NULL ,
 	[PostalCode]         varchar(20)  NOT NULL 
+)
+go
+
+CREATE TABLE [Courier]
+( 
+	[IdU]                bigint  NOT NULL 
+)
+go
+
+CREATE TABLE [Customer]
+( 
+	[IdU]                bigint  NOT NULL 
 )
 go
 
@@ -51,7 +78,7 @@ go
 
 CREATE TABLE [User]
 ( 
-	[IdU]                integer  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdU]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[Firstname]          varchar(20)  NOT NULL 
 	CONSTRAINT [Firstname]
 		CHECK  ( (ASCII(LEFT(Firstname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
@@ -74,12 +101,24 @@ ALTER TABLE [Address]
 	ADD CONSTRAINT [XPKAddress] PRIMARY KEY  CLUSTERED ([IdA] ASC)
 go
 
+ALTER TABLE [Admin]
+	ADD CONSTRAINT [XPKAdmin] PRIMARY KEY  CLUSTERED ([IdU] ASC)
+go
+
 ALTER TABLE [City]
 	ADD CONSTRAINT [XPKCity] PRIMARY KEY  CLUSTERED ([IdC] ASC)
 go
 
 ALTER TABLE [City]
 	ADD CONSTRAINT [XAK1City] UNIQUE ([PostalCode]  ASC)
+go
+
+ALTER TABLE [Courier]
+	ADD CONSTRAINT [XPKCourier] PRIMARY KEY  CLUSTERED ([IdU] ASC)
+go
+
+ALTER TABLE [Customer]
+	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
 
 ALTER TABLE [PackageStockroom]
@@ -106,6 +145,27 @@ go
 ALTER TABLE [Address]
 	ADD CONSTRAINT [FK_City_Address] FOREIGN KEY ([IdC]) REFERENCES [City]([IdC])
 		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [Admin]
+	ADD CONSTRAINT [R_6] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [Courier]
+	ADD CONSTRAINT [R_8] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
+		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [Customer]
+	ADD CONSTRAINT [R_7] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
+		ON DELETE CASCADE
 		ON UPDATE CASCADE
 go
 
