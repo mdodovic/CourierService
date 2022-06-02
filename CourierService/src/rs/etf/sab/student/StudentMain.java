@@ -17,7 +17,7 @@ public class StudentMain {
         PackageOperations packageOperations = null;
         StockroomOperations stockroomOperations = new StockroomOperationsImpl();
         UserOperations userOperations = new UserOperationsImpl();
-        VehicleOperations vehicleOperations = null;
+        VehicleOperations vehicleOperations = new VehicleOperationsImpl();
 
 
         TestHandler.createInstance(
