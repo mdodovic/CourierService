@@ -117,18 +117,76 @@ public class VehicleOperationsImpl implements VehicleOperations {
     }
 
     @Override
-    public boolean changeFuelType(String string, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeFuelType(@NotNull String licensePlateNumber, int fuelType) {
+
+        String changeFuelTypeQuery = "UPDATE [dbo].[Vehicle] " +
+                                "	SET " +
+                                "		FuelType = ? " +
+                                "	WHERE IdV IN ( " +
+                                "			SELECT IdV " +
+                                "                           FROM [dbo].VehicleStockroom " +
+                                "                    )" +
+                                "		AND LicencePlateNumber LIKE ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeFuelTypeQuery);) {           
+            ps.setInt(1, fuelType);
+            ps.setString(2, licensePlateNumber);
+            int numberOfUpdatedVehicles = ps.executeUpdate();
+            return numberOfUpdatedVehicles != 0;                                        
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
-    public boolean changeConsumption(String string, BigDecimal bd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeConsumption(@NotNull String licensePlateNumber, BigDecimal fuelConsumption) {
+        String changeConsumptionQuery = "UPDATE [dbo].[Vehicle] " +
+                                "	SET " +
+                                "		FuelConsumption = ? " +
+                                "	WHERE IdV IN ( " +
+                                "			SELECT IdV " +
+                                "                           FROM [dbo].VehicleStockroom " +
+                                "                    )" +
+                                "		AND LicencePlateNumber LIKE ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeConsumptionQuery);) {           
+            ps.setBigDecimal(1, fuelConsumption);
+            ps.setString(2, licensePlateNumber);
+            int numberOfUpdatedVehicles = ps.executeUpdate();
+            return numberOfUpdatedVehicles != 0;                                        
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
-    public boolean changeCapacity(String string, BigDecimal bd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeCapacity(@NotNull String licensePlateNumber, BigDecimal capacity) {
+        String changeCapacityQuery = "UPDATE [dbo].[Vehicle] " +
+                                "	SET " +
+                                "		Capacity = ? " +
+                                "	WHERE IdV IN ( " +
+                                "			SELECT IdV " +
+                                "                           FROM [dbo].VehicleStockroom " +
+                                "                    )" +
+                                "		AND LicencePlateNumber LIKE ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeCapacityQuery);) {           
+            ps.setBigDecimal(1, capacity);
+            ps.setString(2, licensePlateNumber);
+            int numberOfUpdatedVehicles = ps.executeUpdate();
+            return numberOfUpdatedVehicles != 0;                                        
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
@@ -189,6 +247,13 @@ public class VehicleOperationsImpl implements VehicleOperations {
         System.out.println(vehicleOperations.parkVehicle("", stockroomBgId)); // missing licence plate number
         System.out.println(vehicleOperations.parkVehicle("VA119RT", -1)); // missing stockroom
         
+        System.out.println(vehicleOperations.changeFuelType("VA119RT", 2));
+        System.out.println(vehicleOperations.changeConsumption("VA119RT", new BigDecimal(11.2D)));
+        System.out.println(vehicleOperations.changeCapacity("VA119RT", new BigDecimal(888.55D)));
+        
+        System.out.println(vehicleOperations.changeFuelType("BG1675DA", 2));
+        System.out.println(vehicleOperations.changeConsumption("BG1675DA", new BigDecimal(11.2D)));
+        System.out.println(vehicleOperations.changeCapacity("BG1675DA", new BigDecimal(888.55D)));
 
     }
     
