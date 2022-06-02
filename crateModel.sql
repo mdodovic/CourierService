@@ -227,8 +227,8 @@ go
 
 
 ALTER TABLE [PackageStockroom]
-	ADD CONSTRAINT [FK_Stockroom_PackageStockroom] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
-		ON DELETE NO ACTION
+	ADD CONSTRAINT [R_11] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
+		ON DELETE CASCADE
 		ON UPDATE CASCADE
 go
 
@@ -248,7 +248,7 @@ go
 
 
 ALTER TABLE [VehicleStockroom]
-	ADD CONSTRAINT [FK_Stockroom_VehicleStockroom] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
-		ON DELETE NO ACTION
+	ADD CONSTRAINT [R_10] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
+		ON DELETE CASCADE
 		ON UPDATE CASCADE
 go
