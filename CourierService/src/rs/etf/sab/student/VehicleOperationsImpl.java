@@ -44,15 +44,28 @@ public class VehicleOperationsImpl implements VehicleOperations {
             return numberOfInsertedVehicles != 0;
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return false;        
 
     }
 
     @Override
-    public int deleteVehicles(String... strings) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int deleteVehicles(@NotNull String... licencePlateNumbers) {
+        String deleteVehicelByLicencePlateNumbersQuery = "DELETE FROM [dbo].[Vehicle] " 
+                                                        + " WHERE LicencePlateNumber LIKE ?; ";
+        int numberOfDeletedVehicles = 0;
+        try(PreparedStatement ps = connection.prepareStatement(deleteVehicelByLicencePlateNumbersQuery);) {           
+            for(String licencePlateNumber: licencePlateNumbers) {
+
+                ps.setString(1, licencePlateNumber);
+                numberOfDeletedVehicles += ps.executeUpdate();
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return numberOfDeletedVehicles;
     }
 
     @Override
