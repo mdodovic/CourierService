@@ -17,6 +17,12 @@ go
 DROP TABLE [Courier]
 go
 
+DROP TABLE [Vehicle]
+go
+
+DROP TABLE [CourierRequest]
+go
+
 DROP TABLE [User]
 go
 
@@ -24,9 +30,6 @@ DROP TABLE [Address]
 go
 
 DROP TABLE [City]
-go
-
-DROP TABLE [Vehicle]
 go
 
 CREATE TABLE [Address]
@@ -56,6 +59,14 @@ go
 
 CREATE TABLE [Courier]
 ( 
+	[IdU]                bigint  NOT NULL 
+)
+go
+
+CREATE TABLE [CourierRequest]
+( 
+	[IdCR]               bigint  NOT NULL ,
+	[DrivingLicenceNumber] varchar(20)  NULL ,
 	[IdU]                bigint  NOT NULL 
 )
 go
@@ -134,6 +145,14 @@ ALTER TABLE [Courier]
 	ADD CONSTRAINT [XPKCourier] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
 
+ALTER TABLE [CourierRequest]
+	ADD CONSTRAINT [XPKCourierRequest] PRIMARY KEY  CLUSTERED ([IdCR] ASC)
+go
+
+ALTER TABLE [CourierRequest]
+	ADD CONSTRAINT [XAK1CourierRequest] UNIQUE ([IdU]  ASC)
+go
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
@@ -180,6 +199,13 @@ go
 ALTER TABLE [Courier]
 	ADD CONSTRAINT [R_8] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
 		ON DELETE CASCADE
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [CourierRequest]
+	ADD CONSTRAINT [FK_User_CourierRequest] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
+		ON DELETE NO ACTION
 		ON UPDATE CASCADE
 go
 
