@@ -109,8 +109,29 @@ public class StockroomOperationsImpl implements StockroomOperations {
     }
 
     @Override
-    public int deleteStockroomFromCity(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int deleteStockroomFromCity(int idCity) {
+        
+        String getStockroomByCityIdQuery = "SELECT S.IdS " +
+                                            "	FROM [dbo].[Address] A " +
+                                            "       INNER JOIN [dbo].[Stockroom] S on (A.IdA = S.IdA) " +
+                                            "	WHERE A.IdC = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(getStockroomByCityIdQuery);) {           
+            
+            ps.setInt(1, idCity);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    int IdS = rs.getInt(1);
+                    if(deleteStockroom(IdS)) {
+                        return IdS;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return -1;
     }
 
     @Override
@@ -169,6 +190,9 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
         System.out.println(stockroomOperations.deleteStockroom(stockroomVaId));
         System.out.println(stockroomOperations.deleteStockroom(stockroomVaId));
+        
+        System.out.println(stockroomOperations.deleteStockroomFromCity(bgId));
+        System.out.println(stockroomOperations.deleteStockroomFromCity(bgId));
         
         
     }
