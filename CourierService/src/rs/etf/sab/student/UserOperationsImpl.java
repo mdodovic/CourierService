@@ -33,7 +33,7 @@ public class UserOperationsImpl implements UserOperations {
     private void checkPassword(String password) throws Exception {
         String regex = "^(?=.*[0-9])"
                        + "(?=.*[a-z])(?=.*[A-Z])"
-                       + "(?=.*[_@#$%^&+=])"
+                       + "(?=.*[_@#$%^&+=\\.])"
                        + "(?=\\S+$).{8,20}$";
   
         Pattern p = Pattern.compile(regex);  
