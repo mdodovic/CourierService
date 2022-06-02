@@ -81,7 +81,7 @@ go
 CREATE TABLE [PackageStockroom]
 ( 
 	[IdS]                bigint  NOT NULL ,
-	[IdPS]               bigint  NOT NULL 
+	[IdPS]               bigint  IDENTITY ( 1,1 )  NOT NULL 
 )
 go
 
@@ -121,7 +121,7 @@ go
 
 CREATE TABLE [VehicleStockroom]
 ( 
-	[IdVS]               bigint  NOT NULL ,
+	[IdVS]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdS]                bigint  NOT NULL ,
 	[IdV]                bigint  NOT NULL 
 )
