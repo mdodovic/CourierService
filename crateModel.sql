@@ -59,7 +59,8 @@ go
 
 CREATE TABLE [Courier]
 ( 
-	[IdU]                bigint  NOT NULL 
+	[IdU]                bigint  NOT NULL ,
+	[DrivingLicenceNumber] varchar(20)  NOT NULL 
 )
 go
 
@@ -143,6 +144,10 @@ go
 
 ALTER TABLE [Courier]
 	ADD CONSTRAINT [XPKCourier] PRIMARY KEY  CLUSTERED ([IdU] ASC)
+go
+
+ALTER TABLE [Courier]
+	ADD CONSTRAINT [XAK1Courier] UNIQUE ([DrivingLicenceNumber]  ASC)
 go
 
 ALTER TABLE [CourierRequest]
