@@ -13,10 +13,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.GeneralOperations;
-import rs.etf.sab.operations.StockroomOperations;
 import rs.etf.sab.operations.UserOperations;
 
 /**
@@ -26,10 +29,22 @@ import rs.etf.sab.operations.UserOperations;
 public class UserOperationsImpl implements UserOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
-
+    
+    private void checkPassword(String password) throws Exception {
+        String regex = "^(?=.*[0-9])"
+                       + "(?=.*[a-z])(?=.*[A-Z])"
+                       + "(?=.*[_@#$%^&+=])"
+                       + "(?=\\S+$).{8,20}$";
+  
+        Pattern p = Pattern.compile(regex);  
+        Matcher m = p.matcher(password);
+        if(!m.matches())
+            throw new Exception("Bad password!");
+    }
+    
     @Override
     public boolean insertUser(@NotNull String userName, @NotNull String firstName, @NotNull String lastName, @NotNull String password, @NotNull int idAddress) {
-            
+        
         String insertAddressQuery = "INSERT INTO [dbo].[User] " +
                                     "       (Firstname, Lastname, Username, Password, IdA) \n" +
                                     "   VALUES (?, ?, ?, ?, ?) ";
@@ -38,14 +53,17 @@ public class UserOperationsImpl implements UserOperations {
             ps.setString(1, firstName);
             ps.setString(2, lastName);
             ps.setString(3, userName);
+            checkPassword(password);
             ps.setString(4, password);
             ps.setInt(5, idAddress);
-
+            
             int numberOfInsertedUsers = ps.executeUpdate();
             return numberOfInsertedUsers != 0;
             
         } catch (SQLException ex) {
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+//            Logger.getLogger(UserOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;        
         
@@ -106,12 +124,18 @@ public class UserOperationsImpl implements UserOperations {
         UserOperations userOperations = new UserOperationsImpl();
         
 
-        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "mata123", addressVa1Id));
-        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "mata123", addressVa1Id)); // same username
-        System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "vlado123", -1)); // invalid address
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id));
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id)); // same username
+        System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", -1)); // invalid address
         
-        System.out.println(userOperations.insertUser("user1", "vlado", "Dodovic", "vlado123", addressBg1Id)); // firstname not capital
-        System.out.println(userOperations.insertUser("user2", "Vlado", "dodovic", "vlado123", addressBg1Id)); // lastname not capital
+        System.out.println(userOperations.insertUser("user1", "vlado", "Dodovic", "Vlado.123", addressBg1Id)); // firstname not capital
+        System.out.println(userOperations.insertUser("user2", "Vlado", "dodovic", "Vlado.123", addressBg1Id)); // lastname not capital
+
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id)); // password fail
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata123", addressVa1Id)); // password fail
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "mata_123", addressVa1Id)); // password fail
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_----", addressVa1Id)); // password fail
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "M123s", addressVa1Id)); // password fail
         
         List<String> listOfUsernames = userOperations.getAllUsers();
         System.out.println(listOfUsernames.size()); // 1
