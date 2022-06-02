@@ -11,7 +11,7 @@ public class StudentMain {
         AddressOperations addressOperations = new AddressOperationsImpl();
         CityOperations cityOperations = new CityOperationsImpl();
         CourierOperations courierOperations = null; // e.g. = new MyDistrictOperations();
-        CourierRequestOperation courierRequestOperation = new CourierRequestOperationImpl();
+        CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
         DriveOperation driveOperation = null;
         GeneralOperations generalOperations = new GeneralOperationsImpl();
         PackageOperations packageOperations = null;

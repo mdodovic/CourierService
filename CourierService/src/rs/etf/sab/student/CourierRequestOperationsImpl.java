@@ -17,7 +17,7 @@ import rs.etf.sab.operations.UserOperations;
  *
  * @author matij
  */
-public class CourierRequestOperationImpl implements CourierRequestOperation {
+public class CourierRequestOperationsImpl implements CourierRequestOperation {
     
     private final Connection connection = DB.getInstance().getConnection();
     
