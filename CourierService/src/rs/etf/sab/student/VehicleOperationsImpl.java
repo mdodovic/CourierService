@@ -14,6 +14,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rs.etf.sab.operations.VehicleOperations;
 
 /**
@@ -34,15 +36,15 @@ public class VehicleOperationsImpl implements VehicleOperations {
         
         try(PreparedStatement ps = connection.prepareStatement(insertAddressQuery);) {           
             ps.setString(1, licencePlateNumber);
-            ps.setInt(1, fuelType);
+            ps.setInt(2, fuelType);
             ps.setBigDecimal(3, fuelConsumtion);
             ps.setBigDecimal(4, capacity);
             
-            int numberOfInsertedUsers = ps.executeUpdate();
-            return numberOfInsertedUsers != 0;
+            int numberOfInsertedVehicles = ps.executeUpdate();
+            return numberOfInsertedVehicles != 0;
             
         } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return false;        
 
@@ -58,8 +60,8 @@ public class VehicleOperationsImpl implements VehicleOperations {
 
         List<String> listOfDrivingLicenceNumbers = new ArrayList<String>();
         
-        String getAllUsernamesQuery = "SELECT DriverLicenceNumber "
-                                + " FROM [dbo].[Vehicle]; ";
+        String getAllUsernamesQuery = "SELECT LicencePlateNumber "
+                                      + " FROM [dbo].[Vehicle]; ";
        
         try(Statement stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(getAllUsernamesQuery)){
@@ -100,8 +102,15 @@ public class VehicleOperationsImpl implements VehicleOperations {
         VehicleOperations vehicleOperations = new VehicleOperationsImpl();
         
         System.out.println(vehicleOperations.insertVehicle("BG1675DA", 1, new BigDecimal(6.3D), new BigDecimal(100.5D)));
-        System.out.println(vehicleOperations.insertVehicle("BG1675DA", 1, new BigDecimal(6.3D), new BigDecimal(100.5D))); // same plate number
-        System.out.println(vehicleOperations.insertVehicle("VA119RT", 3, new BigDecimal(6.3D), new BigDecimal(100.5D))); // same plate number
+//        System.out.println(vehicleOperations.insertVehicle("BG1675DA", 1, new BigDecimal(6.3D), new BigDecimal(100.5D))); // same plate number
+//        System.out.println(vehicleOperations.insertVehicle("VA119RT", 3, new BigDecimal(6.3D), new BigDecimal(100.5D))); // fuel type out of range
+
+        
+        List<String> listOfVehicles = vehicleOperations.getAllVehichles();
+        System.out.println(listOfVehicles.size()); // 1
+        for (String s: listOfVehicles) {
+            System.out.println(s);
+        }
 
     }
     
