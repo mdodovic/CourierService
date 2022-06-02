@@ -61,7 +61,7 @@ public class UserOperationsImpl implements UserOperations {
             throw new Exception(ex);
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
-        return null;
+        throw new Exception("No such User for given username:" + username); 
     }
     
     @Override

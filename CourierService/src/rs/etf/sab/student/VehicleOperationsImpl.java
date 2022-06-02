@@ -49,7 +49,7 @@ public class VehicleOperationsImpl implements VehicleOperations {
             throw new Exception(ex);
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
-        return null;
+        throw new Exception("No such Vehicle for given licencePlateNumber:" + licencePlateNumber);        
     }
     
     
@@ -148,9 +148,9 @@ public class VehicleOperationsImpl implements VehicleOperations {
             return numberOfParkedVehicles != 0;
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         } catch (Exception ex) {
-            Logger.getLogger(VehicleOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(VehicleOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return false;        
 
@@ -186,6 +186,8 @@ public class VehicleOperationsImpl implements VehicleOperations {
         }
         
         System.out.println(vehicleOperations.parkVehicle("VA119RT", stockroomBgId));
+        System.out.println(vehicleOperations.parkVehicle("", stockroomBgId)); // missing licence plate number
+        System.out.println(vehicleOperations.parkVehicle("VA119RT", -1)); // missing stockroom
         
 
     }
