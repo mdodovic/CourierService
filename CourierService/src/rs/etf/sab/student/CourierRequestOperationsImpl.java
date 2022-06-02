@@ -83,7 +83,7 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
             return numberOfDeletedCourierRequests != 0;                                        
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         
         return false;
@@ -91,8 +91,30 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
     }
 
     @Override
-    public boolean changeDriverLicenceNumberInCourierRequest(@NotNull String userName, @NotNull String licencePlateNumber) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeDriverLicenceNumberInCourierRequest(@NotNull String userName, @NotNull String drivingLicenceNumber) {
+
+        String changeDrivingLicenceNumberQuery = "UPDATE [dbo].[CourierRequest] " +
+                                                "	SET DrivingLicenceNumber = ? " +
+                                                "	WHERE IdU = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeDrivingLicenceNumberQuery);) {           
+               
+            Long userId = userOperations.fetchUserIdByUsername(userName);
+
+            ps.setString(1, drivingLicenceNumber);
+            ps.setLong(2, userId);
+
+            int numberOfUpdatedDriverLicenceNubmer = ps.executeUpdate();
+            return numberOfUpdatedDriverLicenceNubmer != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+//            Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return false;
+
     }
 
     @Override
@@ -145,17 +167,17 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
             return numberOfNewCouriers != 0 && deletedCourierRequest;            
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
             try {
                 connection.rollback();
             } catch (SQLException ex1) {
-                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex1);
+//                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex1);
             }
         } finally {
             try {
                 connection.setAutoCommit(true);
             } catch (SQLException ex) {
-                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return false;
@@ -203,6 +225,12 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
         System.out.println(courierRequestOperation.grantRequest("vdodovic"));
         listOfUsernames = courierRequestOperation.getAllCourierRequests();
         System.out.println(listOfUsernames.size()); // 1
+        for (String s: listOfUsernames) {
+            System.out.println(s);
+        }
+        
+        System.out.println(courierRequestOperation.changeDriverLicenceNumberInCourierRequest("mdodovic", "19081999"));
+        System.out.println(courierRequestOperation.changeDriverLicenceNumberInCourierRequest("vdodovic", "19081999")); // no courier request
         
     }
     
