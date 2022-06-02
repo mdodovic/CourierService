@@ -26,6 +26,9 @@ go
 DROP TABLE [City]
 go
 
+DROP TABLE [Vehicle]
+go
+
 CREATE TABLE [Address]
 ( 
 	[IdA]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
@@ -91,6 +94,16 @@ CREATE TABLE [User]
 )
 go
 
+CREATE TABLE [Vehicle]
+( 
+	[IdV]                bigint  NOT NULL ,
+	[LicencePlateNumber] varchar(10)  NOT NULL ,
+	[FuelType]           integer  NOT NULL ,
+	[FuelConsumption]    decimal(10,2)  NOT NULL ,
+	[Capacity]           decimal(10,2)  NOT NULL 
+)
+go
+
 CREATE TABLE [VehicleStockroom]
 ( 
 	[IdS]                bigint  NOT NULL 
@@ -139,6 +152,10 @@ go
 
 ALTER TABLE [User]
 	ADD CONSTRAINT [XAK1User] UNIQUE ([Username]  ASC)
+go
+
+ALTER TABLE [Vehicle]
+	ADD CONSTRAINT [XPKVehicle] PRIMARY KEY  CLUSTERED ([IdV] ASC)
 go
 
 ALTER TABLE [VehicleStockroom]
