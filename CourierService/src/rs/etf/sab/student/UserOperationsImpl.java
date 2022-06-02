@@ -41,6 +41,28 @@ public class UserOperationsImpl implements UserOperations {
         if(!m.matches())
             throw new Exception("Bad password!");
     }
+
+    public Long fetchUserIdByUsername(String username) throws Exception {
+        
+        String getUserIdByUsernameQuery = "SELECT IdU "
+                                        + " FROM [dbo].[User] "
+                                        + " WHERE Username = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getUserIdByUsernameQuery);) {           
+            
+            ps.setString(1, username);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return null;
+    }
     
     @Override
     public boolean insertUser(@NotNull String userName, @NotNull String firstName, @NotNull String lastName, @NotNull String password, @NotNull int idAddress) {
@@ -70,8 +92,28 @@ public class UserOperationsImpl implements UserOperations {
     }
 
     @Override
-    public boolean declareAdmin(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean declareAdmin(@NotNull String userName) {
+        
+        String declareAdminQuery = "INSERT INTO [dbo].[Admin] " +
+                                    "       (IdU) " +
+                                    "   VALUES (?); ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(declareAdminQuery);) {           
+
+            Long adminId = fetchUserIdByUsername(userName);
+            ps.setLong(1, adminId);
+
+            int numberOfDeclaredAdmins = ps.executeUpdate();
+            return numberOfDeclaredAdmins != 0;
+
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+//            Logger.getLogger(UserOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+        
     }
 
     @Override
@@ -127,6 +169,7 @@ public class UserOperationsImpl implements UserOperations {
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id));
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id)); // same username
         System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", -1)); // invalid address
+        System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", addressBg1Id));
         
         System.out.println(userOperations.insertUser("user1", "vlado", "Dodovic", "Vlado.123", addressBg1Id)); // firstname not capital
         System.out.println(userOperations.insertUser("user2", "Vlado", "dodovic", "Vlado.123", addressBg1Id)); // lastname not capital
@@ -138,10 +181,14 @@ public class UserOperationsImpl implements UserOperations {
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "M123s", addressVa1Id)); // password fail
         
         List<String> listOfUsernames = userOperations.getAllUsers();
-        System.out.println(listOfUsernames.size()); // 1
+        System.out.println(listOfUsernames.size()); // 2
         for (String s: listOfUsernames) {
             System.out.println(s);
         }
+        
+        System.out.println(userOperations.declareAdmin("mdodovic"));
+        System.out.println(userOperations.declareAdmin("mdodovic"));
+        System.out.println(userOperations.declareAdmin("mdodovic2"));
         
     }
 }
