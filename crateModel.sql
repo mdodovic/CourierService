@@ -8,6 +8,9 @@ go
 DROP TABLE [Stockroom]
 go
 
+DROP TABLE [User]
+go
+
 DROP TABLE [Address]
 go
 
@@ -46,6 +49,17 @@ CREATE TABLE [Stockroom]
 )
 go
 
+CREATE TABLE [User]
+( 
+	[IdU]                integer  IDENTITY ( 1,1 )  NOT NULL ,
+	[Firstname]          varchar(20)  NOT NULL ,
+	[Lastname]           varchar(20)  NOT NULL ,
+	[Username]           varchar(20)  NOT NULL ,
+	[Password]           varchar(20)  NOT NULL ,
+	[IdA]                bigint  NOT NULL 
+)
+go
+
 CREATE TABLE [VehicleStockroom]
 ( 
 	[IdS]                bigint  NOT NULL 
@@ -72,6 +86,14 @@ ALTER TABLE [Stockroom]
 	ADD CONSTRAINT [XPKStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
 go
 
+ALTER TABLE [User]
+	ADD CONSTRAINT [XPKUser] PRIMARY KEY  CLUSTERED ([IdU] ASC)
+go
+
+ALTER TABLE [User]
+	ADD CONSTRAINT [XAK1User] UNIQUE ([Username]  ASC)
+go
+
 ALTER TABLE [VehicleStockroom]
 	ADD CONSTRAINT [XPKVehicleStockroom] PRIMARY KEY  CLUSTERED ([IdS] ASC)
 go
@@ -93,6 +115,13 @@ go
 
 ALTER TABLE [Stockroom]
 	ADD CONSTRAINT [FK_Address_Stockroom] FOREIGN KEY ([IdA]) REFERENCES [Address]([IdA])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [User]
+	ADD CONSTRAINT [FK_Address_User] FOREIGN KEY ([IdA]) REFERENCES [Address]([IdA])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
 go
