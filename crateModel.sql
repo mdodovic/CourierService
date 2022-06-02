@@ -52,8 +52,12 @@ go
 CREATE TABLE [User]
 ( 
 	[IdU]                integer  IDENTITY ( 1,1 )  NOT NULL ,
-	[Firstname]          varchar(20)  NOT NULL ,
-	[Lastname]           varchar(20)  NOT NULL ,
+	[Firstname]          varchar(20)  NOT NULL 
+	CONSTRAINT [Firstname]
+		CHECK  ( (ASCII(LEFT(Firstname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
+	[Lastname]           varchar(20)  NOT NULL 
+	CONSTRAINT [Lastname]
+		CHECK  ( (ASCII(LEFT(Lastname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
 	[Username]           varchar(20)  NOT NULL ,
 	[Password]           varchar(20)  NOT NULL ,
 	[IdA]                bigint  NOT NULL 

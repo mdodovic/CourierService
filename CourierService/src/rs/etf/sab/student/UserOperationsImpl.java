@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
@@ -67,7 +68,26 @@ public class UserOperationsImpl implements UserOperations {
 
     @Override
     public List<String> getAllUsers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<String> listOfUsernames = new ArrayList<String>();
+        
+        String getAllUsernamesQuery = "SELECT Username "
+                                + " FROM [dbo].[User]; ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllUsernamesQuery)){
+            
+            while(rs.next()){
+                listOfUsernames.add(rs.getString(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfUsernames;
+
+
     }
     
     public static void main(String[] args) {
@@ -86,17 +106,18 @@ public class UserOperationsImpl implements UserOperations {
         UserOperations userOperations = new UserOperationsImpl();
         
 
-        System.out.println(userOperations.insertUser(string, string1, string2, string3, vaId));
-        System.out.println(userOperations.insertUser(string, string1, string2, string3, vaId));
-        System.out.println(userOperations.insertUser(string, string1, string2, string3, vaId));
-        System.out.println(userOperations.insertUser(string, string1, string2, string3, vaId));
-
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "mata123", addressVa1Id));
+        System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "mata123", addressVa1Id)); // same username
+        System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "vlado123", -1)); // invalid address
+        
+        System.out.println(userOperations.insertUser("user1", "vlado", "Dodovic", "vlado123", addressBg1Id)); // firstname not capital
+        System.out.println(userOperations.insertUser("user2", "Vlado", "dodovic", "vlado123", addressBg1Id)); // lastname not capital
+        
         List<String> listOfUsernames = userOperations.getAllUsers();
-        System.out.println(listOfUsernames.size()); // 4
+        System.out.println(listOfUsernames.size()); // 1
         for (String s: listOfUsernames) {
             System.out.println(s);
         }
         
     }
-
 }
