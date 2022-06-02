@@ -122,8 +122,22 @@ public class UserOperationsImpl implements UserOperations {
     }
 
     @Override
-    public int deleteUsers(String... strings) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int deleteUsers(@NotNull String... userNames) {
+
+        String deleteUserByUsernameQuery = "DELETE FROM [dbo].[User] " 
+                                    + " WHERE Username LIKE ?; ";
+        int numberOfDeletedUsers = 0;
+        try(PreparedStatement ps = connection.prepareStatement(deleteUserByUsernameQuery);) {           
+            for(String username: userNames) {
+
+                ps.setString(1, username);
+                numberOfDeletedUsers += ps.executeUpdate();
+                
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return numberOfDeletedUsers;
     }
 
     @Override
@@ -189,6 +203,10 @@ public class UserOperationsImpl implements UserOperations {
         System.out.println(userOperations.declareAdmin("mdodovic"));
         System.out.println(userOperations.declareAdmin("mdodovic"));
         System.out.println(userOperations.declareAdmin("mdodovic2"));
+        
+        // send packages
+        
+        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "vdodovic2"}));
         
     }
 }
