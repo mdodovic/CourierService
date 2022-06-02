@@ -108,9 +108,11 @@ go
 
 CREATE TABLE [Vehicle]
 ( 
-	[IdV]                bigint  NOT NULL ,
+	[IdV]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[LicencePlateNumber] varchar(10)  NOT NULL ,
-	[FuelType]           integer  NOT NULL ,
+	[FuelType]           integer  NOT NULL 
+	CONSTRAINT [FuelType]
+		CHECK  ( (FuelType IN (0, 1, 2)) ),
 	[FuelConsumption]    decimal(10,2)  NOT NULL ,
 	[Capacity]           decimal(10,2)  NOT NULL 
 )
@@ -184,6 +186,10 @@ go
 
 ALTER TABLE [Vehicle]
 	ADD CONSTRAINT [XPKVehicle] PRIMARY KEY  CLUSTERED ([IdV] ASC)
+go
+
+ALTER TABLE [Vehicle]
+	ADD CONSTRAINT [XAK1Vehicle] UNIQUE ([LicencePlateNumber]  ASC)
 go
 
 ALTER TABLE [VehicleStockroom]
