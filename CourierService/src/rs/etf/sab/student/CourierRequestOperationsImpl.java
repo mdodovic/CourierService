@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.CourierRequestOperation;
@@ -66,12 +68,30 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
     }
 
     @Override
-    public boolean deleteCourierRequest(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deleteCourierRequest(@NotNull String userName) {
+
+        String deleteCourierRequestByUsernameQuery = "DELETE FROM [dbo].[CourierRequest] " +
+                                                "      WHERE IdU = ( " +
+                                                "                   SELECT IdU " +
+                                                "                       FROM [dbo].[User] " +
+                                                "                       WHERE Username = ? " +
+                                                "                   ); ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(deleteCourierRequestByUsernameQuery);) {           
+            ps.setString(1, userName);
+            int numberOfDeletedCourierRequests = ps.executeUpdate();
+            return numberOfDeletedCourierRequests != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
+
     }
 
     @Override
-    public boolean changeDriverLicenceNumberInCourierRequest(String string, String string1) {
+    public boolean changeDriverLicenceNumberInCourierRequest(@NotNull String userName, @NotNull String licencePlateNumber) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -101,8 +121,45 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
     }
 
     @Override
-    public boolean grantRequest(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean grantRequest(@NotNull String username) {
+        
+        String insertCourierFromCourierRequestQuery = "INSERT INTO [dbo].[Courier] " +
+                                                    "		(IdU, DrivingLicenceNumber) " +
+                                                    "       SELECT U.IdU, CR.DrivingLicenceNumber " +
+                                                    "		FROM [dbo].[CourierRequest] CR " +
+                                                    "			INNER JOIN [dbo].[User] U on (CR.IdU = U.IdU) " +
+                                                    "		WHERE U.Username = ?; ";
+                                                      
+        try(PreparedStatement ps = connection.prepareStatement(insertCourierFromCourierRequestQuery);) {           
+            
+            connection.setAutoCommit(false);
+            
+            ps.setString(1, username);
+            
+            int numberOfNewCouriers = ps.executeUpdate();
+            
+            boolean deletedCourierRequest = deleteCourierRequest(username);
+            
+            connection.commit();
+            
+            return numberOfNewCouriers != 0 && deletedCourierRequest;            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            try {
+                connection.rollback();
+            } catch (SQLException ex1) {
+                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(CourierRequestOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+
     }
     
     
@@ -144,7 +201,8 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
         }
         
         System.out.println(courierRequestOperation.grantRequest("vdodovic"));
-        System.out.println(listOfUsernames.size()); // 2
+        listOfUsernames = courierRequestOperation.getAllCourierRequests();
+        System.out.println(listOfUsernames.size()); // 1
         
     }
     
