@@ -5,7 +5,11 @@
  */
 package rs.etf.sab.student;
 
+import com.sun.istack.internal.NotNull;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
@@ -20,10 +24,43 @@ import rs.etf.sab.operations.UserOperations;
 public class CourierRequestOperationsImpl implements CourierRequestOperation {
     
     private final Connection connection = DB.getInstance().getConnection();
+    private final UserOperationsImpl userOperations = new UserOperationsImpl();
     
     @Override
-    public boolean insertCourierRequest(String string, String string1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean insertCourierRequest​(@NotNull String userName, @NotNull String driverLicenceNumber) {
+
+        String alreadyCourierQuery = "SELECT IdU " +
+                                        "   FROM [dbo].[Courier] " +
+                                        "   WHERE IdU = ?; "; 
+        
+        String declareAdminQuery = "INSERT INTO [dbo].[CourierRequest] " +
+                                    "       (DrivingLicenceNumber, IdU) " +
+                                    "   VALUES (?, ?); ";
+                                    
+        try(PreparedStatement psCheck = connection.prepareStatement(alreadyCourierQuery);
+            PreparedStatement psInsert = connection.prepareStatement(declareAdminQuery);) {           
+
+            Long userId = userOperations.fetchUserIdByUsername(userName);
+            psCheck.setLong(1, userId);
+            try(ResultSet rsCheck = psCheck.executeQuery()){
+                if(rsCheck.next()) {
+                    return false;
+                } else {            
+                    psInsert.setString(1, driverLicenceNumber);
+                    psInsert.setLong(2, userId);
+
+                    int numberOfInsertedCourierRequests = psInsert.executeUpdate();
+                    return numberOfInsertedCourierRequests != 0;
+                }
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+//            Logger.getLogger(UserOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+
     }
 
     @Override
@@ -69,6 +106,16 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
         userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", addressBg1Id);
         
         userOperations.declareAdmin("jcvetkovic");
+        
+        CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
+        
+        System.out.println(courierRequestOperation.insertCourierRequest("mdodovic", "12345678"));
+        System.out.println(courierRequestOperation.insertCourierRequest("mdodovic", "12345678")); // same user
+        System.out.println(courierRequestOperation.insertCourierRequest("vdodovic", "12345678")); // same driving licence
+        System.out.println(courierRequestOperation.insertCourierRequest("mdodovic", "123456781")); // same username
+        System.out.println(courierRequestOperation.insertCourierRequest("vdodovic", "87654321"));
+        
+        
         
     }
     
