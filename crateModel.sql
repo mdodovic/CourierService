@@ -65,7 +65,7 @@ go
 
 CREATE TABLE [CourierRequest]
 ( 
-	[IdCR]               bigint  NOT NULL ,
+	[IdCR]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[DrivingLicenceNumber] varchar(20)  NULL ,
 	[IdU]                bigint  NOT NULL 
 )
