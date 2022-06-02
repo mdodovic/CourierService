@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
@@ -75,7 +77,27 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
 
     @Override
     public List<String> getAllCourierRequests() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<String> listOfUsernames = new ArrayList<String>();
+        
+        String getAllUsernamesQuery = "SELECT U.Username " +
+                                    "       FROM [dbo].[CourierRequest] CR " +
+                                    "		INNER JOIN [dbo].[User] U on (CR.IdU = U.IdU); ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllUsernamesQuery)){
+            
+            while(rs.next()){
+                listOfUsernames.add(rs.getString(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfUsernames;
+
+
     }
 
     @Override
@@ -115,7 +137,14 @@ public class CourierRequestOperationsImpl implements CourierRequestOperation {
         System.out.println(courierRequestOperation.insertCourierRequest("mdodovic", "123456781")); // same username
         System.out.println(courierRequestOperation.insertCourierRequest("vdodovic", "87654321"));
         
+        List<String> listOfUsernames = courierRequestOperation.getAllCourierRequests();
+        System.out.println(listOfUsernames.size()); // 2
+        for (String s: listOfUsernames) {
+            System.out.println(s);
+        }
         
+        System.out.println(courierRequestOperation.grantRequest("vdodovic"));
+        System.out.println(listOfUsernames.size()); // 2
         
     }
     
