@@ -153,6 +153,10 @@ ALTER TABLE [CourierRequest]
 	ADD CONSTRAINT [XAK1CourierRequest] UNIQUE ([IdU]  ASC)
 go
 
+ALTER TABLE [CourierRequest]
+	ADD CONSTRAINT [XAK2CourierRequest] UNIQUE ([DrivingLicenceNumber]  ASC)
+go
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
