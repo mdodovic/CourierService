@@ -6,6 +6,7 @@
 package rs.etf.sab.student;
 
 import com.sun.istack.internal.NotNull;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.GeneralOperations;
+import rs.etf.sab.operations.PackageOperations;
 import rs.etf.sab.operations.UserOperations;
 
 /**
@@ -117,8 +119,36 @@ public class UserOperationsImpl implements UserOperations {
     }
 
     @Override
-    public int getSentPackages(String... strings) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int getSentPackages(@NotNull String... userNames) {
+        
+        String numberOfSentPackagesOfUserQuery = "SELECT U.IdU, U.Username, count(P.IdP) AS SentPackages" +
+                                                "	FROM[dbo].[User] U " +
+                                                "		LEFT OUTER JOIN [dbo].[Package] P on (P.IdU = U.IdU) " +
+                                                "	GROUP BY U.IdU, U.Username " +
+                                                "	HAVING U.Username = ?; ";
+
+        int numberOfSentPackages = 0;
+        boolean hasExistingUser = false;
+        try(PreparedStatement ps = connection.prepareStatement(numberOfSentPackagesOfUserQuery);) {           
+            for(String userName: userNames) {
+
+                ps.setString(1, userName);
+                
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()) {
+                        hasExistingUser = true;                       
+                        numberOfSentPackages += rs.getInt("SentPackages");
+                    }
+                }                
+                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        if(hasExistingUser)
+            return numberOfSentPackages;
+        return -1;
+        
     }
 
     @Override
@@ -127,15 +157,15 @@ public class UserOperationsImpl implements UserOperations {
         String deleteUserByUsernameQuery = "DELETE FROM [dbo].[User] " 
                                     + " WHERE Username LIKE ?; ";
         int numberOfDeletedUsers = 0;
-        try(PreparedStatement ps = connection.prepareStatement(deleteUserByUsernameQuery);) {           
-            for(String username: userNames) {
+        for(String username: userNames) {
+            try(PreparedStatement ps = connection.prepareStatement(deleteUserByUsernameQuery);) {           
 
-                ps.setString(1, username);
-                numberOfDeletedUsers += ps.executeUpdate();
-                
+                    ps.setString(1, username);
+                    numberOfDeletedUsers += ps.executeUpdate();
+
+            } catch (SQLException ex) {
+//                Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
             }
-        } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         return numberOfDeletedUsers;
     }
@@ -180,6 +210,7 @@ public class UserOperationsImpl implements UserOperations {
         UserOperations userOperations = new UserOperationsImpl();
         
 
+        System.out.println(userOperations.insertUser("gdodovic", "Gordana", "Dodovic", "Goca_123", addressVa1Id));
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id));
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id)); // same username
         System.out.println(userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", -1)); // invalid address
@@ -206,7 +237,20 @@ public class UserOperationsImpl implements UserOperations {
         
         // send packages
         
-        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "vdodovic2"}));
+        PackageOperations packageOperations = new PackageOperationsImpl();
+           
+        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 0, new BigDecimal(2));
+        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 1, new BigDecimal(2));
+        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 2, null);
+        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 3, new BigDecimal(2));
+        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "vdodovic", 2, null);
+        
+        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic2"}));
+        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic"}));
+        System.out.println(userOperations.getSentPackages(new String[] {"gdodovic"}));
+        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
+        
+        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
         
     }
 }
