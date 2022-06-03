@@ -74,6 +74,8 @@ CREATE TABLE [Courier]
 	CONSTRAINT [DF_Profit]
 		 DEFAULT  0.0,
 	[Status]             integer  NULL 
+	CONSTRAINT [DF_Status]
+		 DEFAULT  0
 	CONSTRAINT [CK1_Status]
 		CHECK  ( (Status IN (0, 1)) )
 )
