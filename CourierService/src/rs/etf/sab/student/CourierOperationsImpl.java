@@ -57,7 +57,25 @@ public class CourierOperationsImpl implements CourierOperations {
 
     @Override
     public boolean deleteCourier(@NotNull String courierUserName) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        String deleteCourierByUsernameQuery = "DELETE FROM [dbo].[Courier] " +
+                                                "      WHERE IdU = ( " +
+                                                "                   SELECT IdU " +
+                                                "                       FROM [dbo].[User] " +
+                                                "                       WHERE Username = ? " +
+                                                "                   ); ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(deleteCourierByUsernameQuery);) {           
+            ps.setString(1, courierUserName);
+            int numberOfDeletedCouriers = ps.executeUpdate();
+            return numberOfDeletedCouriers != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
+
     }
 
     @Override
@@ -81,7 +99,7 @@ public class CourierOperationsImpl implements CourierOperations {
                 }
             }
         } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
 
         return listOfUsernames;
@@ -146,7 +164,6 @@ public class CourierOperationsImpl implements CourierOperations {
             System.out.println(s);
         }
 
-
         List<String> listOfDrivingCouriers = courierOperation.getCouriersWithStatus(1);
         System.out.println(listOfDrivingCouriers.size()); // 0
         for (String s: listOfDrivingCouriers) {
@@ -158,6 +175,15 @@ public class CourierOperationsImpl implements CourierOperations {
         for (String s: listOfNonDrivingCouriers) {
             System.out.println(s);
         }
+        
+        System.out.println(courierOperation.deleteCourier("postarBG"));
+        
+        listOfCouriers = courierOperation.getAllCouriers();
+        System.out.println(listOfCouriers.size()); // 2
+        for (String s: listOfCouriers) {
+            System.out.println(s);
+        }
+        
         
     }
     
