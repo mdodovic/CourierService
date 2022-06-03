@@ -10,7 +10,7 @@ public class StudentMain {
     public static void main(String[] args) {
         AddressOperations addressOperations = new AddressOperationsImpl();
         CityOperations cityOperations = new CityOperationsImpl();
-        CourierOperations courierOperations = null; // e.g. = new MyDistrictOperations();
+        CourierOperations courierOperations = new CourierOperationsImpl();
         CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
         DriveOperation driveOperation = null;
         GeneralOperations generalOperations = new GeneralOperationsImpl();
