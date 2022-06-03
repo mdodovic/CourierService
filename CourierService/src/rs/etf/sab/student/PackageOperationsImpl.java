@@ -164,8 +164,9 @@ public class PackageOperationsImpl implements PackageOperations {
         
         PackageOperations packageOperations = new PackageOperationsImpl();
            
-//        System.out.println(packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, new BigDecimal(2)));
-//        System.out.println(packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, null));
+        System.out.println(packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, new BigDecimal(2)));
+        System.out.println(packageOperations.insertPackage(addressBg2Id, addressVa1Id, "korisnik1", 3, new BigDecimal(111)));
+        System.out.println(packageOperations.insertPackage(addressBg1Id, addressBg2Id, "korisnik1", 0, null));
         
         
     }

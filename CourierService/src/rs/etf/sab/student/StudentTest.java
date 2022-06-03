@@ -29,7 +29,7 @@ public class StudentTest {
     private CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
     private DriveOperation driveOperation = null;
     private GeneralOperations generalOperations = new GeneralOperationsImpl();
-    private PackageOperations packageOperations = null;
+    private PackageOperations packageOperations = new PackageOperationsImpl();
     private StockroomOperations stockroomOperations = new StockroomOperationsImpl();
     private UserOperations userOperations = new UserOperationsImpl();
     private VehicleOperations vehicleOperations = new VehicleOperationsImpl();
@@ -70,8 +70,7 @@ public class StudentTest {
 
 int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int packageType, BigDecimal weight) {
     int idPackage = this.packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
-//    Assert.assertNotEquals(-1L, idPackage);
-//    Assert.assertTrue(this.packageOperations.acceptAnOffer(idPackage));
+    this.packageOperations.acceptAnOffer(idPackage);
 //    Assert.assertTrue(this.packageOperations.getAllPackages().contains(Integer.valueOf(idPackage)));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage));
 //    BigDecimal price = Util.getPackagePrice(packageType, weight, 
@@ -119,17 +118,16 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         String courierUsernameVA = "postarVA";
         insertCourier(courierUsernameVA, "Pera", "Peric", "Postar_73", idAddressBG2, "123456");
 
-//    int type1 = 0;
-//    BigDecimal weight1 = new BigDecimal(2);
-//    int idPackage1 = insertAndAcceptPackage(idAddressBG2, idAddressCA1, username, type1, weight1);
-//    int type2 = 1;
-//    BigDecimal weight2 = new BigDecimal(4);
-//    int idPackage2 = insertAndAcceptPackage(idAddressBG3, idAddressVA1, username, type2, weight2);
-//    int type3 = 2;
-//    BigDecimal weight3 = new BigDecimal(5);
-//    int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
-//    Assert.assertEquals(0L, this.courierOperation.getCouriersWithStatus(1).size());
-//    this.driveOperation.planingDrive(courierUsernameBG);
+        int type1 = 0;
+        BigDecimal weight1 = new BigDecimal(2);
+        int idPackage1 = insertAndAcceptPackage(idAddressBG2, idAddressCA1, username, type1, weight1);
+        int type2 = 1;
+        BigDecimal weight2 = new BigDecimal(4);
+        int idPackage2 = insertAndAcceptPackage(idAddressBG3, idAddressVA1, username, type2, weight2);
+        int type3 = 2;
+        BigDecimal weight3 = new BigDecimal(5);
+        int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
+//        this.driveOperation.planingDrive(courierUsernameBG);
 //    Assert.assertTrue(this.courierOperation.getCouriersWithStatus(1).contains(courierUsernameBG));
 //    int type4 = 3;
 //    BigDecimal weight4 = new BigDecimal(2);
