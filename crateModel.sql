@@ -76,11 +76,11 @@ CREATE TABLE [Courier]
 	[Profit]             decimal(10,2)  NULL 
 	CONSTRAINT [DF_Profit]
 		 DEFAULT  0.0,
-	[Status]             integer  NULL 
-	CONSTRAINT [DF_Status]
+	[CourierStatus]      integer  NULL 
+	CONSTRAINT [DF_CourierStatus]
 		 DEFAULT  0
-	CONSTRAINT [CK1_Status]
-		CHECK  ( (Status IN (0, 1)) )
+	CONSTRAINT [CK1_CourierStatus]
+		CHECK  ( (CourierStatus IN (0, 1)) )
 )
 go
 
@@ -117,14 +117,28 @@ go
 CREATE TABLE [Package]
 ( 
 	[IdP]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[IdStartAddress]     bigint  NULL ,
-	[IdEndAddress]       bigint  NULL ,
-	[Type]               integer  NULL ,
-	[Weight]             char(18)  NULL ,
-	[Status]             char(18)  NULL ,
-	[Price]              char(18)  NULL ,
-	[CreationTime]       char(18)  NULL ,
-	[AcceptTime]         char(18)  NULL ,
+	[IdStartAddress]     bigint  NOT NULL ,
+	[IdEndAddress]       bigint  NOT NULL ,
+	[Type]               integer  NOT NULL 
+	CONSTRAINT [CK1_Type]
+		CHECK  ( (Type IN (0, 1, 2, 3)) ),
+	[Weight]             decimal(10,2)  NOT NULL 
+	CONSTRAINT [DF_Weight]
+		 DEFAULT  10.0,
+	[PackageStatus]      integer  NOT NULL 
+	CONSTRAINT [DF_PackageStatus]
+		 DEFAULT  0
+	CONSTRAINT [CK1_PackageStatus]
+		CHECK  ( (PackageStatus IN (0, 1, 2, 3, 4)) ),
+	[Price]              decimal(10,2)  NULL 
+	CONSTRAINT [DF_Price]
+		 DEFAULT  0.0,
+	[CreationTime]       datetime  NULL 
+	CONSTRAINT [DF_CreationTime]
+		 DEFAULT  CURRENT_TIMESTAMP,
+	[AcceptTime]         datetime  NULL 
+	CONSTRAINT [DF_AcceptTime]
+		 DEFAULT  NULL,
 	[IdC]                bigint  NULL 
 )
 go
