@@ -119,9 +119,9 @@ CREATE TABLE [Package]
 	[IdP]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdStartAddress]     bigint  NOT NULL ,
 	[IdEndAddress]       bigint  NOT NULL ,
-	[Type]               integer  NOT NULL 
-	CONSTRAINT [CK1_Type]
-		CHECK  ( (Type IN (0, 1, 2, 3)) ),
+	[PackageType]        integer  NOT NULL 
+	CONSTRAINT [CK1_PackageType]
+		CHECK  ( (PackageType IN (0, 1, 2, 3)) ),
 	[Weight]             decimal(10,2)  NOT NULL 
 	CONSTRAINT [DF_Weight]
 		 DEFAULT  10.0,
