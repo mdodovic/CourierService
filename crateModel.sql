@@ -32,6 +32,9 @@ go
 DROP TABLE [User]
 go
 
+DROP TABLE [Package]
+go
+
 DROP TABLE [Address]
 go
 
@@ -108,6 +111,21 @@ CREATE TABLE [HistoryDrive]
 	[IdHD]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdU]                bigint  NOT NULL ,
 	[IdV]                bigint  NOT NULL 
+)
+go
+
+CREATE TABLE [Package]
+( 
+	[IdP]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdStartAddress]     bigint  NULL ,
+	[IdEndAddress]       bigint  NULL ,
+	[Type]               integer  NULL ,
+	[Weight]             char(18)  NULL ,
+	[Status]             char(18)  NULL ,
+	[Price]              char(18)  NULL ,
+	[CreationTime]       char(18)  NULL ,
+	[AcceptTime]         char(18)  NULL ,
+	[IdC]                bigint  NULL 
 )
 go
 
@@ -212,6 +230,10 @@ ALTER TABLE [HistoryDrive]
 	ADD CONSTRAINT [XPKHistoryDrive] PRIMARY KEY  CLUSTERED ([IdHD] ASC)
 go
 
+ALTER TABLE [Package]
+	ADD CONSTRAINT [XPKPackage] PRIMARY KEY  CLUSTERED ([IdP] ASC)
+go
+
 ALTER TABLE [PackageStockroom]
 	ADD CONSTRAINT [XPKPackagesStockroom] PRIMARY KEY  CLUSTERED ([IdPS] ASC)
 go
@@ -299,6 +321,25 @@ ALTER TABLE [HistoryDrive]
 	ADD CONSTRAINT [FK_Vehicle_HistoryDrive] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [Package]
+	ADD CONSTRAINT [FK__Start_Address__Package] FOREIGN KEY ([IdStartAddress]) REFERENCES [Address]([IdA])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
+go
+
+ALTER TABLE [Package]
+	ADD CONSTRAINT [FK__End_Address__Package] FOREIGN KEY ([IdEndAddress]) REFERENCES [Address]([IdA])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [Package]
+	ADD CONSTRAINT [FK_City_Package] FOREIGN KEY ([IdC]) REFERENCES [City]([IdC])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
