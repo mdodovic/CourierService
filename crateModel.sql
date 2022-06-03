@@ -127,10 +127,10 @@ CREATE TABLE [User]
 ( 
 	[IdU]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[Firstname]          varchar(20)  NOT NULL 
-	CONSTRAINT [Firstname]
+	CONSTRAINT [CK1_Firstname]
 		CHECK  ( (ASCII(LEFT(Firstname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
 	[Lastname]           varchar(20)  NOT NULL 
-	CONSTRAINT [Lastname]
+	CONSTRAINT [CK1_Lastname]
 		CHECK  ( (ASCII(LEFT(Lastname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
 	[Username]           varchar(20)  NOT NULL ,
 	[Password]           varchar(20)  NOT NULL ,
@@ -143,7 +143,7 @@ CREATE TABLE [Vehicle]
 	[IdV]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[LicencePlateNumber] varchar(10)  NOT NULL ,
 	[FuelType]           integer  NOT NULL 
-	CONSTRAINT [FuelType]
+	CONSTRAINT [CK1_FuelType]
 		CHECK  ( (FuelType IN (0, 1, 2)) ),
 	[FuelConsumption]    decimal(10,2)  NOT NULL ,
 	[Capacity]           decimal(10,2)  NOT NULL 
