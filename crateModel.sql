@@ -29,10 +29,10 @@ go
 DROP TABLE [Courier]
 go
 
-DROP TABLE [User]
+DROP TABLE [Package]
 go
 
-DROP TABLE [Package]
+DROP TABLE [User]
 go
 
 DROP TABLE [Address]
@@ -139,7 +139,8 @@ CREATE TABLE [Package]
 	[AcceptTime]         datetime  NULL 
 	CONSTRAINT [DF_AcceptTime]
 		 DEFAULT  NULL,
-	[IdC]                bigint  NULL 
+	[IdC]                bigint  NULL ,
+	[IdU]                bigint  NOT NULL 
 )
 go
 
@@ -347,13 +348,19 @@ go
 ALTER TABLE [Package]
 	ADD CONSTRAINT [FK__End_Address__Package] FOREIGN KEY ([IdEndAddress]) REFERENCES [Address]([IdA])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
 go
 
 ALTER TABLE [Package]
 	ADD CONSTRAINT [FK_City_Package] FOREIGN KEY ([IdC]) REFERENCES [City]([IdC])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
+go
+
+ALTER TABLE [Package]
+	ADD CONSTRAINT [FK_User_Package] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
 go
 
 
