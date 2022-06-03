@@ -72,13 +72,47 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public boolean acceptAnOffer(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean acceptAnOffer(int packageId) {
+        
+        String changePackageStatusToAcceptedQuery = "UPDATE [dbo].[Package] " +
+                                                "	SET PackageStatus = 1 " +
+                                                "	WHERE PackageStatus = 0 " +
+                                                "		AND IdP = ?";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToAcceptedQuery);) {           
+               
+            ps.setInt(1, packageId);
+
+            int numberOfAcceptedOffers = ps.executeUpdate();
+            return numberOfAcceptedOffers != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
-    public boolean rejectAnOffer(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean rejectAnOffer(int packageId) {
+        String changePackageStatusToRejectedQuery = "UPDATE [dbo].[Package] " +
+                                                "	SET PackageStatus = 4 " +
+                                                "	WHERE PackageStatus = 0 " +
+                                                "		AND IdP = ?";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToRejectedQuery);) {           
+               
+            ps.setInt(1, packageId);
+
+            int numberOfAcceptedOffers = ps.executeUpdate();
+            return numberOfAcceptedOffers != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
+
     }
 
     @Override
@@ -164,10 +198,16 @@ public class PackageOperationsImpl implements PackageOperations {
         
         PackageOperations packageOperations = new PackageOperationsImpl();
            
-        System.out.println(packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, new BigDecimal(2)));
-        System.out.println(packageOperations.insertPackage(addressBg2Id, addressVa1Id, "korisnik1", 3, new BigDecimal(111)));
-        System.out.println(packageOperations.insertPackage(addressBg1Id, addressBg2Id, "korisnik1", 0, null));
+        int package1 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, new BigDecimal(2));
+        System.out.println(package1);
+        int package2 = packageOperations.insertPackage(addressBg2Id, addressVa1Id, "korisnik1", 3, new BigDecimal(111));
+        System.out.println(package2);
+        int package3 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "korisnik1", 0, null);
+        System.out.println(package3);
         
+        System.out.println(packageOperations.acceptAnOffer(package1));
+        System.out.println(packageOperations.rejectAnOffer(package2));
+        System.out.println(packageOperations.acceptAnOffer(package3));
         
     }
     
