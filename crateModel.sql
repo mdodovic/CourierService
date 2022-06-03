@@ -67,9 +67,15 @@ CREATE TABLE [Courier]
 ( 
 	[IdU]                bigint  NOT NULL ,
 	[DrivingLicenceNumber] varchar(20)  NOT NULL ,
-	[DeliveredPackagesNumber] integer  NULL ,
-	[Profit]             decimal(10,2)  NULL ,
+	[DeliveredPackagesNumber] integer  NULL 
+	CONSTRAINT [DF_DeliveredPackagesNumber]
+		 DEFAULT  0,
+	[Profit]             decimal(10,2)  NULL 
+	CONSTRAINT [DF_Profit]
+		 DEFAULT  0.0,
 	[Status]             integer  NULL 
+	CONSTRAINT [CK1_Status]
+		CHECK  ( (Status IN (0, 1)) )
 )
 go
 
