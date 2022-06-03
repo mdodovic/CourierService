@@ -68,6 +68,19 @@ public class StudentTest {
  
 //    Map<Integer, BigDecimal> packagePrice = new HashMap<>();
 
+int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int packageType, BigDecimal weight) {
+    int idPackage = this.packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
+//    Assert.assertNotEquals(-1L, idPackage);
+//    Assert.assertTrue(this.packageOperations.acceptAnOffer(idPackage));
+//    Assert.assertTrue(this.packageOperations.getAllPackages().contains(Integer.valueOf(idPackage)));
+//    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage));
+//    BigDecimal price = Util.getPackagePrice(packageType, weight, 
+//        Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(addressFrom)), this.addressesCoords.get(Integer.valueOf(addressTo)) }));
+//    Assert.assertTrue((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(1.05D))) < 0));
+//    Assert.assertTrue((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(0.95D))) > 0));
+//    this.packagePrice.put(Integer.valueOf(idPackage), price);
+    return idPackage;
+}
     
     public void test1() {
         

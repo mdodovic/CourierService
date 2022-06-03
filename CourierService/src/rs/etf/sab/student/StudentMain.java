@@ -14,7 +14,7 @@ public class StudentMain {
         CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
         DriveOperation driveOperation = null;
         GeneralOperations generalOperations = new GeneralOperationsImpl();
-        PackageOperations packageOperations = null;
+        PackageOperations packageOperations = new PackageOperationsImpl();
         StockroomOperations stockroomOperations = new StockroomOperationsImpl();
         UserOperations userOperations = new UserOperationsImpl();
         VehicleOperations vehicleOperations = new VehicleOperationsImpl();
