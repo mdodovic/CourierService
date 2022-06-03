@@ -206,7 +206,9 @@ public class PackageOperationsImpl implements PackageOperations {
         System.out.println(package3);
         
         System.out.println(packageOperations.acceptAnOffer(package1));
+        System.out.println(packageOperations.acceptAnOffer(package1)); // not in status 0
         System.out.println(packageOperations.rejectAnOffer(package2));
+        System.out.println(packageOperations.rejectAnOffer(package2)); // not in status 0
         System.out.println(packageOperations.acceptAnOffer(package3));
         
     }
