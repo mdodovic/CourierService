@@ -71,7 +71,6 @@ public class StudentTest {
 int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int packageType, BigDecimal weight) {
     int idPackage = this.packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
     this.packageOperations.acceptAnOffer(idPackage);
-//    Assert.assertTrue(this.packageOperations.getAllPackages().contains(Integer.valueOf(idPackage)));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage));
 //    BigDecimal price = Util.getPackagePrice(packageType, weight, 
 //        Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(addressFrom)), this.addressesCoords.get(Integer.valueOf(addressTo)) }));

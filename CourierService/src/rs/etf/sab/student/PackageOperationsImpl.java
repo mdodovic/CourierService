@@ -75,13 +75,15 @@ public class PackageOperationsImpl implements PackageOperations {
     public boolean acceptAnOffer(int packageId) {
         
         String changePackageStatusToAcceptedQuery = "UPDATE [dbo].[Package] " +
-                                                "	SET PackageStatus = 1 " +
+                                                "	SET PackageStatus = 1, " +
+                                                "           AcceptRejectTime = ? " +
                                                 "	WHERE PackageStatus = 0 " +
                                                 "		AND IdP = ?";
         
         try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToAcceptedQuery);) {           
                
             ps.setInt(1, packageId);
+            ps.setInt(2, packageId);
 
             int numberOfAcceptedOffers = ps.executeUpdate();
             return numberOfAcceptedOffers != 0;                                        
@@ -96,13 +98,14 @@ public class PackageOperationsImpl implements PackageOperations {
     @Override
     public boolean rejectAnOffer(int packageId) {
         String changePackageStatusToRejectedQuery = "UPDATE [dbo].[Package] " +
-                                                "	SET PackageStatus = 4 " +
+                                                "	SET PackageStatus = 4, " +
+                                                "           AcceptRejectTime = ? " +
                                                 "	WHERE PackageStatus = 0 " +
                                                 "		AND IdP = ?";
         
         try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToRejectedQuery);) {           
                
-            ps.setInt(1, packageId);
+            ps.setInt(2, packageId);
 
             int numberOfAcceptedOffers = ps.executeUpdate();
             return numberOfAcceptedOffers != 0;                                        
