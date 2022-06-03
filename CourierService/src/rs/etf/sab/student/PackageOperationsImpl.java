@@ -150,9 +150,9 @@ public class PackageOperationsImpl implements PackageOperations {
         int vaId = cityOperations.insertCity("Valjevo", "14000");        
         
         AddressOperations addressOperations = new AddressOperationsImpl();        
-        int addressBg1Id = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 10, 10);
-        int addressBg2Id = addressOperations.insertAddress("Kraljice Natalije", 37, bgId, 30, 30);        
-        int addressVa1Id = addressOperations.insertAddress("Petnicka", 20, vaId, 5, 5);        
+        int addressBg1Id = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, bgId, 0, 0);
+        int addressBg2Id = addressOperations.insertAddress("Kraljice Natalije", 37, bgId, 12, 12);        
+        int addressVa1Id = addressOperations.insertAddress("Petnicka", 20, vaId, 60, 60);        
 
         UserOperations userOperations = new UserOperationsImpl();
         

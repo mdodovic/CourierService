@@ -20,6 +20,8 @@ BEGIN
 	DECLARE @EndY int;
 	
 	DECLARE @EuclideanDistance decimal(10, 3);
+	DECLARE @BasePrice int;
+	DECLARE @PricePerKg int;
 
 	DECLARE @cursor CURSOR
 
@@ -35,8 +37,6 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 	
-		select @IdP, @IdStartAddress, @IdEndAddress, @PackageType, @Weight;
-
 		SELECT @StartX = Xcoord, @StartY = Ycoord
 		FROM [dbo].[Address]
 		WHERE IdA = @IdStartAddress
@@ -47,7 +47,26 @@ BEGIN
 
 		SET @EuclideanDistance = SQRT(POWER(@StartX - @EndX, 2)+ POWER(@StartY - @EndY, 2))
 		
-		select @EuclideanDistance
+		IF @PackageType = 0 BEGIN
+			SET @BasePrice = 115;
+			SET @PricePerKg = 0;
+		END 
+		IF @PackageType = 1 BEGIN
+			SET @BasePrice = 175;
+			SET @PricePerKg = 100;
+		END 
+		IF @PackageType = 2 BEGIN
+			SET @BasePrice = 250;
+			SET @PricePerKg = 100;
+		END 
+		IF @PackageType = 3 BEGIN
+			SET @BasePrice = 350;
+			SET @PricePerKg = 500;
+		END 
+		
+		UPDATE [dbo].[Package]
+			SET Price = (@BasePrice + @Weight * @PricePerKg) * @EuclideanDistance
+			WHERE IdP = @IdP
 
 		FETCH NEXT FROM @cursor
 		INTO @IdP, @IdStartAddress, @IdEndAddress, @PackageType, @Weight
