@@ -120,6 +120,7 @@ public class UserOperationsImpl implements UserOperations {
 
     @Override
     public int getSentPackages(@NotNull String... userNames) {
+        // TODO: SENT PACKAGES, NOT CREATED or REJECTED
         
         String numberOfSentPackagesOfUserQuery = "SELECT U.IdU, U.Username, count(P.IdP) AS SentPackages" +
                                                 "	FROM[dbo].[User] U " +
@@ -250,7 +251,7 @@ public class UserOperationsImpl implements UserOperations {
         System.out.println(userOperations.getSentPackages(new String[] {"gdodovic"}));
         System.out.println(userOperations.getSentPackages(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
         
-        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
+//        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
         
     }
 }
