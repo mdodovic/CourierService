@@ -2,9 +2,6 @@
 DROP TABLE [VehicleStockroom]
 go
 
-DROP TABLE [Vehicle]
-go
-
 DROP TABLE [PackageStockroom]
 go
 
@@ -17,10 +14,19 @@ go
 DROP TABLE [Admin]
 go
 
-DROP TABLE [Courier]
+DROP TABLE [CourierRequest]
 go
 
-DROP TABLE [CourierRequest]
+DROP TABLE [CurrentDrive]
+go
+
+DROP TABLE [HistoryDrive]
+go
+
+DROP TABLE [Vehicle]
+go
+
+DROP TABLE [Courier]
 go
 
 DROP TABLE [User]
@@ -60,7 +66,10 @@ go
 CREATE TABLE [Courier]
 ( 
 	[IdU]                bigint  NOT NULL ,
-	[DrivingLicenceNumber] varchar(20)  NOT NULL 
+	[DrivingLicenceNumber] varchar(20)  NOT NULL ,
+	[DeliveredPackagesNumber] integer  NULL ,
+	[Profit]             decimal(10,2)  NULL ,
+	[Status]             integer  NULL 
 )
 go
 
@@ -72,9 +81,25 @@ CREATE TABLE [CourierRequest]
 )
 go
 
+CREATE TABLE [CurrentDrive]
+( 
+	[IdCD]               char(18)  NOT NULL ,
+	[IdU]                bigint  NULL ,
+	[IdV]                bigint  NULL 
+)
+go
+
 CREATE TABLE [Customer]
 ( 
 	[IdU]                bigint  NOT NULL 
+)
+go
+
+CREATE TABLE [HistoryDrive]
+( 
+	[IdHD]               char(18)  NOT NULL ,
+	[IdU]                bigint  NULL ,
+	[IdV]                bigint  NULL 
 )
 go
 
@@ -167,8 +192,16 @@ ALTER TABLE [CourierRequest]
 	ADD CONSTRAINT [XAK2CourierRequest] UNIQUE ([DrivingLicenceNumber]  ASC)
 go
 
+ALTER TABLE [CurrentDrive]
+	ADD CONSTRAINT [XPKCurrentDrive] PRIMARY KEY  CLUSTERED ([IdCD] ASC)
+go
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
+go
+
+ALTER TABLE [HistoryDrive]
+	ADD CONSTRAINT [XPKHistoryDrive] PRIMARY KEY  CLUSTERED ([IdHD] ASC)
 go
 
 ALTER TABLE [PackageStockroom]
@@ -228,10 +261,36 @@ ALTER TABLE [CourierRequest]
 go
 
 
+ALTER TABLE [CurrentDrive]
+	ADD CONSTRAINT [R_15] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [CurrentDrive]
+	ADD CONSTRAINT [R_17] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [R_7] FOREIGN KEY ([IdU]) REFERENCES [User]([IdU])
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [HistoryDrive]
+	ADD CONSTRAINT [R_16] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [HistoryDrive]
+	ADD CONSTRAINT [R_18] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
