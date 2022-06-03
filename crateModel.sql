@@ -84,8 +84,8 @@ go
 CREATE TABLE [CurrentDrive]
 ( 
 	[IdCD]               char(18)  NOT NULL ,
-	[IdU]                bigint  NULL ,
-	[IdV]                bigint  NULL 
+	[IdU]                bigint  NOT NULL ,
+	[IdV]                bigint  NOT NULL 
 )
 go
 
@@ -97,9 +97,9 @@ go
 
 CREATE TABLE [HistoryDrive]
 ( 
-	[IdHD]               char(18)  NOT NULL ,
-	[IdU]                bigint  NULL ,
-	[IdV]                bigint  NULL 
+	[IdHD]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdU]                bigint  NOT NULL ,
+	[IdV]                bigint  NOT NULL 
 )
 go
 
@@ -262,15 +262,15 @@ go
 
 
 ALTER TABLE [CurrentDrive]
-	ADD CONSTRAINT [R_15] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
+	ADD CONSTRAINT [FK_Courier_CurrentDrive] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
 go
 
 ALTER TABLE [CurrentDrive]
-	ADD CONSTRAINT [R_17] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
+	ADD CONSTRAINT [FK_Vehicle_CurrentDrive] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
 go
 
 
@@ -282,15 +282,15 @@ go
 
 
 ALTER TABLE [HistoryDrive]
-	ADD CONSTRAINT [R_16] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
+	ADD CONSTRAINT [FK_Courier_HistoryDrive] FOREIGN KEY ([IdU]) REFERENCES [Courier]([IdU])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
 go
 
 ALTER TABLE [HistoryDrive]
-	ADD CONSTRAINT [R_18] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
+	ADD CONSTRAINT [FK_Vehicle_HistoryDrive] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
 		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
+		ON UPDATE CASCADE
 go
 
 
