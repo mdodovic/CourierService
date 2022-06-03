@@ -133,10 +133,10 @@ CREATE TABLE [Package]
 	[Price]              decimal(10,2)  NULL 
 	CONSTRAINT [DF_Price]
 		 DEFAULT  0.0,
-	[CreationTime]       datetime  NULL 
+	[CreateTime]         datetime  NULL 
 	CONSTRAINT [DF_CreationTime]
 		 DEFAULT  CURRENT_TIMESTAMP,
-	[AcceptTime]         datetime  NULL 
+	[AcceptRejectTime]   datetime  NULL 
 	CONSTRAINT [DF_AcceptTime]
 		 DEFAULT  NULL,
 	[IdC]                bigint  NULL ,
