@@ -5,9 +5,17 @@
  */
 package rs.etf.sab.student;
 
+import com.sun.istack.internal.NotNull;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.CourierOperations;
@@ -21,15 +29,34 @@ import rs.etf.sab.operations.UserOperations;
 public class CourierOperationsImpl implements CourierOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
- 
+    private final UserOperationsImpl userOperations = new UserOperationsImpl();
     
     @Override
-    public boolean insertCourier(String string, String string1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean insertCourier(@NotNull String courierUserName, @NotNull String driverLicenceNumber) {
+
+        String insertCourierQuery = "INSERT INTO [dbo].[Courier] " +
+                                    "       (IdU, DrivingLicenceNumber)" +
+                                    "   VALUES (?, ?) ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(insertCourierQuery);) {           
+            Long userId = userOperations.fetchUserIdByUsername(courierUserName);
+            ps.setLong(1, userId);
+            ps.setString(2, driverLicenceNumber);
+            
+            int numberOfInsertedCouriers = ps.executeUpdate();
+            return numberOfInsertedCouriers != 0;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+            Logger.getLogger(CourierOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;        
+
     }
 
     @Override
-    public boolean deleteCourier(String string) {
+    public boolean deleteCourier(@NotNull String courierUserName) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
@@ -40,7 +67,25 @@ public class CourierOperationsImpl implements CourierOperations {
 
     @Override
     public List<String> getAllCouriers() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> listOfUsernames = new ArrayList<String>();
+        
+        String getAllUsernamesQuery = "SELECT U.Username " +
+                                    "       FROM [dbo].[Courier] C " +
+                                    "           INNER JOIN [dbo].[User] U on (C.IdU = U.IdU) " +
+                                    "       ORDER BY U.Username ASC";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllUsernamesQuery)){
+            
+            while(rs.next()){
+                listOfUsernames.add(rs.getString(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfUsernames;
     }
 
     @Override
@@ -69,8 +114,16 @@ public class CourierOperationsImpl implements CourierOperations {
         
         CourierOperations courierOperation = new CourierOperationsImpl();
         
-        System.out.println(courierOperation.insertCourier(username, driverLicenceNumber)
-        courierOperation.insertCourier(username, driverLicenceNumber)
+        System.out.println(courierOperation.insertCourier("postar1", "12345678"));
+//        System.out.println(courierOperation.insertCourier("postar2", "12345678")); // same licence number 
+        System.out.println(courierOperation.insertCourier("postar2", "23456789"));
+        
+        List<String> listOfCouriers = courierOperation.getAllCouriers();
+        System.out.println(listOfCouriers.size()); // 2
+        for (String s: listOfCouriers) {
+            System.out.println(s);
+        }
+
         
     }
     
