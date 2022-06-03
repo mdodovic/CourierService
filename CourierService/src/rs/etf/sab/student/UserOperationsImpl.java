@@ -121,34 +121,34 @@ public class UserOperationsImpl implements UserOperations {
     @Override
     public int getSentPackages(@NotNull String... userNames) {
         // TODO: SENT PACKAGES, NOT CREATED or REJECTED
-        
-        String numberOfSentPackagesOfUserQuery = "SELECT U.IdU, U.Username, count(P.IdP) AS SentPackages" +
-                                                "	FROM[dbo].[User] U " +
-                                                "		LEFT OUTER JOIN [dbo].[Package] P on (P.IdU = U.IdU) " +
-                                                "	GROUP BY U.IdU, U.Username " +
-                                                "	HAVING U.Username = ?; ";
-
-        int numberOfSentPackages = 0;
-        boolean hasExistingUser = false;
-        try(PreparedStatement ps = connection.prepareStatement(numberOfSentPackagesOfUserQuery);) {           
-            for(String userName: userNames) {
-
-                ps.setString(1, userName);
-                
-                try(ResultSet rs = ps.executeQuery()){
-                    if(rs.next()) {
-                        hasExistingUser = true;                       
-                        numberOfSentPackages += rs.getInt("SentPackages");
-                    }
-                }                
-                
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
-        }
-        if(hasExistingUser)
-            return numberOfSentPackages;
-        return -1;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//        String numberOfSentPackagesOfUserQuery = "SELECT U.IdU, U.Username, count(P.IdP) AS SentPackages" +
+//                                                "	FROM[dbo].[User] U " +
+//                                                "		LEFT OUTER JOIN [dbo].[Package] P on (P.IdU = U.IdU) " +
+//                                                "	GROUP BY U.IdU, U.Username " +
+//                                                "	HAVING U.Username = ?; ";
+//
+//        int numberOfSentPackages = 0;
+//        boolean hasExistingUser = false;
+//        try(PreparedStatement ps = connection.prepareStatement(numberOfSentPackagesOfUserQuery);) {           
+//            for(String userName: userNames) {
+//
+//                ps.setString(1, userName);
+//                
+//                try(ResultSet rs = ps.executeQuery()){
+//                    if(rs.next()) {
+//                        hasExistingUser = true;                       
+//                        numberOfSentPackages += rs.getInt("SentPackages");
+//                    }
+//                }                
+//                
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//        }
+//        if(hasExistingUser)
+//            return numberOfSentPackages;
+//        return -1;
         
     }
 
