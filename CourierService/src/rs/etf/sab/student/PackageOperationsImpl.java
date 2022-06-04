@@ -403,17 +403,37 @@ public class PackageOperationsImpl implements PackageOperations {
         
         String getLocationOfThePackageQuery = null;
         
-        if (packageStatus == 1) {
-            // Package is accepted, it is at the start address 
-//            getLocationOfThePackageQuery = 
-        } else if (packageStatus == 2) {
-            // Package is picked up
-            // It is either in the CurrentDrivePackage (currently in the van) 
-            // or it is in PackageStockroom (stored in stockroom for the next picking up)
-            
-        } else if (packageStatus == 3) {
-            // Package is deliveres, it is at the end address
-        
+        switch (packageStatus) {
+            case 1:
+                // Package is accepted, it is at the start address
+                getLocationOfThePackageQuery = "SELECT A.IdC " +
+                                            "	FROM [dbo].[Package] P " +
+                                            "       INNER JOIN [dbo].[Address] A ON (P.IdStartAddress = A.IdA) " +
+                                            "	WHERE P.PackageStatus = 1 " +
+                                            "           AND P.IdP = ?; ";
+                break;
+            case 2:
+                // Package is picked up
+                // It is either in the CurrentDrivePackage (currently in the van)
+                // or it is in PackageStockroom (stored in stockroom for the next picking up)
+                getLocationOfThePackageQuery = "SELECT A.IdC " +
+                                            "	FROM [dbo].[Package] P " +
+                                            "		INNER JOIN [dbo].[PackageStockroom] PS ON (P.IdP = PS.IdP) " +
+                                            "		INNER JOIN [dbo].[Stockroom] S ON (S.IdS = PS.IdS) " +
+                                            "		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA) " +
+                                            "	WHERE P.PackageStatus = 2 " +
+                                            "			AND P.IdP = ?; ";
+                break;
+            case 3:
+                // Package is deliveres, it is at the end address
+                getLocationOfThePackageQuery = "SELECT A.IdC " +
+                                            "	FROM [dbo].[Package] P " +
+                                            "       INNER JOIN [dbo].[Address] A ON (P.IdEndAddress = A.IdA) " +
+                                            "	WHERE P.PackageStatus = 3 " +
+                                            "           AND P.IdP = ?; ";
+                break;
+            default:
+                break;
         }
         
         
