@@ -135,10 +135,13 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
 //        this.driveOperation.planingDrive(courierUsernameBG);
 //    Assert.assertTrue(this.courierOperation.getCouriersWithStatus(1).contains(courierUsernameBG));
-//    int type4 = 3;
-//    BigDecimal weight4 = new BigDecimal(2);
-//    int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
-//    Assert.assertEquals(4L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+        int type4 = 3;
+        BigDecimal weight4 = new BigDecimal(2);
+        int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
+        if(4L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()){
+            System.err.println("BAD PACKAGE PLACES");
+        }
+        
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage2));

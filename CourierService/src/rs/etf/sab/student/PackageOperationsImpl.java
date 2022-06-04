@@ -226,8 +226,65 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public List<Integer> getAllPackagesCurrentlyAtCity(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getAllPackagesCurrentlyAtCity(int cityId) {
+        // TODO: CHECK THIS!!! (2nd and 3rd query are not tested yet)
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllAcceptedIdPFromCityQuery = "SELECT P.IdP " +
+                                                "	FROM [dbo].[Package] P " +
+                                                "		INNER JOIN [dbo].[Address] A ON (P.IdStartAddress = A.IdA) " +
+                                                "	WHERE P.PackageStatus = 1 " +
+                                                "		AND A.IdC = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(getAllAcceptedIdPFromCityQuery);) {                       
+            ps.setInt(1, cityId);
+            try(ResultSet rs = ps.executeQuery()){
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        String getAllStockedIdPFromCityQuery = "SELECT P.IdP " +
+                                                "	FROM [dbo].[Package] P " +
+                                                "		INNER JOIN [dbo].[PackageStockroom] PS ON (P.IdP = PS.IdP) " +
+                                                "		INNER JOIN [dbo].[Stockroom] S ON (S.IdS = PS.IdS) " +
+                                                "		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA) " +
+                                                "	WHERE P.PackageStatus = 2 " +
+                                                "			AND A.IdC = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllStockedIdPFromCityQuery);) {                       
+            ps.setInt(1, cityId);
+            try(ResultSet rs = ps.executeQuery()){
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        String getAllDeliveredIdPFromCityQuery = "SELECT P.IdP " +
+                                                "	FROM [dbo].[Package] P " +
+                                                "		INNER JOIN [dbo].[Address] A ON (P.IdStartAddress = A.IdA) " +
+                                                "	WHERE P.PackageStatus = 3 " +
+                                                "		AND A.IdC = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllDeliveredIdPFromCityQuery);) {                       
+            ps.setInt(1, cityId);
+            try(ResultSet rs = ps.executeQuery()){
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return listOfIds;
+        
     }
 
     @Override
@@ -401,7 +458,7 @@ public class PackageOperationsImpl implements PackageOperations {
         int package4 = packageOperations.insertPackage(addressVa1Id, addressBg2Id, "mdodovic", 1, new BigDecimal(3.4D));
         System.out.println(package3);
 
-        int package5 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
+        int package5 = packageOperations.insertPackage(addressVa1Id, addressBg2Id, "vdodovic", 2, null);
         System.out.println(package3);
         int package6 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
         System.out.println(package3);
@@ -460,6 +517,20 @@ public class PackageOperationsImpl implements PackageOperations {
         List<Integer> listOfIdPUndelivered = packageOperations.getAllUndeliveredPackages();
         System.out.println(listOfIdPUndelivered.size()); // 3
         for (int i: listOfIdPUndelivered) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        List<Integer> listOfBgPackages = packageOperations.getAllPackagesCurrentlyAtCity(bgId);
+        System.out.println(listOfBgPackages.size()); // 2
+        for (int i: listOfBgPackages) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        List<Integer> listOfVaPackages = packageOperations.getAllPackagesCurrentlyAtCity(vaId);
+        System.out.println(listOfVaPackages.size()); // 1
+        for (int i: listOfVaPackages) {
             System.out.print(i + " ");
         }
         System.out.println();
