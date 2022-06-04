@@ -181,8 +181,25 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public int getDeliveryStatus(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int getDeliveryStatus(int packageId) {
+        
+        String getPackageDeliveryStatusQuery = "SELECT PackageStatus " +
+                                                "   FROM [dbo].[Package] " +
+                                                "   WHERE IdP = ?; ";
+        int packageStatus = -1;
+        try(PreparedStatement ps = connection.prepareStatement(getPackageDeliveryStatusQuery);) {           
+            
+            ps.setInt(1, packageId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    packageStatus = rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return packageStatus;
     }
 
     @Override
