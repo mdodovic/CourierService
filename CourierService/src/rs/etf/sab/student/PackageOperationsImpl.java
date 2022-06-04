@@ -175,7 +175,26 @@ public class PackageOperationsImpl implements PackageOperations {
 
     @Override
     public List<Integer> getAllUndeliveredPackages() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdAQuery = "SELECT IdP "
+                                + " FROM [dbo].[Package]"
+                                + " WHERE PackageStatus IN (1, 2); ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllIdAQuery)){
+            
+            while(rs.next()){
+                listOfIds.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfIds;
+
     }
 
     @Override
@@ -415,6 +434,12 @@ public class PackageOperationsImpl implements PackageOperations {
         }
         System.out.println();
 
+        List<Integer> listOfIdPUndelivered = packageOperations.getAllUndeliveredPackages();
+        System.out.println(listOfIdPUndelivered.size()); // 3
+        for (int i: listOfIdPUndelivered) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
         
     }
     
