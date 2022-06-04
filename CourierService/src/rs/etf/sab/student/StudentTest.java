@@ -6,6 +6,8 @@
 package rs.etf.sab.student;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.CourierOperations;
@@ -39,9 +41,11 @@ public class StudentTest {
         return idCity;
     }
 
+    Map<Integer, Pair<Integer, Integer>> addressesCoords = new HashMap<>();
+    
     int insertAddress(String street, int number, int idCity, int x, int y) {
         int idAddress = this.addressOperations.insertAddress(street, number, idCity, x, y);
-//        this.addressesCoords.put(Integer.valueOf(idAddress), new Pair<>(Integer.valueOf(x), Integer.valueOf(y)));
+        this.addressesCoords.put(Integer.valueOf(idAddress), new Pair<>(Integer.valueOf(x), Integer.valueOf(y)));
         return idAddress;
     }
 
@@ -66,12 +70,12 @@ public class StudentTest {
         return stockroomId;
     }    
  
-//    Map<Integer, BigDecimal> packagePrice = new HashMap<>();
+    Map<Integer, BigDecimal> packagePrice = new HashMap<>();
 
 int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int packageType, BigDecimal weight) {
     int idPackage = this.packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
     this.packageOperations.acceptAnOffer(idPackage);
-//    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage));
+
 //    BigDecimal price = Util.getPackagePrice(packageType, weight, 
 //        Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(addressFrom)), this.addressesCoords.get(Integer.valueOf(addressTo)) }));
 //    Assert.assertTrue((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(1.05D))) < 0));
