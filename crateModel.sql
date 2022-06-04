@@ -5,6 +5,9 @@ go
 DROP TABLE [PackageStockroom]
 go
 
+DROP TABLE [Package]
+go
+
 DROP TABLE [Stockroom]
 go
 
@@ -27,9 +30,6 @@ DROP TABLE [Vehicle]
 go
 
 DROP TABLE [Courier]
-go
-
-DROP TABLE [Package]
 go
 
 DROP TABLE [User]
@@ -147,7 +147,8 @@ go
 CREATE TABLE [PackageStockroom]
 ( 
 	[IdS]                bigint  NOT NULL ,
-	[IdPS]               bigint  IDENTITY ( 1,1 )  NOT NULL 
+	[IdPS]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdP]                bigint  NOT NULL 
 )
 go
 
@@ -368,6 +369,12 @@ ALTER TABLE [PackageStockroom]
 	ADD CONSTRAINT [FK_Stockroom_PackageStockroom] FOREIGN KEY ([IdS]) REFERENCES [Stockroom]([IdS])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
+go
+
+ALTER TABLE [PackageStockroom]
+	ADD CONSTRAINT [FK_Package_PackageStockroom] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
