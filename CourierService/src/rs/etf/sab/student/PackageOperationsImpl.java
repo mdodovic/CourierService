@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
@@ -123,7 +124,25 @@ public class PackageOperationsImpl implements PackageOperations {
 
     @Override
     public List<Integer> getAllPackages() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdAQuery = "SELECT IdP "
+                                + " FROM [dbo].[Package]; ";
+       
+        try(Statement stmt = connection.createStatement();
+            ResultSet rs = stmt.executeQuery(getAllIdAQuery)){
+            
+            while(rs.next()){
+                listOfIds.add(rs.getInt(1));
+            }
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfIds;
+
     }
 
     @Override
@@ -220,12 +239,35 @@ public class PackageOperationsImpl implements PackageOperations {
         int package6 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
         System.out.println(package3);
         
+        List<Integer> listOfPackagesId = packageOperations.getAllPackages();
+        System.out.println(listOfPackagesId.size()); // 6
+        for (int i: listOfPackagesId) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+        
         System.out.println(packageOperations.acceptAnOffer(package1));
         System.out.println(packageOperations.acceptAnOffer(package1)); // not in status 0
         System.out.println(packageOperations.rejectAnOffer(package2));
         System.out.println(packageOperations.rejectAnOffer(package2)); // not in status 0
         System.out.println(packageOperations.acceptAnOffer(package3));
         System.out.println(packageOperations.acceptAnOffer(package5));
+        
+        System.out.println(packageOperations.getDeliveryStatus(package1));
+        System.out.println(packageOperations.getDeliveryStatus(package2));
+        System.out.println(packageOperations.getDeliveryStatus(package3));
+        System.out.println(packageOperations.getDeliveryStatus(package4));
+        System.out.println(packageOperations.getDeliveryStatus(package5));
+        System.out.println(packageOperations.getDeliveryStatus(package6));
+
+
+//        List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
+//        System.out.println(listOfVaIdA.size()); // 1
+//        for (int i: listOfVaIdA) {
+//            System.out.print(i + " ");
+//        }
+//        System.out.println();
+
         
     }
     
