@@ -171,13 +171,48 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public boolean changeWeight(int i, BigDecimal bd) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeWeight(int packageId, @NotNull BigDecimal newWeight) {
+        String changeTypeQuery = "UPDATE [dbo].[Package] " +
+                                                "   SET Weight = ? " +
+                                                "   WHERE IdP = ? " +
+                                                "       AND PackageStatus = 0; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeTypeQuery);) {           
+               
+            ps.setBigDecimal(1, newWeight);
+            ps.setInt(2, packageId);
+
+            int numberOfChangedTypes = ps.executeUpdate();
+            return numberOfChangedTypes != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
-    public boolean changeType(int i, int i1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean changeType(int packageId, int newType) {
+
+        String changeTypeQuery = "UPDATE [dbo].[Package] " +
+                                                "   SET PackageType = ? " +
+                                                "   WHERE IdP = ? " +
+                                                "       AND PackageStatus = 0; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeTypeQuery);) {           
+               
+            ps.setInt(1, newType);
+            ps.setInt(2, packageId);
+
+            int numberOfChangedTypes = ps.executeUpdate();
+            return numberOfChangedTypes != 0;                                        
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
     }
 
     @Override
@@ -300,6 +335,15 @@ public class PackageOperationsImpl implements PackageOperations {
         System.out.println(packageOperations.getPriceOfDelivery(package4));
         System.out.println(packageOperations.getPriceOfDelivery(package5));
         System.out.println(packageOperations.getPriceOfDelivery(package6));
+
+        System.out.println(packageOperations.changeType(package6, 1));
+        System.out.println(packageOperations.getPriceOfDelivery(package6));
+
+        System.out.println(packageOperations.changeWeight(package6, new BigDecimal(5.2D)));
+        System.out.println(packageOperations.getPriceOfDelivery(package6));
+
+        System.out.println(packageOperations.changeType(package1, 0));
+        System.out.println(packageOperations.changeType(package2, 0));
         
 //        List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
 //        System.out.println(listOfVaIdA.size()); // 1
