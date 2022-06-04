@@ -198,8 +198,31 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public List<Integer> getAllUndeliveredPackagesFromCity(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getAllUndeliveredPackagesFromCity(int cityId) {
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllUndeliveredIdPSendFromCityQuery = "SELECT P.IdP " +
+                                                        "   FROM [dbo].[Package] P " +
+                                                        "       INNER JOIN [dbo].[Address] A ON (P.IdStartAddress = A.IdA) " +
+                                                        "   WHERE P.PackageStatus IN (1, 2) " +
+                                                        "           AND A.IdC = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllUndeliveredIdPSendFromCityQuery);) {           
+            
+            ps.setInt(1, cityId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+                if(!listOfIds.isEmpty())
+                    return listOfIds;
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return null;
     }
 
     @Override
