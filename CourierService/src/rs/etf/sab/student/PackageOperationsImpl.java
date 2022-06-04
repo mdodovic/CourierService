@@ -268,7 +268,7 @@ public class PackageOperationsImpl implements PackageOperations {
 
         String getAllDeliveredIdPFromCityQuery = "SELECT P.IdP " +
                                                 "	FROM [dbo].[Package] P " +
-                                                "		INNER JOIN [dbo].[Address] A ON (P.IdStartAddress = A.IdA) " +
+                                                "		INNER JOIN [dbo].[Address] A ON (P.IdEndAddress = A.IdA) " +
                                                 "	WHERE P.PackageStatus = 3 " +
                                                 "		AND A.IdC = ?; ";
 
@@ -397,8 +397,39 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public int getCurrentLocationOfPackage(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int getCurrentLocationOfPackage(int packageId) {
+
+        int packageStatus = getDeliveryStatus(packageId);
+        
+        String getLocationOfThePackageQuery = null;
+        
+        if (packageStatus == 1) {
+            // Package is accepted, it is at the start address 
+//            getLocationOfThePackageQuery = 
+        } else if (packageStatus == 2) {
+            // Package is picked up
+            // It is either in the CurrentDrivePackage (currently in the van) 
+            // or it is in PackageStockroom (stored in stockroom for the next picking up)
+            
+        } else if (packageStatus == 3) {
+            // Package is deliveres, it is at the end address
+        
+        }
+        
+        
+        try(PreparedStatement ps = connection.prepareStatement(getLocationOfThePackageQuery);) {           
+            
+            ps.setInt(1, packageId);
+            try(ResultSet rs = ps.executeQuery()){                
+                if(rs.next()){
+                    return rs.getInt(1);
+                }                
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return -1;
     }
 
     @Override
@@ -534,6 +565,12 @@ public class PackageOperationsImpl implements PackageOperations {
             System.out.print(i + " ");
         }
         System.out.println();
+        
+        System.out.println(bgId + " " + vaId);
+        System.out.println(packageOperations.getCurrentLocationOfPackage(package1)); // bg
+        System.out.println(packageOperations.getCurrentLocationOfPackage(package3)); // bg
+        System.out.println(packageOperations.getCurrentLocationOfPackage(package5)); // bg
+        
         
     }
     
