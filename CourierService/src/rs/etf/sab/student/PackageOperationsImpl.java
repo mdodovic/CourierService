@@ -203,8 +203,25 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public BigDecimal getPriceOfDelivery(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BigDecimal getPriceOfDelivery(int packageId) {
+        
+        String getPackageDeliveryStatusQuery = "SELECT Price " +
+                                                "   FROM [dbo].[Package] " +
+                                                "   WHERE IdP = ?; ";
+        BigDecimal price = null;
+        try(PreparedStatement ps = connection.prepareStatement(getPackageDeliveryStatusQuery);) {           
+            
+            ps.setInt(1, packageId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    price = rs.getBigDecimal(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return price;
     }
 
     @Override
@@ -255,7 +272,14 @@ public class PackageOperationsImpl implements PackageOperations {
         System.out.println(package3);
         int package6 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
         System.out.println(package3);
-        
+                
+        System.out.println(packageOperations.acceptAnOffer(package1));
+        System.out.println(packageOperations.acceptAnOffer(package1)); // not in status 0
+        System.out.println(packageOperations.rejectAnOffer(package2));
+        System.out.println(packageOperations.rejectAnOffer(package2)); // not in status 0
+        System.out.println(packageOperations.acceptAnOffer(package3));
+        System.out.println(packageOperations.acceptAnOffer(package5));
+
         List<Integer> listOfPackagesId = packageOperations.getAllPackages();
         System.out.println(listOfPackagesId.size()); // 6
         for (int i: listOfPackagesId) {
@@ -263,21 +287,20 @@ public class PackageOperationsImpl implements PackageOperations {
         }
         System.out.println();
         
-        System.out.println(packageOperations.acceptAnOffer(package1));
-        System.out.println(packageOperations.acceptAnOffer(package1)); // not in status 0
-        System.out.println(packageOperations.rejectAnOffer(package2));
-        System.out.println(packageOperations.rejectAnOffer(package2)); // not in status 0
-        System.out.println(packageOperations.acceptAnOffer(package3));
-        System.out.println(packageOperations.acceptAnOffer(package5));
+        System.out.print(packageOperations.getDeliveryStatus(package1) + " ");
+        System.out.print(packageOperations.getDeliveryStatus(package2) + " ");
+        System.out.print(packageOperations.getDeliveryStatus(package3) + " ");
+        System.out.print(packageOperations.getDeliveryStatus(package4) + " ");
+        System.out.print(packageOperations.getDeliveryStatus(package5) + " ");
+        System.out.println(packageOperations.getDeliveryStatus(package6) + " ");
         
-        System.out.println(packageOperations.getDeliveryStatus(package1));
-        System.out.println(packageOperations.getDeliveryStatus(package2));
-        System.out.println(packageOperations.getDeliveryStatus(package3));
-        System.out.println(packageOperations.getDeliveryStatus(package4));
-        System.out.println(packageOperations.getDeliveryStatus(package5));
-        System.out.println(packageOperations.getDeliveryStatus(package6));
-
-
+        System.out.println(packageOperations.getPriceOfDelivery(package1));
+        System.out.println(packageOperations.getPriceOfDelivery(package2));
+        System.out.println(packageOperations.getPriceOfDelivery(package3));
+        System.out.println(packageOperations.getPriceOfDelivery(package4));
+        System.out.println(packageOperations.getPriceOfDelivery(package5));
+        System.out.println(packageOperations.getPriceOfDelivery(package6));
+        
 //        List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
 //        System.out.println(listOfVaIdA.size()); // 1
 //        for (int i: listOfVaIdA) {

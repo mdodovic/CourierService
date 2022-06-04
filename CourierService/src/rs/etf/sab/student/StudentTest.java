@@ -75,12 +75,15 @@ public class StudentTest {
 int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int packageType, BigDecimal weight) {
     int idPackage = this.packageOperations.insertPackage(addressFrom, addressTo, userName, packageType, weight);
     this.packageOperations.acceptAnOffer(idPackage);
-
-//    BigDecimal price = Util.getPackagePrice(packageType, weight, 
-//        Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(addressFrom)), this.addressesCoords.get(Integer.valueOf(addressTo)) }));
-//    Assert.assertTrue((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(1.05D))) < 0));
-//    Assert.assertTrue((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(0.95D))) > 0));
-//    this.packagePrice.put(Integer.valueOf(idPackage), price);
+    BigDecimal price = Util.getPackagePrice(packageType, weight, 
+            Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(addressFrom)), this.addressesCoords.get(Integer.valueOf(addressTo)) }));
+    if(!((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(1.05D))) < 0))) {
+        System.err.println("PRICES ARE NOT THE SAME");
+    }
+    if(!((this.packageOperations.getPriceOfDelivery(idPackage).compareTo(price.multiply(new BigDecimal(0.95D))) > 0))) {
+        System.err.println("PRICES ARE NOT THE SAME");
+    }
+    this.packagePrice.put(Integer.valueOf(idPackage), price);
     return idPackage;
 }
     
