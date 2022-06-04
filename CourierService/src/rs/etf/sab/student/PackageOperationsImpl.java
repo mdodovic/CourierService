@@ -13,6 +13,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -82,7 +84,7 @@ public class PackageOperationsImpl implements PackageOperations {
         
         try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToAcceptedQuery);) {           
                
-            ps.setInt(1, packageId);
+            ps.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             ps.setInt(2, packageId);
 
             int numberOfAcceptedOffers = ps.executeUpdate();
@@ -104,7 +106,8 @@ public class PackageOperationsImpl implements PackageOperations {
                                                 "		AND IdP = ?";
         
         try(PreparedStatement ps = connection.prepareStatement(changePackageStatusToRejectedQuery);) {           
-               
+
+            ps.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             ps.setInt(2, packageId);
 
             int numberOfAcceptedOffers = ps.executeUpdate();
@@ -194,18 +197,27 @@ public class PackageOperationsImpl implements PackageOperations {
         UserOperations userOperations = new UserOperationsImpl();
         
         userOperations.insertUser("postar1", "Zika", "Zikic", "Ziki_123", addressVa1Id);
-        userOperations.insertUser("korisnik1", "Pera", "Peric", "Peki_123", addressBg1Id);
+        userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressBg1Id);
+        userOperations.insertUser("gdodovic", "Gordana", "Dodovic", "Goca_123", addressVa1Id);
+        userOperations.insertUser("vdodovic", "Vlado", "Dodovic", "Vlado.123", addressVa1Id);
         
         CourierOperations courierOperation = new CourierOperationsImpl();        
         courierOperation.insertCourier("postar1", "12345678");
         
         PackageOperations packageOperations = new PackageOperationsImpl();
            
-        int package1 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "korisnik1", 0, new BigDecimal(2));
+        int package1 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 0, new BigDecimal(2));
         System.out.println(package1);
-        int package2 = packageOperations.insertPackage(addressBg2Id, addressVa1Id, "korisnik1", 3, new BigDecimal(111));
+        int package2 = packageOperations.insertPackage(addressBg2Id, addressVa1Id, "mdodovic", 3, new BigDecimal(111));
         System.out.println(package2);
-        int package3 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "korisnik1", 0, null);
+        int package3 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "mdodovic", 0, null);
+        System.out.println(package3);
+        int package4 = packageOperations.insertPackage(addressVa1Id, addressBg2Id, "mdodovic", 1, new BigDecimal(3.4D));
+        System.out.println(package3);
+
+        int package5 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
+        System.out.println(package3);
+        int package6 = packageOperations.insertPackage(addressBg1Id, addressBg2Id, "vdodovic", 2, null);
         System.out.println(package3);
         
         System.out.println(packageOperations.acceptAnOffer(package1));
@@ -213,6 +225,7 @@ public class PackageOperationsImpl implements PackageOperations {
         System.out.println(packageOperations.rejectAnOffer(package2));
         System.out.println(packageOperations.rejectAnOffer(package2)); // not in status 0
         System.out.println(packageOperations.acceptAnOffer(package3));
+        System.out.println(packageOperations.acceptAnOffer(package5));
         
     }
     

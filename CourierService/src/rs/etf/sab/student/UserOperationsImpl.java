@@ -121,34 +121,36 @@ public class UserOperationsImpl implements UserOperations {
     @Override
     public int getSentPackages(@NotNull String... userNames) {
         // TODO: SENT PACKAGES, NOT CREATED or REJECTED
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//        String numberOfSentPackagesOfUserQuery = "SELECT U.IdU, U.Username, count(P.IdP) AS SentPackages" +
-//                                                "	FROM[dbo].[User] U " +
-//                                                "		LEFT OUTER JOIN [dbo].[Package] P on (P.IdU = U.IdU) " +
-//                                                "	GROUP BY U.IdU, U.Username " +
-//                                                "	HAVING U.Username = ?; ";
-//
-//        int numberOfSentPackages = 0;
-//        boolean hasExistingUser = false;
-//        try(PreparedStatement ps = connection.prepareStatement(numberOfSentPackagesOfUserQuery);) {           
-//            for(String userName: userNames) {
-//
-//                ps.setString(1, userName);
-//                
-//                try(ResultSet rs = ps.executeQuery()){
-//                    if(rs.next()) {
-//                        hasExistingUser = true;                       
-//                        numberOfSentPackages += rs.getInt("SentPackages");
-//                    }
-//                }                
-//                
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
-//        }
-//        if(hasExistingUser)
-//            return numberOfSentPackages;
-//        return -1;
+        String numberOfSentPackagesOfUserQuery = "SELECT count(*) " +
+                                                "	FROM [dbo].[Package] " +
+                                                "	WHERE PackageStatus IN (1, 2, 3) " +
+                                                "		AND IdU = ?; ";
+
+        int numberOfSentPackages = 0;
+        boolean hasExistingUser = false;
+        for(String userName: userNames) {
+
+            try(PreparedStatement ps = connection.prepareStatement(numberOfSentPackagesOfUserQuery);) {           
+                Long userId = this.fetchUserIdByUsername(userName);
+                hasExistingUser = true;                       
+                ps.setLong(1, userId);
+
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()) {
+                        numberOfSentPackages += rs.getInt(1);
+                    }
+                }                
+
+            } catch (SQLException ex) {
+//                Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            } catch (Exception ex) {
+//                Logger.getLogger(UserOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        if(hasExistingUser)
+            return numberOfSentPackages;
+        return -1;
         
     }
 
@@ -211,6 +213,7 @@ public class UserOperationsImpl implements UserOperations {
         UserOperations userOperations = new UserOperationsImpl();
         
 
+        System.out.println(userOperations.insertUser("mterzic", "Marija", "Terzic", "Mara_123", addressVa1Id));
         System.out.println(userOperations.insertUser("gdodovic", "Gordana", "Dodovic", "Goca_123", addressVa1Id));
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id));
         System.out.println(userOperations.insertUser("mdodovic", "Matija", "Dodovic", "Mata_123", addressVa1Id)); // same username
@@ -240,15 +243,24 @@ public class UserOperationsImpl implements UserOperations {
         
         PackageOperations packageOperations = new PackageOperationsImpl();
            
-        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 0, new BigDecimal(2));
-        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 1, new BigDecimal(2));
-        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 2, null);
-        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 3, new BigDecimal(2));
-        packageOperations.insertPackage(addressBg1Id, addressVa1Id, "vdodovic", 2, null);
+        int p1 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 0, new BigDecimal(2));
+        int p2 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 1, new BigDecimal(2));
+        int p3 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 2, null);
+        int p4 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mdodovic", 3, new BigDecimal(2));
+        int p5 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "vdodovic", 2, null);
+        int p6 = packageOperations.insertPackage(addressBg1Id, addressVa1Id, "mterzic", 1, null);
+
+        packageOperations.acceptAnOffer(p1);
+        packageOperations.rejectAnOffer(p2);
+        packageOperations.acceptAnOffer(p3);
+        packageOperations.acceptAnOffer(p5);
+
         
-        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic2"}));
-        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic"}));
-        System.out.println(userOperations.getSentPackages(new String[] {"gdodovic"}));
+        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic2"})); // -1, user do not exists 
+        System.out.println(userOperations.getSentPackages(new String[] {"mdodovic"})); // 2 (4 = 2 accepted + 1 rejected + 1 undefined)
+        System.out.println(userOperations.getSentPackages(new String[] {"gdodovic"})); // 0 (no packages)
+        System.out.println(userOperations.getSentPackages(new String[] {"vdodovic"})); // 1 (1 = 1 accepted)
+        System.out.println(userOperations.getSentPackages(new String[] {"mterzic"})); // 0 (1 = 1 undefined)
         System.out.println(userOperations.getSentPackages(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
         
 //        System.out.println(userOperations.deleteUsers(new String[] {"mdodovic", "vdodovic", "gdodovic", "vdodovic2"}));
