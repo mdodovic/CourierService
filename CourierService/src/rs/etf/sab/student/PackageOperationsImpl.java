@@ -146,8 +146,31 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public List<Integer> getAllPackagesWithSpecificType(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getAllPackagesWithSpecificType(int type) {
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllIdPByTypeQuery = "SELECT IdP "
+                                        + " FROM [dbo].[Package] "
+                                        + " WHERE PackageType = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllIdPByTypeQuery);) {           
+            
+            ps.setInt(1, type);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+                if(!listOfIds.isEmpty())
+                    return listOfIds;
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return null;
+
     }
 
     @Override
@@ -355,13 +378,13 @@ public class PackageOperationsImpl implements PackageOperations {
         }
         System.out.println();
         
-        System.out.print(packageOperations.getDeliveryStatus(package1) + " ");
-        System.out.print(packageOperations.getDeliveryStatus(package2) + " ");
-        System.out.print(packageOperations.getDeliveryStatus(package3) + " ");
-        System.out.print(packageOperations.getDeliveryStatus(package4) + " ");
-        System.out.print(packageOperations.getDeliveryStatus(package5) + " ");
-        System.out.println(packageOperations.getDeliveryStatus(package6) + " ");
-        
+        System.out.print(packageOperations.getDeliveryStatus(package1) + " "); // 1
+        System.out.print(packageOperations.getDeliveryStatus(package2) + " "); // 4
+        System.out.print(packageOperations.getDeliveryStatus(package3) + " "); // 1
+        System.out.print(packageOperations.getDeliveryStatus(package4) + " "); // 0
+        System.out.print(packageOperations.getDeliveryStatus(package5) + " "); // 1
+        System.out.println(packageOperations.getDeliveryStatus(package6) + " "); // 0
+                
         System.out.println(packageOperations.getPriceOfDelivery(package1) + " " + packageOperations.getAcceptanceTime(package1));
         System.out.println(packageOperations.getPriceOfDelivery(package2) + " " + packageOperations.getAcceptanceTime(package2));
         System.out.println(packageOperations.getPriceOfDelivery(package3) + " " + packageOperations.getAcceptanceTime(package3));
@@ -377,13 +400,20 @@ public class PackageOperationsImpl implements PackageOperations {
 
         System.out.println(packageOperations.changeType(package1, 0));
         System.out.println(packageOperations.changeType(package2, 0));
-        
-//        List<Integer> listOfVaIdA = addressOperations.getAllAddressesFromCity(vaId);
-//        System.out.println(listOfVaIdA.size()); // 1
-//        for (int i: listOfVaIdA) {
-//            System.out.print(i + " ");
-//        }
-//        System.out.println();
+
+        List<Integer> listOfIdP1 = packageOperations.getAllPackagesWithSpecificType(1);
+        System.out.println(listOfIdP1.size()); // 2
+        for (int i: listOfIdP1) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
+
+        List<Integer> listOfIdP0 = packageOperations.getAllPackagesWithSpecificType(0);
+        System.out.println(listOfIdP0.size()); // 2
+        for (int i: listOfIdP0) {
+            System.out.print(i + " ");
+        }
+        System.out.println();
 
         
     }
