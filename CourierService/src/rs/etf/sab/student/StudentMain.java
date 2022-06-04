@@ -12,7 +12,7 @@ public class StudentMain {
         CityOperations cityOperations = new CityOperationsImpl();
         CourierOperations courierOperations = new CourierOperationsImpl();
         CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
-        DriveOperation driveOperation = null;
+        DriveOperation driveOperation = new DriveOperationImpl();
         GeneralOperations generalOperations = new GeneralOperationsImpl();
         PackageOperations packageOperations = new PackageOperationsImpl();
         StockroomOperations stockroomOperations = new StockroomOperationsImpl();
