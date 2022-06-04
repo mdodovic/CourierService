@@ -5,9 +5,6 @@ go
 DROP TABLE [PackageStockroom]
 go
 
-DROP TABLE [Package]
-go
-
 DROP TABLE [Stockroom]
 go
 
@@ -20,10 +17,16 @@ go
 DROP TABLE [CourierRequest]
 go
 
-DROP TABLE [CurrentDrive]
+DROP TABLE [HistoryDrive]
 go
 
-DROP TABLE [HistoryDrive]
+DROP TABLE [CurrentDrivePackage]
+go
+
+DROP TABLE [Package]
+go
+
+DROP TABLE [CurrentDrive]
 go
 
 DROP TABLE [Vehicle]
@@ -94,9 +97,17 @@ go
 
 CREATE TABLE [CurrentDrive]
 ( 
-	[IdCD]               char(18)  NOT NULL ,
+	[IdCD]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdU]                bigint  NOT NULL ,
 	[IdV]                bigint  NOT NULL 
+)
+go
+
+CREATE TABLE [CurrentDrivePackage]
+( 
+	[IdCD]               bigint  NOT NULL ,
+	[IdP]                bigint  NOT NULL ,
+	[IdCDP]              bigint  IDENTITY ( 1,1 )  NOT NULL 
 )
 go
 
@@ -238,6 +249,10 @@ ALTER TABLE [CurrentDrive]
 	ADD CONSTRAINT [XPKCurrentDrive] PRIMARY KEY  CLUSTERED ([IdCD] ASC)
 go
 
+ALTER TABLE [CurrentDrivePackage]
+	ADD CONSTRAINT [XPKCurrentDrivePackage] PRIMARY KEY  CLUSTERED ([IdCDP] ASC)
+go
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
@@ -317,6 +332,19 @@ ALTER TABLE [CurrentDrive]
 	ADD CONSTRAINT [FK_Vehicle_CurrentDrive] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
+go
+
+
+ALTER TABLE [CurrentDrivePackage]
+	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePackage] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [CurrentDrivePackage]
+	ADD CONSTRAINT [FK_Package_CurrentDrivePackage] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
