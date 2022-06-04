@@ -166,8 +166,23 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public boolean deletePackage(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean deletePackage(int packageId) {
+
+        String deletePackageQuery = "DELETE FROM [dbo].[Package] " +
+                                                    "	WHERE IdP = ? " +
+                                                    "       AND PackageStatus IN (0, 4); ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(deletePackageQuery);) {
+            ps.setInt(1, packageId);
+            int numberOfDeletedPackages = ps.executeUpdate();
+            return numberOfDeletedPackages != 0;                                        
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        return false;
+
     }
 
     @Override
