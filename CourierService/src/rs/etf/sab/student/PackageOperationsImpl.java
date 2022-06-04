@@ -280,8 +280,26 @@ public class PackageOperationsImpl implements PackageOperations {
     }
 
     @Override
-    public Date getAcceptanceTime(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Date getAcceptanceTime(int packageId) {
+
+        String getAcceptanceTimeQuery = "SELECT AcceptRejectTime " +
+                                        "	FROM [dbo].[Package] " +
+                                        "	WHERE IdP = ? " +
+                                        "		AND PackageStatus IN (1, 2, 3); ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(getAcceptanceTimeQuery);) {           
+            
+            ps.setInt(1, packageId);
+            try(ResultSet rs = ps.executeQuery()){                
+                if(rs.next()){
+                    return rs.getDate(1);
+                }
+                
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        return null;
     }
     
     public static void main(String[] args) {
@@ -344,12 +362,12 @@ public class PackageOperationsImpl implements PackageOperations {
         System.out.print(packageOperations.getDeliveryStatus(package5) + " ");
         System.out.println(packageOperations.getDeliveryStatus(package6) + " ");
         
-        System.out.println(packageOperations.getPriceOfDelivery(package1));
-        System.out.println(packageOperations.getPriceOfDelivery(package2));
-        System.out.println(packageOperations.getPriceOfDelivery(package3));
-        System.out.println(packageOperations.getPriceOfDelivery(package4));
-        System.out.println(packageOperations.getPriceOfDelivery(package5));
-        System.out.println(packageOperations.getPriceOfDelivery(package6));
+        System.out.println(packageOperations.getPriceOfDelivery(package1) + " " + packageOperations.getAcceptanceTime(package1));
+        System.out.println(packageOperations.getPriceOfDelivery(package2) + " " + packageOperations.getAcceptanceTime(package2));
+        System.out.println(packageOperations.getPriceOfDelivery(package3) + " " + packageOperations.getAcceptanceTime(package3));
+        System.out.println(packageOperations.getPriceOfDelivery(package4) + " " + packageOperations.getAcceptanceTime(package4));
+        System.out.println(packageOperations.getPriceOfDelivery(package5) + " " + packageOperations.getAcceptanceTime(package5));
+        System.out.println(packageOperations.getPriceOfDelivery(package6) + " " + packageOperations.getAcceptanceTime(package6));
 
         System.out.println(packageOperations.changeType(package6, 1));
         System.out.println(packageOperations.getPriceOfDelivery(package6));
