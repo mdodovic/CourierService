@@ -27,6 +27,44 @@ import rs.etf.sab.operations.StockroomOperations;
 public class StockroomOperationsImpl implements StockroomOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
+
+    
+    public Long removeVehicleFromStockroom(Long stockroomCourierCityId) throws Exception {
+
+        String fetchVehicleFromStockroomByStockroomIdQuery = "select IdVS, IdV " +
+                                                            "	from VehicleStockroom VS " +
+                                                            "	WHERE VS.IdS = ?; ";
+        
+        String deleteVehicleFromStockroomByStockroomIdQuery = "DELETE FROM [dbo].[VehicleStockroom] " 
+                                                            + " WHERE IdVS = ?; ";
+        
+
+        try(PreparedStatement psFetch = connection.prepareStatement(fetchVehicleFromStockroomByStockroomIdQuery);
+            PreparedStatement psDelete = connection.prepareStatement(deleteVehicleFromStockroomByStockroomIdQuery);) {           
+
+            psFetch.setLong(1, stockroomCourierCityId);
+            
+            try(ResultSet rsFetch = psFetch.executeQuery()){
+                if(rsFetch.next()) {
+                    Long vehicleStockroomId = rsFetch.getLong(1);
+                    Long vehicleId = rsFetch.getLong(2);
+                    
+                    psDelete.setLong(1, vehicleStockroomId);
+                    int numberOfDeletedVehicleStockrooms = psDelete.executeUpdate();
+                    if (numberOfDeletedVehicleStockrooms == 1)
+                        return vehicleId;                       
+                }
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in removing vehicle from VehicleStockroom (id: " + stockroomCourierCityId + ")!");
+        
+    }
+    
+
     
     public long fetchStockroomIdByCityId(@NotNull long cityId) throws Exception {
  

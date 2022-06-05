@@ -7,6 +7,7 @@ package rs.etf.sab.student;
 
 import com.sun.istack.internal.NotNull;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,7 +28,32 @@ public class DriveOperationImpl implements DriveOperation {
     private final CourierOperationsImpl courierOperationsImpl = new CourierOperationsImpl();
     private final VehicleOperationsImpl vehicleOperationsImpl = new VehicleOperationsImpl();
     
-    
+    public void createDrive(Long courierId, Long vehicleId) throws Exception {
+        
+        // TODO: CREATE HISTORY DRIVE !!!
+        
+        String createCurrentDriveQuery = "INSERT INTO [dbo].[CurrentDrive] " +
+                                        "       (IdU, IdV) " +
+                                        "   VALUES (?, ?) ";
+
+        try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery);) {           
+
+            ps.setLong(1, courierId);
+            ps.setLong(2, vehicleId);
+            
+            int numberOfDrivesCreated = ps.executeUpdate();
+               
+            if(numberOfDrivesCreated == 1)
+                return;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        throw new Exception("Error in creating new drive!");                
+
+    }
+
     
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
@@ -40,14 +66,14 @@ public class DriveOperationImpl implements DriveOperation {
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
             Long stockroomCourierCityId = stockroomOperationsImpl.fetchStockroomIdByCityId(courierCityId);            
 
-            // Courier is now driving -> status = 1
+            // Courier is now driving -> status = 1 (drive)
             courierOperationsImpl.changeCourierStatus(courierId, 1); 
 
             // Fetch one (not so important which) vehicle from stockroom
-//            Long vehicleId = vehicleOperationsImpl.removeVehicleFromStockroom(stockroomCourierCityId); 
-//            
-//            // Create current drive 
-//            createDrive(courierId, vehicleId);
+            Long vehicleId = stockroomOperationsImpl.removeVehicleFromStockroom(stockroomCourierCityId); 
+            
+            // Create current drive
+            createDrive(courierId, vehicleId);
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
@@ -80,7 +106,6 @@ public class DriveOperationImpl implements DriveOperation {
     @Override
     public List<Integer> getPackagesInVehicle(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+    }    
     
 }

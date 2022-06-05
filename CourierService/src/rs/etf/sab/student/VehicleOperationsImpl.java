@@ -192,6 +192,7 @@ public class VehicleOperationsImpl implements VehicleOperations {
     @Override
     public boolean parkVehicle(@NotNull String licencePlateNumbers, int idStockroom) {
         // TODO: check if the vehicle is currently used!!!
+        // THIS CAN BE CHECKED BY CURRENTDRIVE TABLE!!!
         
         String parkVehicleQuery = "INSERT INTO [dbo].[VehicleStockroom] " +
                                     "       (IdS, IdV) " +
