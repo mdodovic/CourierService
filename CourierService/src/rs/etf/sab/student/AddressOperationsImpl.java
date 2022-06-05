@@ -25,6 +25,30 @@ public class AddressOperationsImpl implements AddressOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
     
+    public long fetchCityIdOfUser(@NotNull Long userId) throws Exception {
+
+        String getCityIdOfUserQuery = "SELECT A.IdC " +
+                                    "	FROM [dbo].[User] U " +
+                                    "		INNER JOIN [dbo].[Address] A ON (U.IdA = A.IdA) " +
+                                    "	WHERE U.IdU = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getCityIdOfUserQuery);) {           
+            
+            ps.setLong(1, userId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("User with id: " + userId + " does not exists!");
+        
+    }
+    
     @Override
     public int insertAddress(@NotNull String street, int number, int cityId, int xCord, int yCord) {
         

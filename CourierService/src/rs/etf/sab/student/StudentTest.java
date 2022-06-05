@@ -29,7 +29,7 @@ public class StudentTest {
     private CityOperations cityOperations = new CityOperationsImpl();
     private CourierOperations courierOperations = new CourierOperationsImpl();
     private CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
-    private DriveOperation driveOperation = null;
+    private DriveOperation driveOperation = new DriveOperationImpl();
     private GeneralOperations generalOperations = new GeneralOperationsImpl();
     private PackageOperations packageOperations = new PackageOperationsImpl();
     private StockroomOperations stockroomOperations = new StockroomOperationsImpl();
@@ -133,7 +133,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         int type3 = 2;
         BigDecimal weight3 = new BigDecimal(5);
         int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
-//        this.driveOperation.planingDrive(courierUsernameBG);
+        this.driveOperation.planingDrive(courierUsernameBG);
 //    Assert.assertTrue(this.courierOperation.getCouriersWithStatus(1).contains(courierUsernameBG));
         int type4 = 3;
         BigDecimal weight4 = new BigDecimal(2);
@@ -151,6 +151,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(3L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
 //    Assert.assertEquals(1L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
@@ -160,6 +161,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(2L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
 //    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
@@ -169,6 +171,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
 //    Assert.assertEquals(3L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(idPackage2, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
@@ -178,6 +181,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size());
 //    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(idPackage1, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
@@ -187,6 +191,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(CA).size());
 //    Assert.assertEquals(1L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(idPackage3, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
@@ -196,6 +201,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
 //    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(KG).size());
 //    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+
 //    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage4));
 //    Assert.assertEquals(1L, this.packageOperations.getAllUndeliveredPackages().size());
