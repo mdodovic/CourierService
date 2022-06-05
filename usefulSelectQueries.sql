@@ -11,8 +11,6 @@ SELECT S.*, A.*, City.*
 		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA)
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
-select *
-	from Vehicle
 -- vehicle stockroom
 select VS.*, City.Name
 	from VehicleStockroom VS
@@ -27,11 +25,9 @@ select PS.*, City.Name
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
 
-select *
-	from CurrentDrive
-
-select *
-	from HistoryDrive
+select CD.*
+	from CurrentDrive CD
+		INNER JOIN [dbo].Vehicle V ON (CD.IdV = V.IdV)
 
 select P.*, SCity.Name AS StartCity, ECity.Name AS EndCity
 	from Package P
