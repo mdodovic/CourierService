@@ -52,6 +52,27 @@ public class VehicleOperationsImpl implements VehicleOperations {
         throw new Exception("No such Vehicle for given licencePlateNumber:" + licencePlateNumber);        
     }
     
+    public BigDecimal fetchCapacity(Long vehicleId) throws Exception {
+        
+        String fetchCapacityByVehicleIdQuery = "SELECT Capacity "
+                                        + " FROM [dbo].[Vehicle] "
+                                        + " WHERE IdV = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(fetchCapacityByVehicleIdQuery);) {           
+            
+            ps.setLong(1, vehicleId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return rs.getBigDecimal(1);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        throw new Exception("No such Vehicle for given id:" + vehicleId);        
+    }
     
     @Override
     public boolean insertVehicle(@NotNull String licencePlateNumber, int fuelType, BigDecimal fuelConsumtion, BigDecimal capacity) {

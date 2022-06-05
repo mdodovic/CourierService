@@ -174,6 +174,10 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
+    private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) {
+        
+        return null;
+    }
     
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
@@ -191,6 +195,7 @@ public class DriveOperationImpl implements DriveOperation {
 
             // Fetch one (not so important which) vehicle from stockroom
             Long vehicleId = stockroomOperationsImpl.removeVehicleFromStockroom(stockroomCourierCityId); 
+            BigDecimal vehicleCapacity = vehicleOperationsImpl.fetchCapacity(vehicleId); 
             
             // Create current drive and record this drive
             Long driveId = createDrive(courierId, vehicleId);
@@ -202,7 +207,9 @@ public class DriveOperationImpl implements DriveOperation {
             List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
             List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
             
+            // Add them to the vehicle (up to the vehicle's maximal weight)
             
+            addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, 0);
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
@@ -236,5 +243,6 @@ public class DriveOperationImpl implements DriveOperation {
     public List<Integer> getPackagesInVehicle(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
+
 
 }
