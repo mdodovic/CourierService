@@ -23,10 +23,10 @@ go
 DROP TABLE [CurrentDrivePackage]
 go
 
-DROP TABLE [Package]
+DROP TABLE [CurrentDrivePlan]
 go
 
-DROP TABLE [CurrentDrivePlan]
+DROP TABLE [Package]
 go
 
 DROP TABLE [CurrentDrive]
@@ -128,7 +128,8 @@ CREATE TABLE [CurrentDrivePlan]
 	CONSTRAINT [DF_OrdinalVisitNumber]
 		 DEFAULT  0,
 	[VisitReason]        integer  NOT NULL ,
-	[Distance]           decimal(10,3)  NOT NULL 
+	[IdP]                bigint  NOT NULL ,
+	[IdA]                bigint  NOT NULL 
 )
 go
 
@@ -377,6 +378,18 @@ ALTER TABLE [CurrentDrivePlan]
 	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePlan] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
+go
+
+ALTER TABLE [CurrentDrivePlan]
+	ADD CONSTRAINT [FK_Package_CurrentDrivePlan] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [CurrentDrivePlan]
+	ADD CONSTRAINT [FK_Address_CurrentDrivePlan] FOREIGN KEY ([IdA]) REFERENCES [Address]([IdA])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
