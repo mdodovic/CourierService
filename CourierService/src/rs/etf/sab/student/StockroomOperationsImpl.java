@@ -5,6 +5,7 @@
  */
 package rs.etf.sab.student;
 
+import com.sun.istack.internal.NotNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +27,30 @@ import rs.etf.sab.operations.StockroomOperations;
 public class StockroomOperationsImpl implements StockroomOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
+    
+    public long fetchStockroomIdByCityId(@NotNull long cityId) throws Exception {
+ 
+        String getStockroomByCityIdQuery = "SELECT S.IdS " +
+                                            "	FROM [dbo].[Address] A " +
+                                            "       INNER JOIN [dbo].[Stockroom] S on (A.IdA = S.IdA) " +
+                                            "	WHERE A.IdC = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(getStockroomByCityIdQuery);) {           
+            
+            ps.setLong(1, cityId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                        return rs.getLong(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Stockroom with city id: " + cityId + " does not exists!");
+        
+    }
     
 
     @Override

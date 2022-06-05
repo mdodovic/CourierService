@@ -30,7 +30,30 @@ public class CourierOperationsImpl implements CourierOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
     private final UserOperationsImpl userOperations = new UserOperationsImpl();
-    
+
+    public void changeCourierStatus(@NotNull Long courierId, @NotNull int newStatus) throws Exception {
+
+        String changeCourierStatusQuery = "UPDATE [dbo].[Courier] " +
+                                                "   SET CourierStatus = ? " +
+                                                "   WHERE IdU = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(changeCourierStatusQuery);) {           
+               
+            ps.setInt(1, newStatus);
+            ps.setLong(2, courierId);
+
+            int numberOfChangedStatus = ps.executeUpdate();
+            if (numberOfChangedStatus != 0)
+                return;                 
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        throw new Exception("Error in changing status of the courier: " + courierId + "!");
+        
+    }
+        
     @Override
     public boolean insertCourier(@NotNull String courierUserName, @NotNull String driverLicenceNumber) {
 
