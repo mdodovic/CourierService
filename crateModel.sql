@@ -103,9 +103,12 @@ CREATE TABLE [CurrentDrive]
 	[IdCD]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
 	[IdU]                bigint  NOT NULL ,
 	[IdV]                bigint  NOT NULL ,
-	[CurrentPlanPoint]   integer  NULL 
+	[CurrentPlanPoint]   integer  NOT NULL 
 	CONSTRAINT [DF_CurrentPlanLocation]
-		 DEFAULT  0
+		 DEFAULT  0,
+	[RealizedProfit]     decimal(10,3)  NOT NULL 
+	CONSTRAINT [DF_RealizedProfit]
+		 DEFAULT  0.0
 )
 go
 
