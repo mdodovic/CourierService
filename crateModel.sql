@@ -107,7 +107,10 @@ CREATE TABLE [CurrentDrivePackage]
 ( 
 	[IdCD]               bigint  NOT NULL ,
 	[IdP]                bigint  NOT NULL ,
-	[IdCDP]              bigint  IDENTITY ( 1,1 )  NOT NULL 
+	[IdCDP]              bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[DeliveryStatus]     integer  NULL 
+	CONSTRAINT [DF_DeliveryStatus]
+		 DEFAULT  0
 )
 go
 
