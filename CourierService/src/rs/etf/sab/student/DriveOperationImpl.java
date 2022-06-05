@@ -8,7 +8,9 @@ package rs.etf.sab.student;
 import com.sun.istack.internal.NotNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,22 +30,25 @@ public class DriveOperationImpl implements DriveOperation {
     private final CourierOperationsImpl courierOperationsImpl = new CourierOperationsImpl();
     private final VehicleOperationsImpl vehicleOperationsImpl = new VehicleOperationsImpl();
     
-    public void createDrive(Long courierId, Long vehicleId) throws Exception {
+    public long createDrive(Long courierId, Long vehicleId) throws Exception {
 
         String createCurrentDriveQuery = "INSERT INTO [dbo].[CurrentDrive] " +
                                         "       (IdU, IdV) " +
                                         "   VALUES (?, ?) ";
 
-        try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery);) {           
+        try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery, Statement.RETURN_GENERATED_KEYS);) {           
 
             ps.setLong(1, courierId);
             ps.setLong(2, vehicleId);
             
             int numberOfDrivesCreated = ps.executeUpdate();
-               
-            if(numberOfDrivesCreated == 1)
-                return;
             
+            try(ResultSet rs = ps.getGeneratedKeys()){
+                if(rs.next()) {
+                    return rs.getLong(1);
+                }
+            }               
+
         } catch (SQLException ex) {
             Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
@@ -95,7 +100,7 @@ public class DriveOperationImpl implements DriveOperation {
             Long vehicleId = stockroomOperationsImpl.removeVehicleFromStockroom(stockroomCourierCityId); 
             
             // Create current drive and record this drive
-            createDrive(courierId, vehicleId);
+            Long driveId = createDrive(courierId, vehicleId);
             logDrive(courierId, vehicleId);
             
             
