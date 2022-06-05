@@ -26,6 +26,9 @@ go
 DROP TABLE [Package]
 go
 
+DROP TABLE [CurrentDrivePlan]
+go
+
 DROP TABLE [CurrentDrive]
 go
 
@@ -114,6 +117,18 @@ CREATE TABLE [CurrentDrivePackage]
 	[DeliveryStatus]     integer  NULL 
 	CONSTRAINT [DF_DeliveryStatus]
 		 DEFAULT  0
+)
+go
+
+CREATE TABLE [CurrentDrivePlan]
+( 
+	[IdPlan]             bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdCD]               bigint  NOT NULL ,
+	[OrdinalVisitNumber] integer  NOT NULL 
+	CONSTRAINT [DF_OrdinalVisitNumber]
+		 DEFAULT  0,
+	[VisitReason]        integer  NOT NULL ,
+	[Distance]           decimal(10,3)  NOT NULL 
 )
 go
 
@@ -259,6 +274,10 @@ ALTER TABLE [CurrentDrivePackage]
 	ADD CONSTRAINT [XPKCurrentDrivePackage] PRIMARY KEY  CLUSTERED ([IdCDP] ASC)
 go
 
+ALTER TABLE [CurrentDrivePlan]
+	ADD CONSTRAINT [XPKCurrentDrivePlan] PRIMARY KEY  CLUSTERED ([IdPlan] ASC)
+go
+
 ALTER TABLE [Customer]
 	ADD CONSTRAINT [XPKCustomer] PRIMARY KEY  CLUSTERED ([IdU] ASC)
 go
@@ -351,6 +370,13 @@ ALTER TABLE [CurrentDrivePackage]
 	ADD CONSTRAINT [FK_Package_CurrentDrivePackage] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [CurrentDrivePlan]
+	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePlan] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
 go
 
 
