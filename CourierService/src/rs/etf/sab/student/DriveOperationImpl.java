@@ -6,11 +6,13 @@
 package rs.etf.sab.student;
 
 import com.sun.istack.internal.NotNull;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,10 +85,94 @@ public class DriveOperationImpl implements DriveOperation {
     }
 
     public List<ReducedPackage> fetchUndeliveredUnstockedPackagesFromCourierCity(Long courierCityId) throws Exception {
+
+        List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
-        throw new Exception("Error in logging drive!");  
+        String fetchAllUndeliveredUnstockedPackagesFromCourierCityQuery = 
+                "SELECT P.IdP AS IdP, P.IdStartAddress AS StartAddress, " + 
+                    " P.IdEndAddress AS EndAddress, P.Weight AS Weight, " + 
+                    " P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity " +
+                    "	FROM [dbo].[Package] P " +
+                    "		INNER JOIN [dbo].[Address] SA on (P.IdStartAddress = SA.IdA) " +
+                    "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
+                    "	WHERE SA.IdC = ? " +
+                    "		AND PackageStatus = 1 " +
+                    "		AND P.IdP NOT IN (" +
+                    "				  SELECT IdP " +
+                    "                                 FROM PackageStockroom " +
+                    "                            ) " +
+                    "	ORDER BY P.CreateTime, P.Weight; ";
+                
+        try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredUnstockedPackagesFromCourierCityQuery);) {
+            
+            ps.setLong(1, courierCityId);
+            
+            try(ResultSet rs = ps.executeQuery()){
+            
+                while(rs.next()){
+                    ReducedPackage rp =  new ReducedPackage();
+                    rp.setPackageId(rs.getLong("IdP"));
+                    rp.setStartAddressId(rs.getLong("StartAddress"));
+                    rp.setStartCityId(rs.getLong("StartCity"));
+                    rp.setEndAddressId(rs.getLong("EndAddress"));
+                    rp.setEndCityId(rs.getLong("EndCity"));
+                    rp.setPrice(rs.getBigDecimal("Price"));
+                    rp.setWeight(rs.getBigDecimal("Weight"));
+                    listOfPackages.add(rp);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfPackages;
+
     }
     
+    public List<ReducedPackage> fetchUndeliveredStockedPackagesFromCourierCity(Long courierCityId) throws Exception {
+
+        List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
+        
+        String fetchAllUndeliveredStockedPackagesFromCourierCityQuery = 
+                "SELECT P.IdP AS IdP, P.IdStartAddress AS StartAddress, " + 
+                    " P.IdEndAddress AS EndAddress, P.Weight AS Weight, " + 
+                    " P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity " +
+                    "	FROM [dbo].[Package] P " +
+                    "		INNER JOIN [dbo].[Address] SA on (P.IdStartAddress = SA.IdA) " +
+                    "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
+                    "	WHERE SA.IdC = ? " +
+                    "		AND PackageStatus = 1 " +
+                    "		AND P.IdP IN (" +
+                    "				  SELECT IdP " +
+                    "                                 FROM PackageStockroom " +
+                    "                            ) " +
+                    "	ORDER BY P.CreateTime, P.Weight; ";
+                
+        try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredStockedPackagesFromCourierCityQuery);) {
+            
+            ps.setLong(1, courierCityId);
+            
+            try(ResultSet rs = ps.executeQuery()){
+            
+                while(rs.next()){
+                    ReducedPackage rp =  new ReducedPackage();
+                    rp.setPackageId(rs.getLong("IdP"));
+                    rp.setStartAddressId(rs.getLong("StartAddress"));
+                    rp.setStartCityId(rs.getLong("StartCity"));
+                    rp.setEndAddressId(rs.getLong("EndAddress"));
+                    rp.setEndCityId(rs.getLong("EndCity"));
+                    rp.setPrice(rs.getBigDecimal("Price"));
+                    rp.setWeight(rs.getBigDecimal("Weight"));
+                    listOfPackages.add(rp);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return listOfPackages;
+
+    }
 
     
     @Override
@@ -114,6 +200,9 @@ public class DriveOperationImpl implements DriveOperation {
             // Collect packages from courier's city (first from addresses then from stockroom)
             
             List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
+            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
+            
+            
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 

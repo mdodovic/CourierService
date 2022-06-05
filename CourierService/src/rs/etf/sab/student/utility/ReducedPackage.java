@@ -24,6 +24,10 @@ public class ReducedPackage {
     private BigDecimal weight;
     private BigDecimal price;
 
+    public ReducedPackage() {
+        
+    }
+    
     public ReducedPackage(Long packageId, Long startAddressId, Long startCityId, Long endAddressId, Long endCityId, BigDecimal weight, BigDecimal price) {
         this.packageId = packageId;
         this.startAddressId = startAddressId;
