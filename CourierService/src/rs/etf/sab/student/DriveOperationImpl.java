@@ -29,9 +29,7 @@ public class DriveOperationImpl implements DriveOperation {
     private final VehicleOperationsImpl vehicleOperationsImpl = new VehicleOperationsImpl();
     
     public void createDrive(Long courierId, Long vehicleId) throws Exception {
-        
-        // TODO: CREATE HISTORY DRIVE !!!
-        
+
         String createCurrentDriveQuery = "INSERT INTO [dbo].[CurrentDrive] " +
                                         "       (IdU, IdV) " +
                                         "   VALUES (?, ?) ";
@@ -54,6 +52,30 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
+    public void logDrive(Long courierId, Long vehicleId) throws Exception {
+
+        String createCurrentDriveQuery = "INSERT INTO [dbo].[HistoryDrive] " +
+                                        "       (IdU, IdV) " +
+                                        "   VALUES (?, ?) ";
+
+        try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery);) {           
+
+            ps.setLong(1, courierId);
+            ps.setLong(2, vehicleId);
+            
+            int numberOfDrivesCreated = ps.executeUpdate();
+               
+            if(numberOfDrivesCreated == 1)
+                return;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        throw new Exception("Error in logging drive!");                
+
+    }
+
     
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
@@ -72,8 +94,11 @@ public class DriveOperationImpl implements DriveOperation {
             // Fetch one (not so important which) vehicle from stockroom
             Long vehicleId = stockroomOperationsImpl.removeVehicleFromStockroom(stockroomCourierCityId); 
             
-            // Create current drive
+            // Create current drive and record this drive
             createDrive(courierId, vehicleId);
+            logDrive(courierId, vehicleId);
+            
+            
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
