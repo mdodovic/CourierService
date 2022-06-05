@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rs.etf.sab.operations.DriveOperation;
+import rs.etf.sab.student.utility.ReducedPackage;
 
 /**
  *
@@ -81,6 +82,12 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
+    public List<ReducedPackage> fetchUndeliveredUnstockedPackagesFromCourierCity(Long courierCityId) throws Exception {
+        
+        throw new Exception("Error in logging drive!");  
+    }
+    
+
     
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
@@ -92,7 +99,7 @@ public class DriveOperationImpl implements DriveOperation {
             Long courierId = userOperationsImpl.fetchUserIdByUsername(courierUsername);
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
             Long stockroomCourierCityId = stockroomOperationsImpl.fetchStockroomIdByCityId(courierCityId);            
-
+            
             // Courier is now driving -> status = 1 (drive)
             courierOperationsImpl.changeCourierStatus(courierId, 1); 
 
@@ -103,7 +110,10 @@ public class DriveOperationImpl implements DriveOperation {
             Long driveId = createDrive(courierId, vehicleId);
             logDrive(courierId, vehicleId);
             
+            // Phase 1
+            // Collect packages from courier's city (first from addresses then from stockroom)
             
+            List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
@@ -137,5 +147,5 @@ public class DriveOperationImpl implements DriveOperation {
     public List<Integer> getPackagesInVehicle(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
-    
+
 }
