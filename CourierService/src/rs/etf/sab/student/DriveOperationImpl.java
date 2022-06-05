@@ -134,19 +134,15 @@ public class DriveOperationImpl implements DriveOperation {
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
         String fetchAllUndeliveredStockedPackagesFromCourierCityQuery = 
-                "SELECT P.IdP AS IdP, P.IdStartAddress AS StartAddress, " + 
-                    " P.IdEndAddress AS EndAddress, P.Weight AS Weight, " + 
-                    " P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity " +
-                    "	FROM [dbo].[Package] P " +
-                    "		INNER JOIN [dbo].[Address] SA on (P.IdStartAddress = SA.IdA) " +
-                    "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
-                    "	WHERE SA.IdC = ? " +
-                    "		AND PackageStatus = 1 " +
-                    "		AND P.IdP IN (" +
-                    "				  SELECT IdP " +
-                    "                                 FROM PackageStockroom " +
-                    "                            ) " +
-                    "	ORDER BY P.CreateTime, P.Weight; ";
+                "SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity" +
+                "	FROM [dbo].[PackageStockroom] PS " +
+                "		INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
+                "		INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
+                "		INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
+                "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
+                "	WHERE SA.IdC = ? " +
+                "		AND PackageStatus = 1 " +
+                "	ORDER BY P.CreateTime, P.Weight; ";
                 
         try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredStockedPackagesFromCourierCityQuery);) {
             
@@ -174,7 +170,28 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
-    private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) {
+    private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) throws Exception {
+        
+        String fetchLastPlanPointQuery = "SELECT MAX(OrdinalVisitNumber) "
+                                        + " FROM [dbo].[CurrentDrivePlan] "
+                                        + " WHERE IdCD = ?; ";
+        int nextPlanPoint = 0;
+        try(PreparedStatement ps = connection.prepareStatement(fetchLastPlanPointQuery);) {           
+            
+            ps.setLong(1, driveId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    nextPlanPoint = rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            throw new Exception(ex);
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        nextPlanPoint += 1;
+        
+        
         
         return null;
     }
