@@ -366,7 +366,10 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         System.out.println(distance);
 
         BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
-        profit = profit.subtract((new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance)));
+        System.out.println(profit);
+        BigDecimal cost = (new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance));
+        System.out.println(cost);
+        profit = profit.subtract(cost);
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0));
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(0.95D))) > 0));
 

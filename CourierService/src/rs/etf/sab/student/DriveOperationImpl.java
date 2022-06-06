@@ -548,6 +548,25 @@ public class DriveOperationImpl implements DriveOperation {
  
     }
 
+    private void deleteCurrentDrive(Long currentDriveId) throws Exception {
+        String deleteCurrentDrivePlan = "DELETE FROM [dbo].[CurrentDrive] " 
+                                        + " WHERE IdCD = ?";
+
+        try(PreparedStatement ps = connection.prepareStatement(deleteCurrentDrivePlan);) {           
+            ps.setLong(1, currentDriveId);
+    
+            int numberOfDeletedCurrentDrives = ps.executeUpdate();
+            if(numberOfDeletedCurrentDrives == 1)
+                return; 
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+                
+        throw new Exception("Error in current drive deleting!");             
+ 
+    }
+
  
     
     @Override
@@ -562,6 +581,7 @@ public class DriveOperationImpl implements DriveOperation {
             String getCurrentDriveQuery = "SELECT IdCD, IdV, CurrentPlanPoint, IdA " +
                                             "	FROM [dbo].[CurrentDrive] " +
                                             "	WHERE IdU = ?; ";
+            
             Long currentDriveId = -1L;
             Long vehicleId = -1L;
             int currentPlanPoint = -1;
@@ -623,17 +643,23 @@ public class DriveOperationImpl implements DriveOperation {
                 
             } else if(visitReason == 3) {
                 returnValue = -1;
+                // TODO: IMPLEMENTS WHEN YOU HAVE TEST EXAMPLES
                 //leavePackageToPackageStockroom(currentDriveId, packageId);
+                
                 //leaveVehicleToVehicleStockroom...
                 //this.vehicleOperationsImpl.parkVehicle(getCurrentPlanQuery, visitReason);
 
                 // Courier is not driving any more -> status = 1 (not drive)
                 courierOperationsImpl.changeCourierStatus(courierId, 0); 
-
+                courierOperationsImpl.changeCourierProfit(courierId);
             }
         
             
             deleteCurrentDrivePlan(planId);
+            
+            if(visitReason == 3) {
+//                deleteCurrentDrive(currentDriveId);
+            }
             
         } catch (SQLException ex) {
             Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);

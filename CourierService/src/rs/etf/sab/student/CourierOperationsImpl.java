@@ -54,6 +54,42 @@ public class CourierOperationsImpl implements CourierOperations {
         
     }
         
+    
+    void changeCourierProfit(Long courierId) throws Exception {
+
+        String fetchRealizedProfitQuery = "SELECT RealizedProfit " +
+                                        "   FROM [dbo].[CurrentDrive] " +
+                                        "   WHERE IdU = ?; "; 
+        
+        String changeCourierProfitQuery = "UPDATE [dbo].[Courier] " +
+                                                "   SET Profit = Profit + ? " +
+                                                "   WHERE IdU = ?; ";
+                                    
+        try(PreparedStatement psFetch = connection.prepareStatement(fetchRealizedProfitQuery);
+            PreparedStatement psUpdate = connection.prepareStatement(changeCourierProfitQuery);) {           
+
+            psFetch.setLong(1, courierId);
+            try(ResultSet rsFetch = psFetch.executeQuery()){
+                if(rsFetch.next()) {
+                    BigDecimal realizedProfit = rsFetch.getBigDecimal(1);
+                    psUpdate.setBigDecimal(1, realizedProfit);
+                    psUpdate.setLong(2, courierId);
+
+                    int numberOfUpdatedCouriers = psUpdate.executeUpdate();
+                    if (numberOfUpdatedCouriers == 1) 
+                        return;
+                }
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in updating profit of the courier: " + courierId + "!");
+
+    }
+    
+    
     @Override
     public boolean insertCourier(@NotNull String courierUserName, @NotNull String driverLicenceNumber) {
 
@@ -209,5 +245,5 @@ public class CourierOperationsImpl implements CourierOperations {
         
         
     }
-    
+
 }
