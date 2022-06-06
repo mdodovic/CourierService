@@ -573,7 +573,12 @@ public class DriveOperationImpl implements DriveOperation {
                 returnValue = -2; // package is picked up: return -2
                 updatePackageStatusInPackage(packageId, 2);
                 insertPackageInCurrentDrivePackage(currentDriveId, packageId, 0);
-            } 
+            } else if(visitReason == 1) {
+                
+            } else if(visitReason == 2) {
+                
+            }
+        
             
             deleteCurrentDrivePlan(planId);
             

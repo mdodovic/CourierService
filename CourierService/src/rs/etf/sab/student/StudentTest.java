@@ -165,10 +165,11 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         if(4L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()){
             System.err.println("BAD PACKAGE PLACES");
         }
-        
+        /* stop 1 */
         if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
             System.err.println("BAD NEXT STOP");            
         }
+
         if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
             System.err.println("BAD STATUS");            
         }
@@ -178,7 +179,6 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
             System.err.println("BAD STATUS");            
         }
-        
         if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
             System.err.println("BAD CURRENT LOCATION");            
         }
@@ -195,30 +195,67 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD BACKAGES IN VEHICLE");            
         }
 
-
+        /* stop 2 */
         if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
             System.err.println("BAD NEXT STOP");            
         }
 
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
-//    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage3));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage1));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage2));
-//    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
-//    Assert.assertEquals(2L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
-//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(2L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+        
+        /* stop 3 */
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+        
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(3L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
 
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage3));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage1));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage2));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
-//    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
-//    Assert.assertEquals(3L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
-
+        
 //    Assert.assertEquals(idPackage2, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
