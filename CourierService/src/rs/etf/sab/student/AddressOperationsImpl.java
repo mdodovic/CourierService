@@ -48,6 +48,7 @@ public class AddressOperationsImpl implements AddressOperations {
         throw new Exception("Error in fetching coordinates!");
     }
     
+       
     Pair fetchCoordinates(Long addressId)  throws Exception {
 
         String getCityIdOfUserQuery = "SELECT Xcoord, Ycoord " +
@@ -70,6 +71,31 @@ public class AddressOperationsImpl implements AddressOperations {
         throw new Exception("Error in fetching coordinates!");
     }
 
+    
+    public Long fetchCityIdOfAddress(Long addressId) throws Exception {
+    
+        String getCityIdAddressQuery = "SELECT A.IdC " +
+                                    "	FROM [dbo].[Address] A " +
+                                    "	WHERE A.IdA = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getCityIdAddressQuery);) {           
+            
+            ps.setLong(1, addressId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return rs.getLong(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in fetching city from address: " + addressId + "!");
+    
+    }
+
+    
     
     public long fetchCityIdOfUser(@NotNull Long userId) throws Exception {
 

@@ -560,7 +560,7 @@ public class DriveOperationImpl implements DriveOperation {
                 return; 
             
         } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
                 
         throw new Exception("Error in current drive deleting!");             
@@ -646,9 +646,6 @@ public class DriveOperationImpl implements DriveOperation {
                 // TODO: IMPLEMENTS WHEN YOU HAVE TEST EXAMPLES
                 //leavePackageToPackageStockroom(currentDriveId, packageId);
                 
-                //leaveVehicleToVehicleStockroom...
-                //this.vehicleOperationsImpl.parkVehicle(getCurrentPlanQuery, visitReason);
-
                 // Courier is not driving any more -> status = 1 (not drive)
                 courierOperationsImpl.changeCourierStatus(courierId, 0); 
                 courierOperationsImpl.changeCourierProfit(courierId);
@@ -658,7 +655,9 @@ public class DriveOperationImpl implements DriveOperation {
             deleteCurrentDrivePlan(planId);
             
             if(visitReason == 3) {
-//                deleteCurrentDrive(currentDriveId);
+                deleteCurrentDrive(currentDriveId);
+                this.vehicleOperationsImpl.parkVehicle(vehicleId, this.stockroomOperationsImpl.fetchStockroomIdByCityId(this.addressOperationsImpl.fetchCityIdOfAddress(endAddressId)));
+
             }
             
         } catch (SQLException ex) {

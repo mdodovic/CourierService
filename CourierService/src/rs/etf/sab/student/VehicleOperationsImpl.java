@@ -210,10 +210,51 @@ public class VehicleOperationsImpl implements VehicleOperations {
         return false;
     }
 
+    public void parkVehicle(Long vehicleId, Long idStockroom) throws Exception {
+
+        String fetchLicencePlateNumberByVehicleIdQuery = "SELECT LicencePlateNumber "
+                                                        + " FROM [dbo].[Vehicle] "
+                                                        + " WHERE IdV = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(fetchLicencePlateNumberByVehicleIdQuery);) {           
+            
+            ps.setLong(1, vehicleId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    String licencePlateNumber = rs.getString(1);
+                    if(this.parkVehicle(licencePlateNumber, idStockroom.intValue())) 
+                        return;
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        throw new Exception("Error in parking Vehicle for given id:" + vehicleId);        
+        
+    }
+
+    
     @Override
     public boolean parkVehicle(@NotNull String licencePlateNumbers, int idStockroom) {
-        // TODO: check if the vehicle is currently used!!!
-        // THIS CAN BE CHECKED BY CURRENTDRIVE TABLE!!!
+        
+        String checkIfVehicleIsCurrentlyInDriveQuery = "SELECT V.IdV " +
+                                                    "	FROM [dbo].[CurrentDrive] CD " +
+                                                    "		INNER JOIN [dbo].[Vehicle] V ON (CD.IdV = V.IdV) " +
+                                                    "	WHERE LicencePlateNumber LIKE ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(checkIfVehicleIsCurrentlyInDriveQuery);) {           
+            
+            ps.setString(1, licencePlateNumbers);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return false;
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
         
         String parkVehicleQuery = "INSERT INTO [dbo].[VehicleStockroom] " +
                                     "       (IdS, IdV) " +
@@ -228,7 +269,7 @@ public class VehicleOperationsImpl implements VehicleOperations {
             return numberOfParkedVehicles != 0;
             
         } catch (SQLException ex) {
-//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         } catch (Exception ex) {
 //            Logger.getLogger(VehicleOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
