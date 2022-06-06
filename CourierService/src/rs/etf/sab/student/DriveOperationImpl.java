@@ -133,16 +133,16 @@ public class DriveOperationImpl implements DriveOperation {
 
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
-        String fetchAllUndeliveredStockedPackagesFromCourierCityQuery = 
-                "SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity" +
-                "	FROM [dbo].[PackageStockroom] PS " +
-                "		INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
-                "		INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
-                "		INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
-                "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
-                "	WHERE SA.IdC = ? " +
-                "		AND PackageStatus = 1 " +
-                "	ORDER BY P.CreateTime, P.Weight; ";
+        String fetchAllUndeliveredStockedPackagesFromCourierCityQuery = null;
+//                "SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity" +
+//                "	FROM [dbo].[PackageStockroom] PS " +
+//                "		INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
+//                "		INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
+//                "		INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
+//                "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
+//                "	WHERE SA.IdC = ? " +
+//                "		AND PackageStatus = 1 " +
+//                "	ORDER BY P.CreateTime, P.Weight; ";
                 
         try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredStockedPackagesFromCourierCityQuery);) {
             
@@ -170,6 +170,31 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
+    private void insertNextStopInCurrentDrivingPlan(Long driveId, int nextPlanPoint, int visitReason, Long packageId, Long destinationAddressId) throws Exception {
+        
+        String insertNextStopQuery = "INSERT INTO [dbo].[CurrentDrivePlan] " +
+                                    "       (IdCD, OrdinalVisitNumber, VisitReason, IdP, IdA)" +
+                                    "   VALUES (?, ?, ?, ?, ?) ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(insertNextStopQuery);) {           
+            ps.setLong(1, driveId);
+            ps.setInt(2, nextPlanPoint);
+            ps.setInt(3, visitReason);
+            ps.setLong(4, packageId);
+            ps.setLong(5, destinationAddressId);
+            
+            int numberOfInsertedNextStops = ps.executeUpdate();
+            if(numberOfInsertedNextStops == 1)
+                return;
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+       
+        throw new Exception("Error in inserting next stop!");          
+        
+    }
+    
     private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) throws Exception {
         
         String fetchLastPlanPointQuery = "SELECT MAX(OrdinalVisitNumber) "
@@ -191,9 +216,28 @@ public class DriveOperationImpl implements DriveOperation {
         }
         nextPlanPoint += 1;
         
+        BigDecimal spaceLeft = vehicleCapacity;
         
+        for(ReducedPackage rp: undeliveredUnstockedPackagesFromCourierCity) {
+            if(spaceLeft.compareTo(rp.getWeight()) > 0) {
+                spaceLeft = spaceLeft.subtract(rp.getWeight());
+                Long destinationAddressId = null;
+                if(visitReason == 0) {
+                    // 0 - Pick up Package (IdP) from the User Address (IdA)
+                    destinationAddressId = rp.getStartAddressId();
+                } else {
+                    // 1 - Pick up Packages (IdP) from the Stockroom Address (IdA) - 
+                    // there are multiple rows with (1, IdA) packages, 
+                    // all of them should be transfered to CurrentDrivePackages and removed from CurrendDrivePlan
+//                    TODO: NOT IMPLEMENTED!!!!!
+                    destinationAddressId = null;
+                }                
+                insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, rp.getPackageId(), destinationAddressId);
+                nextPlanPoint += 1;
+            }
+        }
         
-        return null;
+        return spaceLeft;
     }
     
     @Override
@@ -222,11 +266,18 @@ public class DriveOperationImpl implements DriveOperation {
             // Collect packages from courier's city (first from addresses then from stockroom)
             
             List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
-            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
+//            TODO: BAD IMPLEMENTATION            
+//            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
             
             // Add them to the vehicle (up to the vehicle's maximal weight)
             
-            addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, 0);
+            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, 0);
+
+//            TODO: BAD IMPLEMENTATION            
+            if (vehicleCapacity.compareTo(BigDecimal.ZERO) > 0){
+                System.out.println("Check stockroom " + vehicleCapacity);
+//                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredStockedPackagesFromCourierCity, 1);
+            }
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 

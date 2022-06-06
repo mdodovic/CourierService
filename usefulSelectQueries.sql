@@ -25,9 +25,14 @@ select PS.*, City.Name
 		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA)
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
-select CD.*
+select CD.*, V.*
 	from CurrentDrive CD
 		INNER JOIN [dbo].Vehicle V ON (CD.IdV = V.IdV)
+
+select CDPlan.*
+	from CurrentDrivePlan CDPlan
+
+
 
 select P.*, SCity.Name AS StartCity, ECity.Name AS EndCity
 	from Package P
