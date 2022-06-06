@@ -191,8 +191,31 @@ public class CourierOperationsImpl implements CourierOperations {
     }
 
     @Override
-    public BigDecimal getAverageCourierProfit(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BigDecimal getAverageCourierProfit(int numberOfDeliveries) {
+        
+        String getAverageProfitQuery = "SELECT AVG(Profit) AS AverageProfit" +
+                                    "	FROM [dbo].[Courier] " +
+                                    "	WHERE 1 = 1 ";
+        if(numberOfDeliveries != -1) {
+            getAverageProfitQuery += " AND DeliveredPackagesNumber = ?; ";
+        }
+        BigDecimal averageProfit = BigDecimal.ONE;
+        try(PreparedStatement ps = connection.prepareStatement(getAverageProfitQuery);) {
+            
+            if(numberOfDeliveries != -1) {
+                ps.setInt(1, numberOfDeliveries);
+            }
+            
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next())
+                    averageProfit = rs.getBigDecimal(1);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        return averageProfit;
+
     }
 
     
