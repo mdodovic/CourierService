@@ -509,7 +509,28 @@ public class DriveOperationImpl implements DriveOperation {
         
     }
     
-    
+    private void removePackageFromCurrentDrivePackage(Long currentDriveId, Long packageId) throws Exception {
+        String deleteCurrentDrivePlan = "DELETE FROM [dbo].[CurrentDrivePackage] " 
+                                    + " WHERE IdCD = ?"
+                                    + "     AND IdP = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(deleteCurrentDrivePlan);) {           
+            ps.setLong(1, currentDriveId);
+            ps.setLong(2, packageId);
+
+            int numberOfDeletedPackages = ps.executeUpdate();
+            if(numberOfDeletedPackages == 1)
+                return; 
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+                
+        throw new Exception("Error in package from van!");             
+ 
+    }
+
+ 
     
     @Override
     public int nextStop(@NotNull String courierUsername) {
@@ -570,12 +591,17 @@ public class DriveOperationImpl implements DriveOperation {
             updateProfitCurrentPlanPointAndAddressInCurrentDrive(currentDriveId, endAddressId, distance, currentPlanPoint + 1, vehicleId);
             
             if(visitReason == 0) {
-                returnValue = -2; // package is picked up: return -2
+                // pick up package
+                returnValue = -2; // return -2
                 updatePackageStatusInPackage(packageId, 2);
                 insertPackageInCurrentDrivePackage(currentDriveId, packageId, 0);
             } else if(visitReason == 1) {
                 
             } else if(visitReason == 2) {
+                // deliver package
+                returnValue = packageId.intValue();
+                updatePackageStatusInPackage(packageId, 3);
+                removePackageFromCurrentDrivePackage(currentDriveId, packageId);
                 
             }
         
@@ -632,6 +658,5 @@ public class DriveOperationImpl implements DriveOperation {
 
     }    
 
- 
 
 }
