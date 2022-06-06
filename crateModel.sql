@@ -109,7 +109,10 @@ CREATE TABLE [CurrentDrive]
 	[RealizedProfit]     decimal(10,3)  NOT NULL 
 	CONSTRAINT [DF_RealizedProfit]
 		 DEFAULT  0.0,
-	[IdA]                bigint  NOT NULL 
+	[IdA]                bigint  NOT NULL ,
+	[NumberOfDeliveries] integer  NULL 
+	CONSTRAINT [DF_NumberOfDeliveries]
+		 DEFAULT  0
 )
 go
 
