@@ -93,6 +93,35 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
+    private void insertPureProfitToCurrentDrive(Long driveId) throws Exception {
+
+        String updatePureProfit = "UPDATE [dbo].[CurrentDrive] " +
+                                "	SET RealizedProfit = ( " +
+                                "				SELECT SUM(P.Price) " +
+                                "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
+                                "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
+                                "                                   WHERE CDP.VisitReason IN (0, 1) " +
+                                "                           ) " +
+                                "	WHERE IdCD = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(updatePureProfit);) {           
+
+            ps.setLong(1, driveId);
+
+            int updatedDrivesNumber = ps.executeUpdate();
+            
+            if(updatedDrivesNumber == 1)
+                return;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in updating drive!");        
+        
+    }
+
+    
     public List<ReducedPackage> fetchUndeliveredUnstockedPackagesFromCourierCity(Long courierCityId) throws Exception {
 
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
@@ -393,6 +422,8 @@ public class DriveOperationImpl implements DriveOperation {
 //                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredStockedPackagesFromCourierCity, 1);
             }
             
+            insertPureProfitToCurrentDrive(driveId);
+            
             // Phase 2
             // Order of delivery
             addNextStopsAfterPickingUp(driveId, vehicleCapacity, courierCityId);
@@ -431,24 +462,40 @@ public class DriveOperationImpl implements DriveOperation {
     
     private void updateProfitCurrentPlanPointAndAddressInCurrentDrive(Long currentDriveId, Long endAddressId, double distance, int nextPlanPoint, Long vehicleId) throws Exception {
 
+        String fetchFuelPricePerKmQuery = "SELECT FuelConsumption * CASE FuelType " +
+                                            "                   	WHEN 0 THEN 15 " +
+                                            "                           WHEN 1 THEN 32 " +
+                                            "                           WHEN 2 THEN 36 " +
+                                            "                       END AS FuelPricePerKm " +
+                                            "	FROM [dbo].[Vehicle] " +
+                                            "	WHERE IdV = ?; ";
+        
         String updateCurrentDrive = "UPDATE [dbo].[CurrentDrive] " +
                                     "	SET " +
                                     "		IdA = ?, " +
                                     "		CurrentPlanPoint = ?, " +
                                     "		RealizedProfit = RealizedProfit - ? " +
                                     "	WHERE IdCD = ?; ";
-        
-        try(PreparedStatement ps = connection.prepareStatement(updateCurrentDrive);) {           
+        try(PreparedStatement psFetch = connection.prepareStatement(fetchFuelPricePerKmQuery);
+            PreparedStatement psUpdate = connection.prepareStatement(updateCurrentDrive);) {           
+                                    
+            psFetch.setLong(1, vehicleId);
+            
+            try(ResultSet rsFetch = psFetch.executeQuery()){
+                if(rsFetch.next()) {
+                    BigDecimal fuelPricePerKm = rsFetch.getBigDecimal(1);
+                    
+                    psUpdate.setLong(1, endAddressId);
+                    psUpdate.setInt(2, nextPlanPoint);
+                    psUpdate.setBigDecimal(3, new BigDecimal(distance).multiply(fuelPricePerKm));
+                    psUpdate.setLong(4, currentDriveId);
 
-            ps.setLong(1, endAddressId);
-            ps.setInt(2, nextPlanPoint);
-            // TODO: multiply this with vehicle fuel consumption
-            ps.setBigDecimal(3, new BigDecimal(distance));
-            ps.setLong(4, currentDriveId);
-
-            int updatedCurrentDriveNumber = ps.executeUpdate();
-            if(updatedCurrentDriveNumber == 1)
-                return;
+                    int updatedCurrentDriveNumber = psUpdate.executeUpdate();
+                    if(updatedCurrentDriveNumber == 1)
+                        return;
+                }
+            }
+            
         } catch (SQLException ex) {
             Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
@@ -709,6 +756,5 @@ public class DriveOperationImpl implements DriveOperation {
         return listOfIds;        
 
     }    
-
 
 }
