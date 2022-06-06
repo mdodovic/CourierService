@@ -29,6 +29,10 @@ select CD.*, V.*
 	from CurrentDrive CD
 		INNER JOIN [dbo].Vehicle V ON (CD.IdV = V.IdV)
 
+select CDP.*
+	from CurrentDrivePackage CDP
+
+
 select CDPlan.*
 	from CurrentDrivePlan CDPlan
 
