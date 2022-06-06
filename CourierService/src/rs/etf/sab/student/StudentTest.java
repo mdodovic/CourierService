@@ -380,9 +380,123 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             
     }
     
+    public void test2() throws Exception {
+        
+        generalOperations.eraseAll();
+        
+        int BG = insertCity("Belgrade", "11000");
+        int KG = insertCity("Kragujevac", "550000");
+        int VA = insertCity("Valjevo", "14000");
+        int CA = insertCity("Cacak", "32000");
+        int idAddressBG1 = insertAddress("Kraljice Natalije", 37, BG, 11, 15);
+        int idAddressBG2 = insertAddress("Bulevar kralja Aleksandra", 73, BG, 10, 10);
+        int idAddressBG3 = insertAddress("Vojvode Stepe", 39, BG, 1, -1);
+        int idAddressBG4 = insertAddress("Takovska", 7, BG, 11, 12);
+        int idAddressBG5 = insertAddress("Bulevar kralja Aleksandra", 37, BG, 12, 12);
+        int idAddressKG1 = insertAddress("Daniciceva", 1, KG, 4, 310);
+        int idAddressKG2 = insertAddress("Dure Pucara Starog", 2, KG, 11, 320);
+        int idAddressVA1 = insertAddress("Cika Ljubina", 8, VA, 102, 101);
+        int idAddressVA2 = insertAddress("Karadjordjeva", 122, VA, 104, 103);
+        int idAddressVA3 = insertAddress("Milovana Glisica", 45, VA, 101, 101);
+        int idAddressCA1 = insertAddress("Zupana Stracimira", 1, CA, 110, 309);
+        int idAddressCA2 = insertAddress("Bulevar Vuka Karadzica", 1, CA, 111, 315);
+        int idStockroomBG = insertStockroom(idAddressBG1);
+        int idStockroomVA = insertStockroom(idAddressVA1);
+        insertAndParkVehicle("BG1675DA", new BigDecimal(6.3D), new BigDecimal(1000.5D), 2, idStockroomBG);
+        insertAndParkVehicle("VA1675DA", new BigDecimal(7.3D), new BigDecimal(500.5D), 1, idStockroomVA);
+        String username = "crno.dete";
+        insertUser(username, "Svetislav", "Kisprdilov", "Test_123", idAddressBG1);
+        String courierUsernameBG = "postarBG";
+        insertCourier(courierUsernameBG, "Pera", "Peric", "Postar_73", idAddressBG2, "654321");
+        String courierUsernameVA = "postarVA";
+        insertCourier(courierUsernameVA, "Pera", "Peric", "Postar_73", idAddressVA2, "123456");
+        int type = 1;
+        BigDecimal weight = new BigDecimal(4);
+        int idPackage1 = insertAndAcceptPackage(idAddressBG2, idAddressKG1, username, type, weight);
+        int idPackage2 = insertAndAcceptPackage(idAddressKG2, idAddressBG4, username, type, weight);
+        int idPackage3 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
+        int idPackage4 = insertAndAcceptPackage(idAddressCA2, idAddressBG4, username, type, weight);
+        if(0L != this.courierOperations.getCouriersWithStatus(1).size()) {
+            System.err.println("BAD: COURIER STATUS");
+        }
+
+        this.driveOperation.planingDrive(courierUsernameBG);
+        this.driveOperation.planingDrive(courierUsernameVA);
+//    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(1).size());
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(idPackage1, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage1));
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameVA));
+//    Assert.assertEquals(idPackage3, this.driveOperation.nextStop(courierUsernameVA));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage3));
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameVA));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(KG).contains(Integer.valueOf(idPackage1)));
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameVA));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage4)));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(CA).contains(Integer.valueOf(idPackage3)));
+//    int idPackage5 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
+//    int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
+//    this.driveOperation.planingDrive(courierUsernameBG);
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage6));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
+//    Assert.assertFalse(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage6)));
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage2)));
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage6)));
+//    Assert.assertEquals(idPackage2, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
+//    Assert.assertEquals(idPackage6, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage6));
+//    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage5));
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
+//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4)));
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
+//    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size());
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6)));
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(0L, this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size());
+//    Assert.assertEquals(3L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage4)));
+//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage5)));
+//    this.driveOperation.planingDrive(courierUsernameBG);
+//    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4)));
+//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
+//    Assert.assertEquals(idPackage4, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage4));
+//    Assert.assertEquals(idPackage5, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage5));
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
+//    Assert.assertEquals(0L, this.packageOperations.getAllUndeliveredPackages().size());
+//    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(0).size());
+//    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(1).compareTo(new BigDecimal(0)) > 0));
+//    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(5).compareTo(new BigDecimal(0)) > 0));
+
+
+    }
+
+    
     public static void main(String[] args) {
         try {
-            new StudentTest().test1();
+//            new StudentTest().test1();
+            new StudentTest().test2();
         } catch (Exception ex) {
             Logger.getLogger(StudentTest.class.getName()).log(Level.SEVERE, null, ex);
         }
