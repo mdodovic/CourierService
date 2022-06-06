@@ -55,14 +55,15 @@ public class CourierOperationsImpl implements CourierOperations {
     }
         
     
-    void changeCourierProfit(Long courierId) throws Exception {
+    void changeCourierProfitAndNumberOfDeliveries(Long courierId) throws Exception {
 
-        String fetchRealizedProfitQuery = "SELECT RealizedProfit " +
+        String fetchRealizedProfitQuery = "SELECT RealizedProfit, NumberOfDeliveries " +
                                         "   FROM [dbo].[CurrentDrive] " +
                                         "   WHERE IdU = ?; "; 
         
         String changeCourierProfitQuery = "UPDATE [dbo].[Courier] " +
-                                                "   SET Profit = Profit + ? " +
+                                                "   SET Profit = Profit + ?, " +
+                                                "       DeliveredPackagesNumber = DeliveredPackagesNumber + ? " +
                                                 "   WHERE IdU = ?; ";
                                     
         try(PreparedStatement psFetch = connection.prepareStatement(fetchRealizedProfitQuery);
@@ -72,8 +73,10 @@ public class CourierOperationsImpl implements CourierOperations {
             try(ResultSet rsFetch = psFetch.executeQuery()){
                 if(rsFetch.next()) {
                     BigDecimal realizedProfit = rsFetch.getBigDecimal(1);
+                    int numberOfDeliveries = rsFetch.getInt(2);
                     psUpdate.setBigDecimal(1, realizedProfit);
-                    psUpdate.setLong(2, courierId);
+                    psUpdate.setInt(2, numberOfDeliveries);
+                    psUpdate.setLong(3, courierId);
 
                     int numberOfUpdatedCouriers = psUpdate.executeUpdate();
                     if (numberOfUpdatedCouriers == 1) 

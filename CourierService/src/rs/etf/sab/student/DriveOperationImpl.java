@@ -100,13 +100,23 @@ public class DriveOperationImpl implements DriveOperation {
                                 "				SELECT SUM(P.Price) " +
                                 "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
                                 "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
-                                "                                   WHERE CDP.VisitReason IN (0, 1) " +
+                                "                                   WHERE CDP.IdCD = ? " + 
+                                "                                       AND CDP.VisitReason IN (0, 1) " +
+                                "                           ), " +
+                                "           NumberOfDeliveries = ( " +
+                                "				SELECT COUNT(*) " +
+                                "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
+                                "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
+                                "                                   WHERE CDP.IdCD = ? " + 
+                                "                                       AND CDP.VisitReason IN (0, 1) " +
                                 "                           ) " +
                                 "	WHERE IdCD = ?; ";
         
         try(PreparedStatement ps = connection.prepareStatement(updatePureProfit);) {           
 
             ps.setLong(1, driveId);
+            ps.setLong(2, driveId);
+            ps.setLong(3, driveId);
 
             int updatedDrivesNumber = ps.executeUpdate();
             
@@ -695,7 +705,7 @@ public class DriveOperationImpl implements DriveOperation {
                 
                 // Courier is not driving any more -> status = 1 (not drive)
                 courierOperationsImpl.changeCourierStatus(courierId, 0); 
-                courierOperationsImpl.changeCourierProfit(courierId);
+                courierOperationsImpl.changeCourierProfitAndNumberOfDeliveries(courierId);
             }
         
             

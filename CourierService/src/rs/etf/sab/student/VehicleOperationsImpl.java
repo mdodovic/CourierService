@@ -269,7 +269,7 @@ public class VehicleOperationsImpl implements VehicleOperations {
             return numberOfParkedVehicles != 0;
             
         } catch (SQLException ex) {
-            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         } catch (Exception ex) {
 //            Logger.getLogger(VehicleOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

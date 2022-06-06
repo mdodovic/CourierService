@@ -140,243 +140,243 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         this.driveOperation.planingDrive(courierUsernameBG);
 
         
-//        double d10 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
-//            new AddressOperationsImpl().fetchCoordinates(idAddressCA1),
-//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
-//            
-//            });
-//        double d20 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
-//            new AddressOperationsImpl().fetchCoordinates(idAddressVA1),
-//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
-//                
-//            });
-//        double d30 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
-//            new AddressOperationsImpl().fetchCoordinates(idAddressKG1),
-//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
-//                
-//            });
-//        System.out.println(idAddressBG4);
-//        System.out.println(idPackage1 + " " + d10);
-//        System.out.println(idPackage2 + " " + d20);
-//        System.out.println(idPackage3 + " " + d30);
-//        int type4 = 3;
-//        BigDecimal weight4 = new BigDecimal(2);
-//        int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
-//        if(4L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()){
-//            System.err.println("BAD PACKAGE PLACES");
-//        }
-//        /* stop 1 */
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(1L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(3L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(1L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//
-//        /* stop 2 */
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(2L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//        
-//        /* stop 3 */
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//        
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(3L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//
-//        /* stop 4 */
-//        if(idPackage2 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//
-//        /* stop 5 */
-//        if(idPackage1 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(CA).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(1L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//        
-//        /* stop 6 */
-//        if(idPackage3 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage1)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage3)) {
-//            System.err.println("BAD STATUS");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
-//            System.err.println("BAD CURRENT LOCATION");            
-//        }
-//        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(KG).size()) {
-//            System.err.println("BAD PACKAGES IN CITY");            
-//        }
-//        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD BACKAGES IN VEHICLE");            
-//        }
-//        
-//        /* stop 7 */
-//        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD NEXT STOP");            
-//        }
-//        
-//        if(1L != this.packageOperations.getAllUndeliveredPackages().size()
-//            &&     
-//            this.packageOperations.getAllUndeliveredPackages().contains(Integer.valueOf(idPackage4))
-//            ) {
-//            System.err.println("BAD UNPLANED PACKAGE");
-//        }
-//        double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
-//                this.addressesCoords.get(Integer.valueOf(idAddressBG1)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressBG2)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressBG3)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressBG4)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressVA1)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressCA1)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressKG1)), 
-//                this.addressesCoords.get(Integer.valueOf(idAddressBG1)) });
-//        System.out.println(distance);
-//
-//        BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
-//        System.out.println(profit);
-//        BigDecimal cost = (new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance));
-//        System.out.println(cost);
-//        profit = profit.subtract(cost);
-//        if(!((this.courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0)
-//             && (this.courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(0.95D))) > 0)
-//                )) {
-//            System.err.println("BAD FINAL PRICE");
-//        }
+        double d10 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+            new AddressOperationsImpl().fetchCoordinates(idAddressCA1),
+            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+            
+            });
+        double d20 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+            new AddressOperationsImpl().fetchCoordinates(idAddressVA1),
+            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+                
+            });
+        double d30 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+            new AddressOperationsImpl().fetchCoordinates(idAddressKG1),
+            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+                
+            });
+        System.out.println(idAddressBG4);
+        System.out.println(idPackage1 + " " + d10);
+        System.out.println(idPackage2 + " " + d20);
+        System.out.println(idPackage3 + " " + d30);
+        int type4 = 3;
+        BigDecimal weight4 = new BigDecimal(2);
+        int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
+        if(4L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()){
+            System.err.println("BAD PACKAGE PLACES");
+        }
+        /* stop 1 */
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(3L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(1L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+
+        /* stop 2 */
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(2L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+        
+        /* stop 3 */
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+        
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(3L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+
+        /* stop 4 */
+        if(idPackage2 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+
+        /* stop 5 */
+        if(idPackage1 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(CA).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(1L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+        
+        /* stop 6 */
+        if(idPackage3 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(1L != this.packageOperations.getAllPackagesCurrentlyAtCity(KG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
+        
+        /* stop 7 */
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+        
+        if(1L != this.packageOperations.getAllUndeliveredPackages().size()
+            &&     
+            this.packageOperations.getAllUndeliveredPackages().contains(Integer.valueOf(idPackage4))
+            ) {
+            System.err.println("BAD UNPLANED PACKAGE");
+        }
+        double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+                this.addressesCoords.get(Integer.valueOf(idAddressBG1)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressBG2)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressBG3)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressBG4)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressVA1)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressCA1)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressKG1)), 
+                this.addressesCoords.get(Integer.valueOf(idAddressBG1)) });
+        System.out.println(distance);
+
+        BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
+        System.out.println(profit);
+        BigDecimal cost = (new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance));
+        System.out.println(cost);
+        profit = profit.subtract(cost);
+        if(!((this.courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0)
+             && (this.courierOperations.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(0.95D))) > 0)
+                )) {
+            System.err.println("BAD FINAL PRICE");
+        }
             
     }
     
