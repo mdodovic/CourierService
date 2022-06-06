@@ -12,11 +12,12 @@ SELECT S.*, A.*, City.*
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
 -- vehicle stockroom
-select VS.*, City.Name
+select VS.*, City.Name, V.*
 	from VehicleStockroom VS
 		INNER JOIN [dbo].[Stockroom] S ON (VS.IdS = S.IdS)
 		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA)
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
+		INNER JOIN [dbo].Vehicle V ON (VS.IdV = V.IdV)
 
 -- package stockroom
 select PS.*, City.Name
