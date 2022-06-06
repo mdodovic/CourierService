@@ -108,7 +108,8 @@ CREATE TABLE [CurrentDrive]
 		 DEFAULT  0,
 	[RealizedProfit]     decimal(10,3)  NOT NULL 
 	CONSTRAINT [DF_RealizedProfit]
-		 DEFAULT  0.0
+		 DEFAULT  0.0,
+	[IdA]                bigint  NOT NULL 
 )
 go
 
@@ -361,6 +362,12 @@ ALTER TABLE [CurrentDrive]
 	ADD CONSTRAINT [FK_Vehicle_CurrentDrive] FOREIGN KEY ([IdV]) REFERENCES [Vehicle]([IdV])
 		ON DELETE NO ACTION
 		ON UPDATE CASCADE
+go
+
+ALTER TABLE [CurrentDrive]
+	ADD CONSTRAINT [FK_Address_CourierDrive] FOREIGN KEY ([IdA]) REFERENCES [Address]([IdA])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
 go
 
 
