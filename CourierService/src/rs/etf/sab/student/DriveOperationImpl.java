@@ -13,11 +13,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rs.etf.sab.operations.DriveOperation;
+import rs.etf.sab.student.utility.Pair;
 import rs.etf.sab.student.utility.ReducedPackage;
+import rs.etf.sab.student.utility.Util;
 
 /**
  *
@@ -32,6 +36,9 @@ public class DriveOperationImpl implements DriveOperation {
     private final StockroomOperationsImpl stockroomOperationsImpl = new StockroomOperationsImpl();
     private final CourierOperationsImpl courierOperationsImpl = new CourierOperationsImpl();
     private final VehicleOperationsImpl vehicleOperationsImpl = new VehicleOperationsImpl();
+    
+    private List<ReducedPackage> allDestinationStops;
+    private Long lastStopAddressId;
     
     public long createDrive(Long courierId, Long vehicleId) throws Exception {
 
@@ -195,8 +202,7 @@ public class DriveOperationImpl implements DriveOperation {
         
     }
     
-    private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) throws Exception {
-        
+    private int fetchNextPlanPoint(Long driveId) throws Exception {
         String fetchLastPlanPointQuery = "SELECT MAX(OrdinalVisitNumber) "
                                         + " FROM [dbo].[CurrentDrivePlan] "
                                         + " WHERE IdCD = ?; ";
@@ -215,6 +221,12 @@ public class DriveOperationImpl implements DriveOperation {
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         nextPlanPoint += 1;
+        return nextPlanPoint;
+    }
+    
+    private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) throws Exception {
+        
+        int nextPlanPoint = fetchNextPlanPoint(driveId);
         
         BigDecimal spaceLeft = vehicleCapacity;
         
@@ -232,7 +244,9 @@ public class DriveOperationImpl implements DriveOperation {
 //                    TODO: NOT IMPLEMENTED!!!!!
                     destinationAddressId = null;
                 }                
+                lastStopAddressId = destinationAddressId;
                 insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, rp.getPackageId(), destinationAddressId);
+                allDestinationStops.add(rp);
                 nextPlanPoint += 1;
             }
         }
@@ -240,12 +254,58 @@ public class DriveOperationImpl implements DriveOperation {
         return spaceLeft;
     }
     
+    private void addNextStopsAfterPickingUp(Long driveId, BigDecimal vehicleCapacity) throws Exception {
+        
+        int nextPlanPoint = fetchNextPlanPoint(driveId);
+        System.out.println(lastStopAddressId);
+        System.out.println("rs.etf.sab.student.DriveOperationImpl.addNextStopsAfterPickingUp()");
+        
+        // Sort all destinations by distance from the last picking up address
+        
+        Collections.sort(allDestinationStops, (ds1, ds2)-> {
+            Pair p0 = null;
+            try {
+                p0 = this.addressOperationsImpl.fetchCoordinates(lastStopAddressId);
+            } catch (Exception ex) {
+                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Pair p1 = null;
+            try {
+                p1 = this.addressOperationsImpl.fetchCoordinates(ds1.getEndAddressId());
+            } catch (Exception ex) {
+                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Pair p2 = null;
+            try {
+                p2 = this.addressOperationsImpl.fetchCoordinates(ds2.getEndAddressId());
+            } catch (Exception ex) {
+                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            if(Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p1 }) 
+                    > 
+               Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p2 }))
+                    return 1;
+            if(Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p1 }) 
+                    < 
+               Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p2 }))
+                    return -1;
+            return 0;            
+        });
+        
+        
+        
+    }
+
+    
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
         
         try {
             
             connection.setAutoCommit(false);
+            
+            allDestinationStops = new ArrayList<>();
             
             Long courierId = userOperationsImpl.fetchUserIdByUsername(courierUsername);
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
@@ -279,6 +339,10 @@ public class DriveOperationImpl implements DriveOperation {
 //                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredStockedPackagesFromCourierCity, 1);
             }
             
+            // Phase 2
+            // Order of delivery
+            addNextStopsAfterPickingUp(driveId, vehicleCapacity);
+            
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
         } catch (SQLException ex) {
@@ -311,6 +375,5 @@ public class DriveOperationImpl implements DriveOperation {
     public List<Integer> getPackagesInVehicle(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }    
-
 
 }

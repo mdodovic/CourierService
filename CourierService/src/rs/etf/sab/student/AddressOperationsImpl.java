@@ -16,6 +16,7 @@ import java.util.List;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.GeneralOperations;
+import rs.etf.sab.student.utility.Pair;
 
 /**
  *
@@ -24,6 +25,51 @@ import rs.etf.sab.operations.GeneralOperations;
 public class AddressOperationsImpl implements AddressOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
+    
+    public Pair<Integer, Integer> fetchCoordinates(@NotNull int addressId) throws Exception {
+
+        String getCityIdOfUserQuery = "SELECT Xcoord, Ycoord " +
+                                    "	FROM [dbo].[Address] " +
+                                    "	WHERE IdA = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getCityIdOfUserQuery);) {           
+            
+            ps.setLong(1, addressId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return Pair.createPair(rs.getInt(1), rs.getInt(2));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in fetching coordinates!");
+    }
+    
+    Pair fetchCoordinates(Long addressId)  throws Exception {
+
+        String getCityIdOfUserQuery = "SELECT Xcoord, Ycoord " +
+                                    "	FROM [dbo].[Address] " +
+                                    "	WHERE IdA = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getCityIdOfUserQuery);) {           
+            
+            ps.setLong(1, addressId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                    return Pair.createPair(rs.getInt(1), rs.getInt(2));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in fetching coordinates!");
+    }
+
     
     public long fetchCityIdOfUser(@NotNull Long userId) throws Exception {
 

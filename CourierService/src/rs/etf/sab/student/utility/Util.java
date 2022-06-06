@@ -29,4 +29,9 @@ public class Util {
               .getKey()).intValue(), ((Integer)addresses[i].getValue()).intValue()); 
         return distance;
     }
+    
+    static BigDecimal distance(final int x1, final int y1, final int x2, final int y2) {
+        return BigDecimal.valueOf(Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+    }
+
 }

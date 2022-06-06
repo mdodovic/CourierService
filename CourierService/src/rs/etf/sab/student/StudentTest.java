@@ -10,6 +10,8 @@ import rs.etf.sab.student.utility.Util;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import rs.etf.sab.operations.AddressOperations;
 import rs.etf.sab.operations.CityOperations;
 import rs.etf.sab.operations.CourierOperations;
@@ -89,7 +91,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
     return idPackage;
 }
     
-    public void test1() {
+    public void test1() throws Exception {
         
         generalOperations.eraseAll();
         
@@ -136,7 +138,27 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         BigDecimal weight3 = new BigDecimal(5);
         int idPackage3 = insertAndAcceptPackage(idAddressBG4, idAddressKG1, username, type3, weight3);
         this.driveOperation.planingDrive(courierUsernameBG);
-//    Assert.assertTrue(this.courierOperation.getCouriersWithStatus(1).contains(courierUsernameBG));
+
+        
+//        double d10 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+//            new AddressOperationsImpl().fetchCoordinates(idAddressCA1),
+//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+//            
+//            });
+//        double d20 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+//            new AddressOperationsImpl().fetchCoordinates(idAddressVA1),
+//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+//                
+//            });
+//        double d30 = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+//            new AddressOperationsImpl().fetchCoordinates(idAddressKG1),
+//            new AddressOperationsImpl().fetchCoordinates(idAddressBG4)            
+//                
+//            });
+//        System.out.println(idAddressBG4);
+//        System.out.println(idPackage1 + " " + d10);
+//        System.out.println(idPackage2 + " " + d20);
+//        System.out.println(idPackage3 + " " + d30);
         int type4 = 3;
         BigDecimal weight4 = new BigDecimal(2);
         int idPackage4 = insertAndAcceptPackage(idAddressBG2, idAddressKG2, username, type4, weight4);
@@ -221,7 +243,11 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
     }
     
     public static void main(String[] args) {
-        new StudentTest().test1();
+        try {
+            new StudentTest().test1();
+        } catch (Exception ex) {
+            Logger.getLogger(StudentTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 }
