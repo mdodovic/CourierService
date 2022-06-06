@@ -132,7 +132,9 @@ CREATE TABLE [CurrentDrivePlan]
 	CONSTRAINT [DF_OrdinalVisitNumber]
 		 DEFAULT  0,
 	[VisitReason]        integer  NOT NULL ,
-	[IdP]                bigint  NULL ,
+	[IdP]                bigint  NULL 
+	CONSTRAINT [DF_IdP]
+		 DEFAULT  NULL,
 	[IdA]                bigint  NOT NULL 
 )
 go
