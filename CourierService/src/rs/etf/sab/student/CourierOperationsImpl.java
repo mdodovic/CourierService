@@ -108,7 +108,7 @@ public class CourierOperationsImpl implements CourierOperations {
         String getAllUsernamesByStatusQuery = "SELECT U.Username " +
                                     "       FROM [dbo].[Courier] C " +
                                     "           INNER JOIN [dbo].[User] U on (C.IdU = U.IdU) " +
-                                    "       WHERE C.Status = ? " +
+                                    "       WHERE C.CourierStatus = ? " +
                                     "       ORDER BY U.Username ASC";
        
         try(PreparedStatement ps = connection.prepareStatement(getAllUsernamesByStatusQuery);) {
