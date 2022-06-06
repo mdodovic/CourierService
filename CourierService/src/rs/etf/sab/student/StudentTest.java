@@ -345,12 +345,15 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD BACKAGES IN VEHICLE");            
         }
         
+        /* stop 7 */
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
 
-//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage4));
 //    Assert.assertEquals(1L, this.packageOperations.getAllUndeliveredPackages().size());
 //    Assert.assertTrue(this.packageOperations.getAllUndeliveredPackages().contains(Integer.valueOf(idPackage4)));
-//    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(0).size());
+
         double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
                 this.addressesCoords.get(Integer.valueOf(idAddressBG1)), 
                 this.addressesCoords.get(Integer.valueOf(idAddressBG2)), 
@@ -361,13 +364,9 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
                 this.addressesCoords.get(Integer.valueOf(idAddressKG1)), 
                 this.addressesCoords.get(Integer.valueOf(idAddressBG1)) });
         System.out.println(distance);
-        distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
-                this.addressesCoords.get(Integer.valueOf(idAddressKG1)), 
-                this.addressesCoords.get(Integer.valueOf(idAddressBG1)) });
-        System.out.println(distance);
 
-//    BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
-//    profit = profit.subtract((new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance)));
+        BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
+        profit = profit.subtract((new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance)));
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0));
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(0.95D))) > 0));
 

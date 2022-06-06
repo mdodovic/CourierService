@@ -181,16 +181,28 @@ public class DriveOperationImpl implements DriveOperation {
 
     private void insertNextStopInCurrentDrivingPlan(Long driveId, int nextPlanPoint, int visitReason, Long packageId, Long destinationAddressId) throws Exception {
         
+                
         String insertNextStopQuery = "INSERT INTO [dbo].[CurrentDrivePlan] " +
-                                    "       (IdCD, OrdinalVisitNumber, VisitReason, IdP, IdA)" +
-                                    "   VALUES (?, ?, ?, ?, ?) ";
+                                    "       (IdCD, OrdinalVisitNumber, VisitReason, ";
+        if(packageId != null) {
+            insertNextStopQuery += "IdP, "; 
+        }
+        insertNextStopQuery += " IdA) VALUES (?, ?, ?, ";
+        if(packageId != null) {
+            insertNextStopQuery += "?, ";
+        }
+        insertNextStopQuery += " ?) ";
         
         try(PreparedStatement ps = connection.prepareStatement(insertNextStopQuery);) {           
             ps.setLong(1, driveId);
             ps.setInt(2, nextPlanPoint);
             ps.setInt(3, visitReason);
-            ps.setLong(4, packageId);
-            ps.setLong(5, destinationAddressId);
+            if(packageId != null) {
+                ps.setLong(4, packageId);
+                ps.setLong(5, destinationAddressId);
+            } else {
+                ps.setLong(4, destinationAddressId);
+            }
             
             int numberOfInsertedNextStops = ps.executeUpdate();
             if(numberOfInsertedNextStops == 1)
@@ -339,7 +351,6 @@ public class DriveOperationImpl implements DriveOperation {
         }
     }
 
-    
     @Override
     public boolean planingDrive(@NotNull String courierUsername) {
         
@@ -385,8 +396,15 @@ public class DriveOperationImpl implements DriveOperation {
             // Phase 2
             // Order of delivery
             addNextStopsAfterPickingUp(driveId, vehicleCapacity, courierCityId);
-            
-            System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
+
+
+            // Phase 3
+            // Return to stockroom
+            // There Vehicle and Packages will be leaved
+            int nextPlanPoint = fetchNextPlanPoint(driveId);
+            insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, 3, null, startAddressId);            
+
+        System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
         } catch (SQLException ex) {
             Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -603,6 +621,15 @@ public class DriveOperationImpl implements DriveOperation {
                 updatePackageStatusInPackage(packageId, 3);
                 removePackageFromCurrentDrivePackage(currentDriveId, packageId);
                 
+            } else if(visitReason == 3) {
+                returnValue = -1;
+                //leavePackageToPackageStockroom(currentDriveId, packageId);
+                //leaveVehicleToVehicleStockroom...
+                //this.vehicleOperationsImpl.parkVehicle(getCurrentPlanQuery, visitReason);
+
+                // Courier is not driving any more -> status = 1 (not drive)
+                courierOperationsImpl.changeCourierStatus(courierId, 0); 
+
             }
         
             
