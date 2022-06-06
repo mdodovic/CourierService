@@ -90,6 +90,29 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
     }
     
+    public Long fetchAddressIdByStockroom(Long stockroomCourierCityId) throws Exception {
+        
+        String getStockroomByCityIdQuery = "SELECT IdA " +
+                                            "	FROM [dbo].[Stockroom] " +
+                                            "	WHERE IdS = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(getStockroomByCityIdQuery);) {           
+            
+            ps.setLong(1, stockroomCourierCityId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                if(rs.next()){
+                        return rs.getLong(1);
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Stockroom with id: " + stockroomCourierCityId + " does not exists!");
+        
+    }
+    
 
     @Override
     public int insertStockroom(int address) {
@@ -259,5 +282,6 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
         
     }
-    
+
+
 }

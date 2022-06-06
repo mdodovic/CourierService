@@ -166,17 +166,40 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD PACKAGE PLACES");
         }
         
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
-//    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage2));
-//    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage3));
-//    Assert.assertEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage1));
-//    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage2));
-//    Assert.assertNotEquals(-1L, this.packageOperations.getCurrentLocationOfPackage(idPackage3));
-//    Assert.assertEquals(3L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
-//    Assert.assertEquals(1L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD STATUS");            
+        }
+        if(1L != this.packageOperations.getDeliveryStatus(idPackage3)) {
+            System.err.println("BAD STATUS");            
+        }
+        
+        if(-1L != this.packageOperations.getCurrentLocationOfPackage(idPackage1)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage2)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(-1L == this.packageOperations.getCurrentLocationOfPackage(idPackage3)) {
+            System.err.println("BAD CURRENT LOCATION");            
+        }
+        if(3L != this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()) {
+            System.err.println("BAD PACKAGES IN CITY");            
+        }
+        if(1L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD BACKAGES IN VEHICLE");            
+        }
 
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
+
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD NEXT STOP");            
+        }
+
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage1));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
 //    Assert.assertEquals(1L, this.packageOperations.getDeliveryStatus(idPackage3));
@@ -231,10 +254,15 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertEquals(1L, this.packageOperations.getAllUndeliveredPackages().size());
 //    Assert.assertTrue(this.packageOperations.getAllUndeliveredPackages().contains(Integer.valueOf(idPackage4)));
 //    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(0).size());
-//    double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { this.addressesCoords.get(Integer.valueOf(idAddressBG1)), this.addressesCoords.get(Integer.valueOf(idAddressBG2)), this.addressesCoords
-//          .get(Integer.valueOf(idAddressBG3)), this.addressesCoords.get(Integer.valueOf(idAddressBG4)), this.addressesCoords
-//          .get(Integer.valueOf(idAddressVA1)), this.addressesCoords.get(Integer.valueOf(idAddressCA1)), this.addressesCoords.get(Integer.valueOf(idAddressKG1)), this.addressesCoords
-//          .get(Integer.valueOf(idAddressBG1)) });
+    double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+            this.addressesCoords.get(Integer.valueOf(idAddressBG1)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressBG2)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressBG3)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressBG4)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressVA1)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressCA1)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressKG1)), 
+            this.addressesCoords.get(Integer.valueOf(idAddressBG1)) });
 //    BigDecimal profit = ((BigDecimal)this.packagePrice.get(Integer.valueOf(idPackage1))).add(this.packagePrice.get(Integer.valueOf(idPackage2))).add(this.packagePrice.get(Integer.valueOf(idPackage3)));
 //    profit = profit.subtract((new BigDecimal(36)).multiply(new BigDecimal(6.3D)).multiply(new BigDecimal(distance)));
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(3).compareTo(profit.multiply(new BigDecimal(1.05D))) < 0));

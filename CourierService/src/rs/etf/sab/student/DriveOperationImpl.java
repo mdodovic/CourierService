@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import rs.etf.sab.operations.DriveOperation;
@@ -40,18 +41,19 @@ public class DriveOperationImpl implements DriveOperation {
     private List<ReducedPackage> allDestinationStops;
     private Long lastStopAddressId;
     
-    public long createDrive(Long courierId, Long vehicleId) throws Exception {
+    public long createDrive(Long courierId, Long vehicleId, Long startAddressId) throws Exception {
 
         String createCurrentDriveQuery = "INSERT INTO [dbo].[CurrentDrive] " +
-                                        "       (IdU, IdV) " +
-                                        "   VALUES (?, ?) ";
+                                        "       (IdU, IdV, IdA) " +
+                                        "   VALUES (?, ?, ?) ";
 
         try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery, Statement.RETURN_GENERATED_KEYS);) {           
 
             ps.setLong(1, courierId);
             ps.setLong(2, vehicleId);
+            ps.setLong(3, startAddressId);
             
-            int numberOfDrivesCreated = ps.executeUpdate();
+            ps.executeUpdate();
             
             try(ResultSet rs = ps.getGeneratedKeys()){
                 if(rs.next()) {
@@ -253,35 +255,18 @@ public class DriveOperationImpl implements DriveOperation {
         
         return spaceLeft;
     }
-    
-    private void addNextStopsAfterPickingUp(Long driveId, BigDecimal vehicleCapacity) throws Exception {
-        
-        int nextPlanPoint = fetchNextPlanPoint(driveId);
-        System.out.println(lastStopAddressId);
-        System.out.println("rs.etf.sab.student.DriveOperationImpl.addNextStopsAfterPickingUp()");
-        
-        // Sort all destinations by distance from the last picking up address
-        
-        Collections.sort(allDestinationStops, (ds1, ds2)-> {
-            Pair p0 = null;
+
+    private void sortByDestination(List<ReducedPackage> packageList, Long baseAddressId) {
+        Collections.sort(packageList, (ds1, ds2)-> {
+            Pair p0 = null, p1 = null, p2 = null;
             try {
-                p0 = this.addressOperationsImpl.fetchCoordinates(lastStopAddressId);
-            } catch (Exception ex) {
-                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Pair p1 = null;
-            try {
+                p0 = this.addressOperationsImpl.fetchCoordinates(baseAddressId);
                 p1 = this.addressOperationsImpl.fetchCoordinates(ds1.getEndAddressId());
-            } catch (Exception ex) {
-                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Pair p2 = null;
-            try {
                 p2 = this.addressOperationsImpl.fetchCoordinates(ds2.getEndAddressId());
             } catch (Exception ex) {
                 Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             if(Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p1 }) 
                     > 
                Util.getDistance((Pair<Integer, Integer>[])new Pair[] { p0, p2 }))
@@ -292,9 +277,66 @@ public class DriveOperationImpl implements DriveOperation {
                     return -1;
             return 0;            
         });
+    }
+    
+    private List<ReducedPackage> fetchAllPackagesFromTheSameDestinationCity(Long currentCity) {
+        List<ReducedPackage> packagesFromTheSameDestCity = new ArrayList<>();
+        List<Integer> packagesFromTheSameDestCityIndexes = new ArrayList<>();
+
+        for(int i = 0; i < allDestinationStops.size(); i++) {
+            ReducedPackage rp = allDestinationStops.get(i);
+            if(Objects.equals(rp.getEndCityId(), currentCity)) {
+                packagesFromTheSameDestCity.add(rp);
+                packagesFromTheSameDestCityIndexes.add(i);
+            }
+        }
+        for(int i: packagesFromTheSameDestCityIndexes) {
+            allDestinationStops.remove(i);
+        }
         
+        return packagesFromTheSameDestCity;
+    }
+    
+    private void addNextStopsAfterPickingUp(Long driveId, BigDecimal vehicleCapacity, Long currentCity) throws Exception {
         
+        int nextPlanPoint = fetchNextPlanPoint(driveId);
         
+        // TODO: SAME CITY AS COURIER
+                
+        while(!allDestinationStops.isEmpty()) {
+            // Sort all destinations by distance from the last picking up address
+            sortByDestination(allDestinationStops, lastStopAddressId);            
+            // fetch first stop, add it to 
+            ReducedPackage rp = allDestinationStops.remove(0);
+            currentCity = rp.getEndCityId();
+            List<ReducedPackage> packagesForTheSameCity = fetchAllPackagesFromTheSameDestinationCity(currentCity);
+            
+            lastStopAddressId = rp.getEndAddressId();
+            insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, 2, rp.getPackageId(), lastStopAddressId);
+            allDestinationStops.remove(rp);
+            nextPlanPoint += 1;
+            
+//            nextPlanPoint = insertAllOthersPackagesFromTheSameDestinationCity(driveId, packagesForTheSameCity, nextPlanPoint);
+            
+//            // Collect packages from courier's city (first from addresses then from stockroom)
+//            
+//            List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
+////            TODO: BAD IMPLEMENTATION            
+////            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
+//            
+//            // Add them to the vehicle (up to the vehicle's maximal weight)
+//            
+//            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, 3);
+//
+////            TODO: BAD IMPLEMENTATION            
+//            if (vehicleCapacity.compareTo(BigDecimal.ZERO) > 0){
+//                System.out.println("Check stockroom " + vehicleCapacity);
+////                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredStockedPackagesFromCourierCity, 3);
+//            }
+
+            
+            
+        }
     }
 
     
@@ -310,6 +352,7 @@ public class DriveOperationImpl implements DriveOperation {
             Long courierId = userOperationsImpl.fetchUserIdByUsername(courierUsername);
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
             Long stockroomCourierCityId = stockroomOperationsImpl.fetchStockroomIdByCityId(courierCityId);            
+            Long startAddressId = stockroomOperationsImpl.fetchAddressIdByStockroom(stockroomCourierCityId);
             
             // Courier is now driving -> status = 1 (drive)
             courierOperationsImpl.changeCourierStatus(courierId, 1); 
@@ -319,7 +362,7 @@ public class DriveOperationImpl implements DriveOperation {
             BigDecimal vehicleCapacity = vehicleOperationsImpl.fetchCapacity(vehicleId); 
             
             // Create current drive and record this drive
-            Long driveId = createDrive(courierId, vehicleId);
+            Long driveId = createDrive(courierId, vehicleId, startAddressId);
             logDrive(courierId, vehicleId);
             
             // Phase 1
@@ -341,7 +384,7 @@ public class DriveOperationImpl implements DriveOperation {
             
             // Phase 2
             // Order of delivery
-            addNextStopsAfterPickingUp(driveId, vehicleCapacity);
+            addNextStopsAfterPickingUp(driveId, vehicleCapacity, courierCityId);
             
             System.out.println("rs.etf.sab.student.DriveOperationImpl.planingDrive()");
 
@@ -365,15 +408,225 @@ public class DriveOperationImpl implements DriveOperation {
         return false;
         
     }
+    
+    // 
+    
+    private void updateProfitCurrentPlanPointAndAddressInCurrentDrive(Long currentDriveId, Long endAddressId, double distance, int nextPlanPoint, Long vehicleId) throws Exception {
 
+        String updateCurrentDrive = "UPDATE [dbo].[CurrentDrive] " +
+                                    "	SET " +
+                                    "		IdA = ?, " +
+                                    "		CurrentPlanPoint = ?, " +
+                                    "		RealizedProfit = RealizedProfit - ? " +
+                                    "	WHERE IdCD = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(updateCurrentDrive);) {           
+
+            ps.setLong(1, endAddressId);
+            ps.setInt(2, nextPlanPoint);
+            // TODO: multiply this with vehicle fuel consumption
+            ps.setBigDecimal(3, new BigDecimal(distance));
+            ps.setLong(4, currentDriveId);
+
+            int updatedCurrentDriveNumber = ps.executeUpdate();
+            if(updatedCurrentDriveNumber == 1)
+                return;
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in updating current drive!");
+       
+    }    
+    
+    private void updatePackageStatusInPackage(Long packageId, int newStatus) throws Exception {
+
+        String updatePackage = "UPDATE [dbo].[Package] " +
+                                    "	SET " +
+                                    "		PackageStatus = ? " +
+                                    "	WHERE IdP = ?; ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(updatePackage);) {           
+
+            ps.setInt(1, newStatus);
+            ps.setLong(2, packageId);
+
+            int updatedPackagesStatusNumber = ps.executeUpdate();
+            
+            if(updatedPackagesStatusNumber == 1)
+                return;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in updating package!");
+    }
+
+    private long insertPackageInCurrentDrivePackage(Long currentDriveId, Long packageId, int deliverySatus) throws Exception {
+
+        String createCurrentDriveQuery = "INSERT INTO [dbo].[CurrentDrivePackage] " +
+                                        "       (IdCD, IdP, DeliveryStatus) " +
+                                        "   VALUES (?, ?, ?) ";
+
+        try(PreparedStatement ps = connection.prepareStatement(createCurrentDriveQuery, Statement.RETURN_GENERATED_KEYS);) {           
+
+            ps.setLong(1, currentDriveId);
+            ps.setLong(2, packageId);
+            ps.setInt(3, deliverySatus);
+            
+            ps.executeUpdate();
+            
+            try(ResultSet rs = ps.getGeneratedKeys()){
+                if(rs.next()) {
+                    return rs.getLong(1);
+                }
+            }               
+
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+
+        throw new Exception("Error in inserting package into drive vehicle!");                
+    }
+
+    private void deleteCurrentDrivePlan(Long planId) throws Exception {
+        String deleteCurrentDrivePlan = "DELETE FROM [dbo].[CurrentDrivePlan] " 
+                                    + " WHERE IdPlan = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(deleteCurrentDrivePlan);) {           
+            ps.setLong(1, planId);
+
+            int numberOfDeletedPlans = ps.executeUpdate();
+            if(numberOfDeletedPlans == 1)
+                return; 
+            
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+                
+        throw new Exception("Error in deleting current drive plan!");             
+        
+    }
+    
+    
+    
     @Override
-    public int nextStop(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public int nextStop(@NotNull String courierUsername) {
+        int returnValue = -3;
+        try {
+            
+            connection.setAutoCommit(false);
+            
+            Long courierId = this.userOperationsImpl.fetchUserIdByUsername(courierUsername);
+            
+            String getCurrentDriveQuery = "SELECT IdCD, IdV, CurrentPlanPoint, IdA " +
+                                            "	FROM [dbo].[CurrentDrive] " +
+                                            "	WHERE IdU = ?; ";
+            Long currentDriveId = -1L;
+            Long vehicleId = -1L;
+            int currentPlanPoint = -1;
+            Long startAddressId = -1L;
+            try(PreparedStatement ps = connection.prepareStatement(getCurrentDriveQuery);) {           
+
+                ps.setLong(1, courierId);
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()){
+                        currentDriveId = rs.getLong("IdCD");
+                        vehicleId = rs.getLong("IdV");
+                        currentPlanPoint = rs.getInt("CurrentPlanPoint");
+                        startAddressId = rs.getLong("IdA");
+                    }
+                }
+            }
+            
+            String getCurrentPlanQuery = "SELECT IdPlan, VisitReason, IdP, IdA " +
+                                            "	FROM [dbo].[CurrentDrivePlan] " +
+                                            "	WHERE OrdinalVisitNumber = ?; ";
+            Long planId = -1L;
+            int visitReason = -1;
+            Long packageId = -1L;
+            Long endAddressId = -1L;
+
+            try(PreparedStatement ps = connection.prepareStatement(getCurrentPlanQuery);) {           
+
+                ps.setInt(1, currentPlanPoint + 1);
+                try(ResultSet rs = ps.executeQuery()){
+                    if(rs.next()){
+                        planId = rs.getLong("IdPlan");
+                        visitReason = rs.getInt("VisitReason");
+                        packageId = rs.getLong("IdP");
+                        endAddressId = rs.getLong("IdA");
+ 
+                    }
+                }
+            }
+            
+            double distance = Util.getDistance((Pair<Integer, Integer>[])new Pair[] { 
+                this.addressOperationsImpl.fetchCoordinates(startAddressId), 
+                this.addressOperationsImpl.fetchCoordinates(endAddressId), 
+            });
+            
+            updateProfitCurrentPlanPointAndAddressInCurrentDrive(currentDriveId, endAddressId, distance, currentPlanPoint + 1, vehicleId);
+            
+            if(visitReason == 0) {
+                returnValue = -2; // package is picked up: return -2
+                updatePackageStatusInPackage(packageId, 2);
+                insertPackageInCurrentDrivePackage(currentDriveId, packageId, 0);
+            } 
+            
+            deleteCurrentDrivePlan(planId);
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+            try {
+                connection.rollback();
+            } catch (SQLException ex1) {
+                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return returnValue;
+        
     }
 
     @Override
-    public List<Integer> getPackagesInVehicle(String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Integer> getPackagesInVehicle(String courierUsername) {
+
+        List<Integer> listOfIds = new ArrayList<Integer>();
+        
+        String getAllPackagesInVehicleQuery = "SELECT CDP.IdP " +
+                                            "	FROM CurrentDrivePackage CDP " +
+                                            "		INNER JOIN CurrentDrive CD ON (CD.IdCD = CDP.IdCD) " +
+                                            "	WHERE CD.IdU = ?; ";
+
+        try(PreparedStatement ps = connection.prepareStatement(getAllPackagesInVehicleQuery);) {           
+            Long userId = this.userOperationsImpl.fetchUserIdByUsername(courierUsername);
+            ps.setLong(1, userId);
+            try(ResultSet rs = ps.executeQuery()){
+                
+                while(rs.next()){
+                    listOfIds.add(rs.getInt(1));
+                }
+            }
+        } catch (SQLException ex) {
+//            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        } catch (Exception ex) {
+            Logger.getLogger(DriveOperationImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listOfIds;        
+
     }    
+
+ 
 
 }
