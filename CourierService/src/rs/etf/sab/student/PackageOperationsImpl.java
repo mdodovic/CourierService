@@ -225,7 +225,7 @@ public class PackageOperationsImpl implements PackageOperations {
 
     @Override
     public List<Integer> getAllPackagesCurrentlyAtCity(int cityId) {
-        // TODO: CHECK THIS!!! (2nd and 3rd query are not tested yet)
+
         List<Integer> listOfIds = new ArrayList<Integer>();
         
         String getAllAcceptedIdPFromCityQuery = "SELECT P.IdP " +
