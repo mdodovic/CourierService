@@ -170,7 +170,7 @@ public class DriveOperationImpl implements DriveOperation {
     }
 
     
-    public List<ReducedPackage> fetchUndeliveredUnstockedPackagesFromCourierCity(Long courierCityId) throws Exception {
+    public List<ReducedPackage> fetchUndeliveredUnstockedPackagesFromGivenCity(Long cityId) throws Exception {
 
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
@@ -191,7 +191,7 @@ public class DriveOperationImpl implements DriveOperation {
                 
         try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredUnstockedPackagesFromCourierCityQuery);) {
             
-            ps.setLong(1, courierCityId);
+            ps.setLong(1, cityId);
             
             try(ResultSet rs = ps.executeQuery()){
             
@@ -430,7 +430,7 @@ public class DriveOperationImpl implements DriveOperation {
             // First packages are collected from (users') addresses 
             // Then they are collected from currentCity's stockroom
             
-            List<ReducedPackage> undeliveredUnstockedPackagesFromCurrentCity = fetchUndeliveredUnstockedPackagesFromCourierCity(currentCity);
+            List<ReducedPackage> undeliveredUnstockedPackagesFromCurrentCity = fetchUndeliveredUnstockedPackagesFromGivenCity(currentCity);
 ////            TODO: BAD IMPLEMENTATION            
 ////            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
 //            
@@ -477,9 +477,9 @@ public class DriveOperationImpl implements DriveOperation {
             // Phase 1
             // Collect packages from courier's city (first from addresses then from stockroom)
             
-            List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(courierCityId);
+            List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromGivenCity(courierCityId);
 //            TODO: BAD IMPLEMENTATION            
-//            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
+//            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromGivenCity(courierCityId);
             
             // Add them to the vehicle (up to the vehicle's maximal weight)
             

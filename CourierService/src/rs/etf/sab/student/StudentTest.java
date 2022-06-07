@@ -498,7 +498,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
 
 
-//    this.driveOperation.planingDrive(courierUsernameBG);
+        this.driveOperation.planingDrive(courierUsernameBG);
 
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage6));
@@ -542,7 +542,7 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 //    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(0L, this.packageOperations.getAllUndeliveredPackages().size());
 //    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(0).size());
-//    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(1).compareTo(new BigDecimal(0)) > 0));
+        BigDecimal profit1 = this.courierOperations.getAverageCourierProfit(1);
 //    Assert.assertTrue((this.courierOperation.getAverageCourierProfit(5).compareTo(new BigDecimal(0)) > 0));
 
 
