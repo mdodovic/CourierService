@@ -220,13 +220,12 @@ public class DriveOperationImpl implements DriveOperation {
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
         String fetchAllUndeliveredStockedPackagesFromCityQuery = "" +
-            " SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, " +
-            " P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity " +
-            "	FROM [dbo].[PackageStockroom] PS \n" +
+            " SELECT P.IdP AS IdP, S.IdA AS StartAddress, P.IdEndAddress AS EndAddress, " +
+            " P.Weight AS Weight, P.Price AS Price, PSA.IdC AS StartCity, EA.IdC AS EndCity " +
+            "	FROM [dbo].[PackageStockroom] PS " +
             "       INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
             "       INNER JOIN [dbo].[Address] PSA on (S.IdA = PSA.IdA) " +
             "       INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
-            "       INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
             "       INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
             "	WHERE PSA.IdC = ? " +
             "       AND PackageStatus = 2 " +
