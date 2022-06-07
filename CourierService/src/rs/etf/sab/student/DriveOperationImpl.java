@@ -257,9 +257,8 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
 
-    private void insertNextStopInCurrentDrivingPlan(Long driveId, int nextPlanPoint, int visitReason, Long packageId, Long destinationAddressId) throws Exception {
+    private Long insertNextStopInCurrentDrivingPlan(Long driveId, int nextPlanPoint, int visitReason, Long packageId, Long destinationAddressId) throws Exception {
         
-                
         String insertNextStopQuery = "INSERT INTO [dbo].[CurrentDrivePlan] " +
                                     "       (IdCD, OrdinalVisitNumber, VisitReason, ";
         if(packageId != null) {
@@ -271,7 +270,7 @@ public class DriveOperationImpl implements DriveOperation {
         }
         insertNextStopQuery += " ?) ";
         
-        try(PreparedStatement ps = connection.prepareStatement(insertNextStopQuery);) {           
+        try(PreparedStatement ps = connection.prepareStatement(insertNextStopQuery, Statement.RETURN_GENERATED_KEYS);) {           
             ps.setLong(1, driveId);
             ps.setInt(2, nextPlanPoint);
             ps.setInt(3, visitReason);
@@ -283,8 +282,13 @@ public class DriveOperationImpl implements DriveOperation {
             }
             
             int numberOfInsertedNextStops = ps.executeUpdate();
-            if(numberOfInsertedNextStops == 1)
-                return;
+            if(numberOfInsertedNextStops == 1) {
+                try(ResultSet rs = ps.getGeneratedKeys()){
+                    if(rs.next()) {
+                        return rs.getLong(1);
+                    }
+                }
+            }
             
         } catch (SQLException ex) {
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
@@ -316,16 +320,39 @@ public class DriveOperationImpl implements DriveOperation {
         return nextPlanPoint;
     }
     
+    private void markStockedPackageToBePickedUp(Long currentDrivePlanId, Long packageId, Long packageStockroomId) throws Exception {
+        
+        String insertPackageFromStockroomForCurrentDrive = "INSERT INTO [dbo].[StockedPackagesForCurrentDrive] " +
+                                                            " (IdPlan, IdPS, IdP) " + 
+                                                            " VALUES (?, ?, ?) ";
+        
+        try(PreparedStatement ps = connection.prepareStatement(insertPackageFromStockroomForCurrentDrive);) {           
+            ps.setLong(1, currentDrivePlanId);
+            ps.setLong(2, packageStockroomId);
+            ps.setLong(3, packageId);
+            
+            ps.executeUpdate();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+            throw new Exception("Error in inserting next stop!");          
+        }
+       
+    }
+
+    
     private BigDecimal addNextStopsIntoCurrentDrivePlan(Long driveId, BigDecimal vehicleCapacity, List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity, int visitReason) throws Exception {
         
         int nextPlanPoint = fetchNextPlanPoint(driveId);
         
         BigDecimal spaceLeft = vehicleCapacity;
+        boolean firstPackageFromStockroom = true;
+        Long currentDrivePlanId = null;
+        Long destinationAddressId = null;
         
         for(ReducedPackage rp: undeliveredUnstockedPackagesFromCourierCity) {
             if(spaceLeft.compareTo(rp.getWeight()) > 0) {
                 spaceLeft = spaceLeft.subtract(rp.getWeight());
-                Long destinationAddressId = null;
 
                 if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromUserAddressToDeliver.ordinal()) {
                     // 0 - Pick up Package (IdP) from the User Address (IdA) to deliver
@@ -337,13 +364,16 @@ public class DriveOperationImpl implements DriveOperation {
 
                 } else if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromStockroomToDeliver.ordinal()) {
                     // 1 - Pick up Packages (IdP = null, those IdP are in StockRoom for given IdA) from the Stockroom Address (IdA) to deliver
-                    // there are multiple rows with (1, IdA) packages, 
-                    // all of them should be transfered to CurrentDrivePackages and removed from CurrendDrivePlan
-                    destinationAddressId = ... stockroom address
-                    lastStopAddressId = destinationAddressId;
-                    insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, rp.getPackageId(), destinationAddressId);
+                    if(firstPackageFromStockroom == true) {
+                        firstPackageFromStockroom = false;
+                        destinationAddressId = rp.getStartAddressId();
+                        lastStopAddressId = destinationAddressId;
+                        currentDrivePlanId = insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, null, destinationAddressId);
+                        nextPlanPoint += 1;
+                    }
+                    Long packageStockroomId = this.stockroomOperationsImpl.fetchStockroomIdByCityId(this.addressOperationsImpl.fetchCityIdOfAddress(lastStopAddressId));
                     allDestinationStops.add(rp);
-                    nextPlanPoint += 1;
+                    markStockedPackageToBePickedUp(currentDrivePlanId, rp.getPackageId(), packageStockroomId);
                     
                 } else if(visitReason == VisitReason_CurrentDrivePlan.DeliverPackage.ordinal()) {
                     // 2 - Deliver Package (IdP) to the Destination Address (IdA)
@@ -412,7 +442,14 @@ public class DriveOperationImpl implements DriveOperation {
         
         int nextPlanPoint = fetchNextPlanPoint(driveId);
         
-        // TODO: SAME CITY AS COURIER - this is currentCity, remove them from allDestinationStops, sort, 
+        List<ReducedPackage> packagesForDeliveryToCourierCity = fetchAllPackagesFromTheSameDestinationCity(currentCity);
+        for(ReducedPackage rp : packagesForDeliveryToCourierCity) {
+            lastStopAddressId = rp.getEndAddressId();
+            insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, VisitReason_CurrentDrivePlan.DeliverPackage.ordinal(), rp.getPackageId(), lastStopAddressId);
+            nextPlanPoint += 1;
+        }
+        
+        
                 
         while(!allDestinationStops.isEmpty()) {
             // Sort all destinations by distance from the last picking up address
