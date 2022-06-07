@@ -215,24 +215,26 @@ public class DriveOperationImpl implements DriveOperation {
 
     }
     
-    public List<ReducedPackage> fetchUndeliveredStockedPackagesFromCourierCity(Long courierCityId) throws Exception {
+    public List<ReducedPackage> fetchUndeliveredStockedPackagesFromGivenCity(Long cityId) throws Exception {
 
         List<ReducedPackage> listOfPackages = new ArrayList<ReducedPackage>();
         
-        String fetchAllUndeliveredStockedPackagesFromCourierCityQuery = null;
-//                "SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity" +
-//                "	FROM [dbo].[PackageStockroom] PS " +
-//                "		INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
-//                "		INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
-//                "		INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
-//                "		INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
-//                "	WHERE SA.IdC = ? " +
-//                "		AND PackageStatus = 1 " +
-//                "	ORDER BY P.CreateTime, P.Weight; ";
+        String fetchAllUndeliveredStockedPackagesFromCityQuery = "" +
+            " SELECT P.IdP AS IdP, SA.IdA AS StartAddress, P.IdEndAddress AS EndAddress, " +
+            " P.Weight AS Weight, P.Price AS Price, SA.IdC AS StartCity, EA.IdC AS EndCity " +
+            "	FROM [dbo].[PackageStockroom] PS \n" +
+            "       INNER JOIN [dbo].[Stockroom] S ON (PS.IdS = S.IdS) " +
+            "       INNER JOIN [dbo].[Address] PSA on (S.IdA = PSA.IdA) " +
+            "       INNER JOIN [dbo].[Package] P ON (PS.IdP = P.IdP) " +
+            "       INNER JOIN [dbo].[Address] SA on (S.IdA = SA.IdA) " +
+            "       INNER JOIN [dbo].[Address] EA on (P.IdEndAddress = EA.IdA) " +
+            "	WHERE PSA.IdC = ? " +
+            "       AND PackageStatus = 2 " +
+            "	ORDER BY P.CreateTime, P.Weight; ";
                 
-        try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredStockedPackagesFromCourierCityQuery);) {
+        try(PreparedStatement ps = connection.prepareStatement(fetchAllUndeliveredStockedPackagesFromCityQuery);) {
             
-            ps.setLong(1, courierCityId);
+            ps.setLong(1, cityId);
             
             try(ResultSet rs = ps.executeQuery()){
             
@@ -334,12 +336,16 @@ public class DriveOperationImpl implements DriveOperation {
                     allDestinationStops.add(rp);
                     nextPlanPoint += 1;
 
-//                } else if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromStockroomToDeliver.ordinal()) {
-////                    TODO: NOT IMPLEMENTED!!!!!
-//                    // 1 - Pick up Packages (IdP = null, those IdP are in StockRoom for given IdA) from the Stockroom Address (IdA) to deliver
-//                    // there are multiple rows with (1, IdA) packages, 
-//                    // all of them should be transfered to CurrentDrivePackages and removed from CurrendDrivePlan
-//                    destinationAddressId = null;
+                } else if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromStockroomToDeliver.ordinal()) {
+                    // 1 - Pick up Packages (IdP = null, those IdP are in StockRoom for given IdA) from the Stockroom Address (IdA) to deliver
+                    // there are multiple rows with (1, IdA) packages, 
+                    // all of them should be transfered to CurrentDrivePackages and removed from CurrendDrivePlan
+                    destinationAddressId = ... stockroom address
+                    lastStopAddressId = destinationAddressId;
+                    insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, rp.getPackageId(), destinationAddressId);
+                    allDestinationStops.add(rp);
+                    nextPlanPoint += 1;
+                    
                 } else if(visitReason == VisitReason_CurrentDrivePlan.DeliverPackage.ordinal()) {
                     // 2 - Deliver Package (IdP) to the Destination Address (IdA)
                     throw new UnsupportedOperationException("Not possible!");
@@ -478,18 +484,20 @@ public class DriveOperationImpl implements DriveOperation {
             // Collect packages from courier's city (first from addresses then from stockroom)
             
             List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromGivenCity(courierCityId);
-//            TODO: BAD IMPLEMENTATION            
-//            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromGivenCity(courierCityId);
+            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromGivenCity(courierCityId);
             
             // Add them to the vehicle (up to the vehicle's maximal weight)
             
-            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, VisitReason_CurrentDrivePlan.PickUpFromUserAddressToDeliver.ordinal());
+            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, 
+                    vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, 
+                    VisitReason_CurrentDrivePlan.PickUpFromUserAddressToDeliver.ordinal());
 
-////            TODO: BAD IMPLEMENTATION            
-//            if (vehicleCapacity.compareTo(BigDecimal.ZERO) > 0){
-//                System.out.println("Check stockroom " + vehicleCapacity);
-////                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredStockedPackagesFromCourierCity, VisitReason_CurrentDrivePlan.PickUpFromStockToDeliver.ordinal());
-//            }
+            if (vehicleCapacity.compareTo(BigDecimal.ZERO) > 0){
+                System.out.println("Check stockroom " + vehicleCapacity);
+                vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, 
+                        vehicleCapacity, undeliveredStockedPackagesFromCourierCity, 
+                        VisitReason_CurrentDrivePlan.PickUpFromStockroomToDeliver.ordinal());
+            }
             
             insertPureProfitToCurrentDrive(driveId);
             
