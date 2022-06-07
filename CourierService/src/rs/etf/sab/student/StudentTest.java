@@ -420,30 +420,45 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: COURIER STATUS");
         }
 
-        this.driveOperation.planingDrive(courierUsernameBG);
-        this.driveOperation.planingDrive(courierUsernameVA);
-//    Assert.assertEquals(2L, this.courierOperation.getCouriersWithStatus(1).size());
+//        this.driveOperation.planingDrive(courierUsernameBG);
+        this.driveOperation.planingDrive(courierUsernameVA); // pick up from its own city, deliver to the location, pick up for the stockroom in his own city
+        
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(idPackage1, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage1));
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameVA));
 //    Assert.assertEquals(idPackage3, this.driveOperation.nextStop(courierUsernameVA));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage3));
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameVA));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
-//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
+
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG)); // FINISH courierUsernameBG
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(KG).contains(Integer.valueOf(idPackage1)));
-//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameVA));
+
+//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameVA)); // FINISH courierUsernameVA
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
+
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage4)));
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(CA).contains(Integer.valueOf(idPackage3)));
+
+    // NEXT DRIVE (has storages)
+
+
+
 //    int idPackage5 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
 //    int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
+
+
 //    this.driveOperation.planingDrive(courierUsernameBG);
+
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage6));
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
