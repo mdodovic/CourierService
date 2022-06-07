@@ -29,6 +29,33 @@ public class StockroomOperationsImpl implements StockroomOperations {
     private final Connection connection = DB.getInstance().getConnection();
 
     
+    public long fetchPackageStockroomIdByStockroom(Long stockroomId) throws Exception {
+        
+        String fetchPackageStockroomIdByStockroomIdQuery = "SELECT IdPS " +
+                                                            "	FROM [dbo].[PackageStockroom] " +
+                                                            "	WHERE IdS = ?; ";
+        
+
+        try(PreparedStatement ps = connection.prepareStatement(fetchPackageStockroomIdByStockroomIdQuery);) {           
+
+            ps.setLong(1, stockroomId);
+            
+            try(ResultSet rs = ps.executeQuery()){
+                if(rs.next()) {
+                    return rs.getLong(1);
+                }
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        
+        throw new Exception("Error in fetching packagestockroom id !");
+
+    }
+
+
+    
     public Long removeVehicleFromStockroom(Long stockroomCourierCityId) throws Exception {
 
         String fetchVehicleFromStockroomByStockroomIdQuery = "select IdVS, IdV " +
@@ -282,6 +309,5 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
         
     }
-
 
 }

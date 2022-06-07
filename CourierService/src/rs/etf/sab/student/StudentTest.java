@@ -570,15 +570,22 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: BAD PACKAGES IN VEHICLE");            
         }
 
-//    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size());
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6)));
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            // FINISH courierUsernameBG
+            System.err.println("BAD: END OF DRIVE");
+        }
 
-//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(0L, this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size());
-//    Assert.assertEquals(3L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage4)));
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage5)));
+        if(0L != this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size()) {
+            System.err.println("BAD: UNDELIVERED PACKAGES");            
+        }
+        if(!(3L == this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2))
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage4))
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage5))
+                )) {
+            System.err.println("BAD: PACKAGE NUMBER IN CITY");                        
+        }    
+
 //    this.driveOperation.planingDrive(courierUsernameBG);
 //    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));

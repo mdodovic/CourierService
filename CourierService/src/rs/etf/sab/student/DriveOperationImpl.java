@@ -320,7 +320,7 @@ public class DriveOperationImpl implements DriveOperation {
         return nextPlanPoint;
     }
     
-    private void markStockedPackageToBePickedUp(Long currentDrivePlanId, Long packageId, Long packageStockroomId) throws Exception {
+    private void markStockedPackageToBePickedUp(Long currentDrivePlanId, Long packageId, Long stockroomId) throws Exception {
         
         String insertPackageFromStockroomForCurrentDrive = "INSERT INTO [dbo].[StockedPackagesForCurrentDrive] " +
                                                             " (IdPlan, IdPS, IdP) " + 
@@ -328,7 +328,7 @@ public class DriveOperationImpl implements DriveOperation {
         
         try(PreparedStatement ps = connection.prepareStatement(insertPackageFromStockroomForCurrentDrive);) {           
             ps.setLong(1, currentDrivePlanId);
-            ps.setLong(2, packageStockroomId);
+            ps.setLong(2, this.stockroomOperationsImpl.fetchPackageStockroomIdByStockroom(stockroomId));
             ps.setLong(3, packageId);
             
             ps.executeUpdate();
@@ -785,7 +785,7 @@ public class DriveOperationImpl implements DriveOperation {
     private int transferPackageFromTemporaryPackageStockroomToVehicle(Long planId, Long currentDriveId, int deliveryStatus) throws Exception {
 
         String getAllpackagesIdFromTemporaryPackageStockroomQuery = "" +
-                "SELECT IdP " +
+                " SELECT IdP, IdPS " +
                 "	FROM [dbo].[StockedPackagesForCurrentDrive] " +
                 "	WHERE IdPlan = ?; ";
         
@@ -794,19 +794,28 @@ public class DriveOperationImpl implements DriveOperation {
                                                     "   VALUES (?, ?, ?); ";
 
         String deletePackagesFromTemporaryStockroom = "DELETE FROM [dbo].[StockedPackagesForCurrentDrive] " +
-                                            "	WHERE IdPlan = ?; ";
+                                                        " WHERE IdPlan = ?; ";
 
+        String deletePackageFromPackageStockroomQuery = "DELETE FROM [dbo].[PackageStockroom] " +
+                                                         " WHERE IdPS = ?; ";
+
+        
         int addedPackagesToVehicleNumber = 0;  
         int deletedPackagesFromTemporaryStockroom = 0;  
+        int deletedPackagesFromStockroom = 0;  
         try(PreparedStatement psFetch = connection.prepareStatement(getAllpackagesIdFromTemporaryPackageStockroomQuery);
             PreparedStatement psInsert = connection.prepareStatement(insertPackagesToVehicleQuery);           
-            PreparedStatement psDelete = connection.prepareStatement(deletePackagesFromTemporaryStockroom);) {           
+            PreparedStatement psDelete1 = connection.prepareStatement(deletePackagesFromTemporaryStockroom);          
+            PreparedStatement psDelete2 = connection.prepareStatement(deletePackageFromPackageStockroomQuery);) {           
                                     
             psFetch.setLong(1, planId);
+            List<Long> stockroomIdOfRemovedPackages = new ArrayList<>();
             
             try(ResultSet rsFetch = psFetch.executeQuery()){
                 while(rsFetch.next()) {
-
+                    
+                    stockroomIdOfRemovedPackages.add(rsFetch.getLong("IdPS"));
+                    
                     psInsert.setLong(1, currentDriveId);
                     psInsert.setLong(2, rsFetch.getLong("IdP"));
                     psInsert.setInt(3, deliveryStatus);
@@ -815,13 +824,19 @@ public class DriveOperationImpl implements DriveOperation {
                 }
             }
             
-            psDelete.setLong(1, planId);
-            deletedPackagesFromTemporaryStockroom = psDelete.executeUpdate();
-            
+            psDelete1.setLong(1, planId);
+            deletedPackagesFromTemporaryStockroom = psDelete1.executeUpdate();
+ 
+            for(Long stockroomId: stockroomIdOfRemovedPackages) {
+                psDelete2.setLong(1, stockroomId);
+                deletedPackagesFromStockroom += psDelete2.executeUpdate();
+            }
+ 
         } catch (SQLException ex) {
             Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
-        if(deletedPackagesFromTemporaryStockroom == addedPackagesToVehicleNumber)
+        if(deletedPackagesFromTemporaryStockroom == addedPackagesToVehicleNumber
+            && addedPackagesToVehicleNumber == deletedPackagesFromStockroom)
             return addedPackagesToVehicleNumber;
 
         throw new Exception("Error in stocking packages!");
