@@ -139,14 +139,14 @@ public class DriveOperationImpl implements DriveOperation {
                                 "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
                                 "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
                                 "                                   WHERE CDP.IdCD = ? " + 
-                                "                                       AND CDP.VisitReason IN (0, 1) " +
+                                "                                       AND CDP.VisitReason = 2 " +
                                 "                           ), " +
                                 "           NumberOfDeliveries = ( " +
                                 "				SELECT COUNT(*) " +
                                 "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
                                 "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
                                 "                                   WHERE CDP.IdCD = ? " + 
-                                "                                       AND CDP.VisitReason IN (0, 1) " +
+                                "                                       AND CDP.VisitReason = 2 " +
                                 "                           ) " +
                                 "	WHERE IdCD = ?; ";
         
@@ -543,12 +543,12 @@ public class DriveOperationImpl implements DriveOperation {
                         VisitReason_CurrentDrivePlan.PickUpFromStockroomToDeliver.ordinal());
             }
             
-            insertPureProfitToCurrentDrive(driveId);
             
             // Phase 2
             // Order of delivery
             addNextStopsAfterPickingUp(driveId, vehicleCapacity, courierCityId);
 
+            insertPureProfitToCurrentDrive(driveId);
 
             // Phase 3
             // Return to stockroom
