@@ -483,12 +483,6 @@ go
 
 
 ALTER TABLE [StockedPackagesInCurrentDrivePlan]
-	ADD CONSTRAINT [FK_CurrentDrivePlan_StockedPackages] FOREIGN KEY ([IdPlan]) REFERENCES [CurrentDrivePlan]([IdPlan])
-		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
-go
-
-ALTER TABLE [StockedPackagesInCurrentDrivePlan]
 	ADD CONSTRAINT [FK_PackageStockroom_StockedPackages] FOREIGN KEY ([IdPS]) REFERENCES [PackageStockroom]([IdPS])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
@@ -496,6 +490,12 @@ go
 
 ALTER TABLE [StockedPackagesInCurrentDrivePlan]
 	ADD CONSTRAINT [FK_Package_StockedPackages] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [StockedPackagesInCurrentDrivePlan]
+	ADD CONSTRAINT [FK_CurrentDrivePlan_StockedPackages] FOREIGN KEY ([IdPlan]) REFERENCES [CurrentDrivePlan]([IdPlan])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
