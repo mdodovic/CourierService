@@ -17,19 +17,19 @@ go
 DROP TABLE [CurrentDrivePackage]
 go
 
-DROP TABLE [StockedPackagesInCurrentDrivePlan]
+DROP TABLE [CurrentDrivePlan]
+go
+
+DROP TABLE [StockedPackagesForCurrentDrive]
 go
 
 DROP TABLE [PackageStockroom]
 go
 
-DROP TABLE [Stockroom]
-go
-
-DROP TABLE [CurrentDrivePlan]
-go
-
 DROP TABLE [Package]
+go
+
+DROP TABLE [Stockroom]
 go
 
 DROP TABLE [CurrentDrive]
@@ -197,10 +197,10 @@ CREATE TABLE [PackageStockroom]
 )
 go
 
-CREATE TABLE [StockedPackagesInCurrentDrivePlan]
+CREATE TABLE [StockedPackagesForCurrentDrive]
 ( 
-	[IdSPCDP]            bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[IdPlan]             bigint  NOT NULL ,
+	[IdSPCD]             bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdCD]               bigint  NOT NULL ,
 	[IdPS]               bigint  NOT NULL ,
 	[IdP]                bigint  NOT NULL 
 )
@@ -316,8 +316,8 @@ ALTER TABLE [PackageStockroom]
 	ADD CONSTRAINT [XPKPackagesStockroom] PRIMARY KEY  CLUSTERED ([IdPS] ASC)
 go
 
-ALTER TABLE [StockedPackagesInCurrentDrivePlan]
-	ADD CONSTRAINT [XPKPCurrentDrivePlan] PRIMARY KEY  CLUSTERED ([IdSPCDP] ASC)
+ALTER TABLE [StockedPackagesForCurrentDrive]
+	ADD CONSTRAINT [XPKStockedPackagesForCurrentDrive] PRIMARY KEY  CLUSTERED ([IdSPCD] ASC)
 go
 
 ALTER TABLE [Stockroom]
@@ -482,20 +482,20 @@ ALTER TABLE [PackageStockroom]
 go
 
 
-ALTER TABLE [StockedPackagesInCurrentDrivePlan]
-	ADD CONSTRAINT [FK_PackageStockroom_StockedPackages] FOREIGN KEY ([IdPS]) REFERENCES [PackageStockroom]([IdPS])
+ALTER TABLE [StockedPackagesForCurrentDrive]
+	ADD CONSTRAINT [FK_CurrentDrive_StockedPackagesForCurrentDrive] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
 
-ALTER TABLE [StockedPackagesInCurrentDrivePlan]
-	ADD CONSTRAINT [FK_Package_StockedPackages] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+ALTER TABLE [StockedPackagesForCurrentDrive]
+	ADD CONSTRAINT [FK_PackageStockroom_StockedPackagesForCurrentDrive] FOREIGN KEY ([IdPS]) REFERENCES [PackageStockroom]([IdPS])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
 
-ALTER TABLE [StockedPackagesInCurrentDrivePlan]
-	ADD CONSTRAINT [FK_CurrentDrivePlan_StockedPackages] FOREIGN KEY ([IdPlan]) REFERENCES [CurrentDrivePlan]([IdPlan])
+ALTER TABLE [StockedPackagesForCurrentDrive]
+	ADD CONSTRAINT [FK_Package_StockedPackagesForCurrentDrive] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
