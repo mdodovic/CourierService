@@ -47,6 +47,9 @@ go
 DROP TABLE [City]
 go
 
+DROP TABLE [StockedPackagesInCurrentDrivePlan]
+go
+
 CREATE TABLE [Address]
 ( 
 	[IdA]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
@@ -194,6 +197,12 @@ CREATE TABLE [PackageStockroom]
 )
 go
 
+CREATE TABLE [StockedPackagesInCurrentDrivePlan]
+( 
+	[IdSPCDP]            bigint  IDENTITY ( 1,1 )  NOT NULL 
+)
+go
+
 CREATE TABLE [Stockroom]
 ( 
 	[IdS]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
@@ -302,6 +311,10 @@ go
 
 ALTER TABLE [PackageStockroom]
 	ADD CONSTRAINT [XPKPackagesStockroom] PRIMARY KEY  CLUSTERED ([IdPS] ASC)
+go
+
+ALTER TABLE [StockedPackagesInCurrentDrivePlan]
+	ADD CONSTRAINT [XPKPCurrentDrivePlan] PRIMARY KEY  CLUSTERED ([IdSPCDP] ASC)
 go
 
 ALTER TABLE [Stockroom]
