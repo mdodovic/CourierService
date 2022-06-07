@@ -328,7 +328,7 @@ public class DriveOperationImpl implements DriveOperation {
         
         try(PreparedStatement ps = connection.prepareStatement(insertPackageFromStockroomForCurrentDrive);) {           
             ps.setLong(1, currentDrivePlanId);
-            ps.setLong(2, this.stockroomOperationsImpl.fetchPackageStockroomIdByStockroom(stockroomId));
+            ps.setLong(2, this.stockroomOperationsImpl.fetchPackageStockroomIdByStockroomAndPackage(stockroomId, packageId));
             ps.setLong(3, packageId);
             
             ps.executeUpdate();
@@ -803,13 +803,13 @@ public class DriveOperationImpl implements DriveOperation {
         int addedPackagesToVehicleNumber = 0;  
         int deletedPackagesFromTemporaryStockroom = 0;  
         int deletedPackagesFromStockroom = 0;  
+        List<Long> stockroomIdOfRemovedPackages = new ArrayList<>();
         try(PreparedStatement psFetch = connection.prepareStatement(getAllpackagesIdFromTemporaryPackageStockroomQuery);
             PreparedStatement psInsert = connection.prepareStatement(insertPackagesToVehicleQuery);           
             PreparedStatement psDelete1 = connection.prepareStatement(deletePackagesFromTemporaryStockroom);          
             PreparedStatement psDelete2 = connection.prepareStatement(deletePackageFromPackageStockroomQuery);) {           
                                     
             psFetch.setLong(1, planId);
-            List<Long> stockroomIdOfRemovedPackages = new ArrayList<>();
             
             try(ResultSet rsFetch = psFetch.executeQuery()){
                 while(rsFetch.next()) {

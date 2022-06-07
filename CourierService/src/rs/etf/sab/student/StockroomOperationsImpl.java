@@ -27,18 +27,20 @@ import rs.etf.sab.operations.StockroomOperations;
 public class StockroomOperationsImpl implements StockroomOperations {
 
     private final Connection connection = DB.getInstance().getConnection();
-
+        
     
-    public long fetchPackageStockroomIdByStockroom(Long stockroomId) throws Exception {
+    public long fetchPackageStockroomIdByStockroomAndPackage(Long stockroomId, Long packageId) throws Exception {
         
         String fetchPackageStockroomIdByStockroomIdQuery = "SELECT IdPS " +
                                                             "	FROM [dbo].[PackageStockroom] " +
-                                                            "	WHERE IdS = ?; ";
+                                                            "	WHERE IdS = ? " +
+                                                            "       AND IdP = ?; ";
         
 
         try(PreparedStatement ps = connection.prepareStatement(fetchPackageStockroomIdByStockroomIdQuery);) {           
 
             ps.setLong(1, stockroomId);
+            ps.setLong(2, packageId);
             
             try(ResultSet rs = ps.executeQuery()){
                 if(rs.next()) {
@@ -309,5 +311,6 @@ public class StockroomOperationsImpl implements StockroomOperations {
         
         
     }
+
 
 }
