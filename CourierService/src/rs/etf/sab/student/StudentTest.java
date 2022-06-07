@@ -586,12 +586,16 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: PACKAGE NUMBER IN CITY");                        
         }    
 
-//    this.driveOperation.planingDrive(courierUsernameBG);
-//    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
+        this.driveOperation.planingDrive(courierUsernameBG);
+        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD: PACKAGES IN VEHICLE");            
+        }
+        
 //    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
 //    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4)));
 //    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
+
 //    Assert.assertEquals(idPackage4, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage4));
 //    Assert.assertEquals(idPackage5, this.driveOperation.nextStop(courierUsernameBG));

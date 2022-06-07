@@ -135,7 +135,7 @@ public class DriveOperationImpl implements DriveOperation {
 
         String updatePureProfit = "UPDATE [dbo].[CurrentDrive] " +
                                 "	SET RealizedProfit = ( " +
-                                "				SELECT SUM(P.Price) " +
+                                "				SELECT COALESCE(SUM(P.Price), 0) " +
                                 "                                   FROM [dbo].[CurrentDrivePlan] CDP " +
                                 "					INNER JOIN [dbo].[Package] P ON (CDP.IdP = P.IdP) " +
                                 "                                   WHERE CDP.IdCD = ? " + 
