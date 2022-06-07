@@ -2,12 +2,6 @@
 DROP TABLE [VehicleStockroom]
 go
 
-DROP TABLE [PackageStockroom]
-go
-
-DROP TABLE [Stockroom]
-go
-
 DROP TABLE [Customer]
 go
 
@@ -21,6 +15,15 @@ DROP TABLE [HistoryDrive]
 go
 
 DROP TABLE [CurrentDrivePackage]
+go
+
+DROP TABLE [StockedPackagesInCurrentDrivePlan]
+go
+
+DROP TABLE [PackageStockroom]
+go
+
+DROP TABLE [Stockroom]
 go
 
 DROP TABLE [CurrentDrivePlan]
@@ -45,9 +48,6 @@ DROP TABLE [Address]
 go
 
 DROP TABLE [City]
-go
-
-DROP TABLE [StockedPackagesInCurrentDrivePlan]
 go
 
 CREATE TABLE [Address]
@@ -199,7 +199,10 @@ go
 
 CREATE TABLE [StockedPackagesInCurrentDrivePlan]
 ( 
-	[IdSPCDP]            bigint  IDENTITY ( 1,1 )  NOT NULL 
+	[IdSPCDP]            bigint  IDENTITY ( 1,1 )  NOT NULL ,
+	[IdPlan]             bigint  NOT NULL ,
+	[IdPS]               bigint  NOT NULL ,
+	[IdP]                bigint  NOT NULL 
 )
 go
 
@@ -474,6 +477,25 @@ go
 
 ALTER TABLE [PackageStockroom]
 	ADD CONSTRAINT [FK_Package_PackageStockroom] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+
+ALTER TABLE [StockedPackagesInCurrentDrivePlan]
+	ADD CONSTRAINT [FK_CurrentDrivePlan_StockedPackages] FOREIGN KEY ([IdPlan]) REFERENCES [CurrentDrivePlan]([IdPlan])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [StockedPackagesInCurrentDrivePlan]
+	ADD CONSTRAINT [FK_PackageStockroom_StockedPackages] FOREIGN KEY ([IdPS]) REFERENCES [PackageStockroom]([IdPS])
+		ON DELETE NO ACTION
+		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [StockedPackagesInCurrentDrivePlan]
+	ADD CONSTRAINT [FK_Package_StockedPackages] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
