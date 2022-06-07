@@ -345,6 +345,11 @@ public class DriveOperationImpl implements DriveOperation {
                     throw new UnsupportedOperationException("Not possible!");
                 } else if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromUserAddressToStock.ordinal()) {
                     // 3 - Pick up Package (IdP) from the User Address (IdA) to stock
+                    destinationAddressId = rp.getStartAddressId();
+                    lastStopAddressId = destinationAddressId;
+                    insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, visitReason, rp.getPackageId(), destinationAddressId);
+                    nextPlanPoint += 1;
+                    
                 } else if(visitReason == VisitReason_CurrentDrivePlan.PickUpFromStockroomToStock.ordinal()) {
                     // 4 - Pick up Package (IdP = null, those IdP are in StockRoom for given IdA) from the stockroom Address (IdA) to stock in User's city stockroom
                 } else if(visitReason == VisitReason_CurrentDrivePlan.FinishDriveAtTheCourierStockroom.ordinal()) {
@@ -425,12 +430,13 @@ public class DriveOperationImpl implements DriveOperation {
             // First packages are collected from (users') addresses 
             // Then they are collected from currentCity's stockroom
             
-//            List<ReducedPackage> undeliveredUnstockedPackagesFromCourierCity = fetchUndeliveredUnstockedPackagesFromCourierCity(currentCity);
+            List<ReducedPackage> undeliveredUnstockedPackagesFromCurrentCity = fetchUndeliveredUnstockedPackagesFromCourierCity(currentCity);
 ////            TODO: BAD IMPLEMENTATION            
 ////            List<ReducedPackage> undeliveredStockedPackagesFromCourierCity = fetchUndeliveredStockedPackagesFromCourierCity(courierCityId);
 //            
 //            // Add them to the vehicle (up to the vehicle's maximal weight)
-//            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, undeliveredUnstockedPackagesFromCourierCity, VisitReason_CurrentDrivePlan.PickUpFromUserAddressToStock.ordinal());
+            vehicleCapacity = addNextStopsIntoCurrentDrivePlan(driveId, vehicleCapacity, 
+                    undeliveredUnstockedPackagesFromCurrentCity, VisitReason_CurrentDrivePlan.PickUpFromUserAddressToStock.ordinal());
 
 ////            TODO: BAD IMPLEMENTATION            
 //            if (vehicleCapacity.compareTo(BigDecimal.ZERO) > 0){
@@ -677,7 +683,51 @@ public class DriveOperationImpl implements DriveOperation {
  
     }
 
- 
+    private int leavePackageToPackageStockroom(Long currentDriveId, Long stockroomId) throws Exception {
+        
+        String fetchPackagesFromVehicle = "SELECT IdP " +
+                                            "	FROM [dbo].[CurrentDrivePackage] " +
+                                            "	WHERE IdCD = ?; ";
+        
+        String insertPackagesToPackageStockroom = "INSERT INTO [dbo].[PackageStockroom] " +
+                                                    "       (IdS, IdP) " +
+                                                    "   VALUES (?, ?); ";
+
+        String deletePackagesFromVehicle = "DELETE FROM [dbo].[CurrentDrivePackage] " +
+                                            "	WHERE IdCD = ?; ";
+
+        int stockedPackages = 0;  
+        int deletedPackagesFromVehicle = 0;  
+        try(PreparedStatement psFetch = connection.prepareStatement(fetchPackagesFromVehicle);
+            PreparedStatement psInsert = connection.prepareStatement(insertPackagesToPackageStockroom);           
+            PreparedStatement psDelete = connection.prepareStatement(deletePackagesFromVehicle);) {           
+                                    
+            psFetch.setLong(1, currentDriveId);
+            
+            try(ResultSet rsFetch = psFetch.executeQuery()){
+                while(rsFetch.next()) {
+
+                    psInsert.setLong(1, stockroomId);
+                    psInsert.setLong(2, rsFetch.getLong("IdP"));
+
+                    stockedPackages += psInsert.executeUpdate();
+                }
+            }
+            
+            psDelete.setLong(1, currentDriveId);
+            deletedPackagesFromVehicle = psDelete.executeUpdate();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        if(deletedPackagesFromVehicle == stockedPackages)
+            return stockedPackages;
+
+        throw new Exception("Error in stocking packages!");
+                
+
+    }
+
     
     @Override
     public int nextStop(@NotNull String courierUsername) {
@@ -751,12 +801,16 @@ public class DriveOperationImpl implements DriveOperation {
                 updatePackageStatusInPackage(packageId, 3);
                 removePackageFromCurrentDrivePackage(currentDriveId, packageId);
             } else if(visitReason == 3) {
+                // 3 - Pick up Package (IdP) from the User Address (IdA) to stock
+                returnValue = -2; // return -2
+                updatePackageStatusInPackage(packageId, 2);
+                insertPackageInCurrentDrivePackage(currentDriveId, packageId, DeliveryStatus_CurrentDrivePackage.PickedUpToBeStocked.ordinal());
+                
             } else if(visitReason == 4) {
                 
             } else if(visitReason == VisitReason_CurrentDrivePlan.FinishDriveAtTheCourierStockroom.ordinal()) {
                 returnValue = -1;
-                // TODO: IMPLEMENTS WHEN YOU HAVE TEST EXAMPLES
-                //leavePackageToPackageStockroom(currentDriveId, packageId);
+                leavePackageToPackageStockroom(currentDriveId, this.stockroomOperationsImpl.fetchStockroomIdByCityId(this.addressOperationsImpl.fetchCityIdOfAddress(endAddressId)));
                 
                 // Courier is not driving any more -> status = 1 (not drive)
                 courierOperationsImpl.changeCourierStatus(courierId, CourierStatus_Courier.NotDrive.ordinal()); 
