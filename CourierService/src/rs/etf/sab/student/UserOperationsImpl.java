@@ -120,7 +120,7 @@ public class UserOperationsImpl implements UserOperations {
 
     @Override
     public int getSentPackages(@NotNull String... userNames) {
-        // TODO: SENT PACKAGES, NOT CREATED or REJECTED
+
         String numberOfSentPackagesOfUserQuery = "SELECT count(*) " +
                                                 "	FROM [dbo].[Package] " +
                                                 "	WHERE PackageStatus IN (1, 2, 3) " +
