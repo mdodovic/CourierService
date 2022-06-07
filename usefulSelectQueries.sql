@@ -32,6 +32,11 @@ select PS.*, City.Name
 		INNER JOIN [dbo].[Address] A ON (S.IdA = A.IdA)
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
+-- temporary packages for picking up
+select SPFCD.*, P.*
+	from StockedPackagesForCurrentDrive SPFCD
+		INNER JOIN Package P ON (SPFCD.IdP = P.IdP)
+
 select CD.*, V.*
 	from CurrentDrive CD
 		INNER JOIN [dbo].Vehicle V ON (CD.IdV = V.IdV)
@@ -40,9 +45,10 @@ select CDP.*
 	from CurrentDrivePackage CDP
 
 
-select CDPlan.*
+select CDPlan.*, City.Name
 	from CurrentDrivePlan CDPlan
-
+		INNER JOIN [dbo].[Address] A ON (CDPlan.IdA = A.IdA)
+		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
 
 select P.*, SCity.Name AS StartCity, ECity.Name AS EndCity
