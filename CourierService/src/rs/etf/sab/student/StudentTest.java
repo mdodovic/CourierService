@@ -420,12 +420,18 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: COURIER STATUS");
         }
 
-//        this.driveOperation.planingDrive(courierUsernameBG);
+        this.driveOperation.planingDrive(courierUsernameBG); // pick up from its own city, deliver to the location, pick up for the stockroom in his own city
         this.driveOperation.planingDrive(courierUsernameVA); // pick up from its own city, deliver to the location, pick up for the stockroom in his own city
         
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(idPackage1, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage1));
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(idPackage1 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVER PACKAGE");            
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage1)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
 
         if(-2L != this.driveOperation.nextStop(courierUsernameVA)) {
             System.err.println("BAD: PICK UP PACKAGE");
@@ -437,8 +443,12 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: DELIVERED PACKAGE STATUS");            
         }
 
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
 
         if(-2L != this.driveOperation.nextStop(courierUsernameVA)) {
             System.err.println("BAD: PICK UP PACKAGE");
@@ -447,11 +457,22 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
             System.err.println("BAD: DELIVERED PACKAGE STATUS");            
         }
 
-//    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG)); // FINISH courierUsernameBG
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage2));
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            // FINISH courierUsernameBG
+            System.err.println("BAD: END OF DRIVE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
 
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(KG).contains(Integer.valueOf(idPackage1)));
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size() == 1
+                && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(KG).size() == 1
+                && this.packageOperations.getAllPackagesCurrentlyAtCity(KG).contains(Integer.valueOf(idPackage1)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }
 
         if(-1L != this.driveOperation.nextStop(courierUsernameVA)) {
             // FINISH courierUsernameVA
@@ -465,15 +486,16 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
                 && this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage4)))) {
             System.err.println("BAD: STORAGED PACKAGE");                        
         }
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(CA).size() == 1
+                && this.packageOperations.getAllPackagesCurrentlyAtCity(CA).contains(Integer.valueOf(idPackage3)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }
         
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(CA).contains(Integer.valueOf(idPackage3)));
 
     // NEXT DRIVE (has storages)
 
-
-
-//    int idPackage5 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
-//    int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
+        int idPackage5 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
+        int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
 
 
 //    this.driveOperation.planingDrive(courierUsernameBG);
