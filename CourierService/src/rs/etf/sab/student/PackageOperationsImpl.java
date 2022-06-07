@@ -215,14 +215,12 @@ public class PackageOperationsImpl implements PackageOperations {
                 while(rs.next()){
                     listOfIds.add(rs.getInt(1));
                 }
-                if(!listOfIds.isEmpty())
-                    return listOfIds;
             }
         } catch (SQLException ex) {
 //            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
         }
         
-        return null;
+        return listOfIds;
     }
 
     @Override
