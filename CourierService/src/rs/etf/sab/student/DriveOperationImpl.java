@@ -40,7 +40,7 @@ public class DriveOperationImpl implements DriveOperation {
     
     private List<ReducedPackage> allDestinationStops;
     private Long lastStopAddressId;
-    
+
     private enum DeliveryStatus_CurrentDrivePackage {
         PickedUpToBeDelivered(0),
         PickedUpToBeStocked(1);
@@ -779,8 +779,57 @@ public class DriveOperationImpl implements DriveOperation {
                 
 
     }
-
     
+    
+    
+    private int transferPackageFromTemporaryPackageStockroomToVehicle(Long planId, Long currentDriveId, int deliveryStatus) throws Exception {
+
+        String getAllpackagesIdFromTemporaryPackageStockroomQuery = "" +
+                "SELECT IdP " +
+                "	FROM [dbo].[StockedPackagesForCurrentDrive] " +
+                "	WHERE IdPlan = ?; ";
+        
+        String insertPackagesToVehicleQuery = "INSERT INTO [dbo].[CurrentDrivePackage] " +
+                                                    "       (IdCD, IdP, DeliveryStatus) " +
+                                                    "   VALUES (?, ?, ?); ";
+
+        String deletePackagesFromTemporaryStockroom = "DELETE FROM [dbo].[StockedPackagesForCurrentDrive] " +
+                                            "	WHERE IdPlan = ?; ";
+
+        int addedPackagesToVehicleNumber = 0;  
+        int deletedPackagesFromTemporaryStockroom = 0;  
+        try(PreparedStatement psFetch = connection.prepareStatement(getAllpackagesIdFromTemporaryPackageStockroomQuery);
+            PreparedStatement psInsert = connection.prepareStatement(insertPackagesToVehicleQuery);           
+            PreparedStatement psDelete = connection.prepareStatement(deletePackagesFromTemporaryStockroom);) {           
+                                    
+            psFetch.setLong(1, planId);
+            
+            try(ResultSet rsFetch = psFetch.executeQuery()){
+                while(rsFetch.next()) {
+
+                    psInsert.setLong(1, currentDriveId);
+                    psInsert.setLong(2, rsFetch.getLong("IdP"));
+                    psInsert.setInt(3, deliveryStatus);
+                    
+                    addedPackagesToVehicleNumber += psInsert.executeUpdate();
+                }
+            }
+            
+            psDelete.setLong(1, planId);
+            deletedPackagesFromTemporaryStockroom = psDelete.executeUpdate();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(CityOperationsImpl.class.getName()).log(Level.SEVERE, null, ex);            
+        }
+        if(deletedPackagesFromTemporaryStockroom == addedPackagesToVehicleNumber)
+            return addedPackagesToVehicleNumber;
+
+        throw new Exception("Error in stocking packages!");
+                
+
+    }
+    
+
     @Override
     public int nextStop(@NotNull String courierUsername) {
         int returnValue = -3;
@@ -846,12 +895,16 @@ public class DriveOperationImpl implements DriveOperation {
                 updatePackageStatusInPackage(packageId, 2);
                 insertPackageInCurrentDrivePackage(currentDriveId, packageId, DeliveryStatus_CurrentDrivePackage.PickedUpToBeDelivered.ordinal());
             } else if(visitReason == 1) {
+                returnValue = -2; // return -2
+                transferPackageFromTemporaryPackageStockroomToVehicle(
+                        planId, currentDriveId, DeliveryStatus_CurrentDrivePackage.PickedUpToBeDelivered.ordinal());
                 
             } else if(visitReason == VisitReason_CurrentDrivePlan.DeliverPackage.ordinal()) {
                 // 2 - Deliver Package (IdP) to the Destination Address (IdA)
                 returnValue = packageId.intValue();
                 updatePackageStatusInPackage(packageId, 3);
                 removePackageFromCurrentDrivePackage(currentDriveId, packageId);
+                
             } else if(visitReason == 3) {
                 // 3 - Pick up Package (IdP) from the User Address (IdA) to stock
                 returnValue = -2; // return -2
@@ -859,6 +912,9 @@ public class DriveOperationImpl implements DriveOperation {
                 insertPackageInCurrentDrivePackage(currentDriveId, packageId, DeliveryStatus_CurrentDrivePackage.PickedUpToBeStocked.ordinal());
                 
             } else if(visitReason == 4) {
+                returnValue = -2; // return -2
+                transferPackageFromTemporaryPackageStockroomToVehicle(
+                        planId, currentDriveId, DeliveryStatus_CurrentDrivePackage.PickedUpToBeStocked.ordinal());
                 
             } else if(visitReason == VisitReason_CurrentDrivePlan.FinishDriveAtTheCourierStockroom.ordinal()) {
                 returnValue = -1;

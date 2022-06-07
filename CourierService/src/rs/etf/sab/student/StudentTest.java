@@ -500,29 +500,79 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
 
         this.driveOperation.planingDrive(courierUsernameBG);
 
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage6));
-//    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)));
-//    Assert.assertFalse(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage6)));
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
-//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage2)));
-//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage6)));
-//    Assert.assertEquals(idPackage2, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage2));
-//    Assert.assertEquals(idPackage6, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(3L, this.packageOperations.getDeliveryStatus(idPackage6));
-//    Assert.assertEquals(0L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage5));
-//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
-//    Assert.assertEquals(-2L, this.driveOperation.nextStop(courierUsernameBG));
-//    Assert.assertEquals(2L, this.packageOperations.getDeliveryStatus(idPackage4));
-//    Assert.assertEquals(2L, this.driveOperation.getPackagesInVehicle(courierUsernameBG).size());
-//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4)));
-//    Assert.assertTrue(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)));
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage6)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size() == 1
+                && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
+                && !this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage6)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage2)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
+             && (2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+        
+        if(idPackage2 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+
+        if(idPackage6 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage6)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }        
+        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD: VEHICLE HAS PACKAGES");                        
+        }
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage5)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).size() == 1
+                && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)))) {
+            System.err.println("BAD: STORAGED PACKAGE");                        
+        }        
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage4)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage4)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage5)
+             && (2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
+            System.err.println("BAD: BAD PACKAGES IN VEHICLE");            
+        }
+        
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6))
+             && (1L == this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size()))) {
+            System.err.println("BAD: BAD PACKAGES IN VEHICLE");            
+        }
+
 //    Assert.assertEquals(1L, this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size());
 //    Assert.assertTrue(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6)));
+
 //    Assert.assertEquals(-1L, this.driveOperation.nextStop(courierUsernameBG));
 //    Assert.assertEquals(0L, this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size());
 //    Assert.assertEquals(3L, this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size());
