@@ -5,6 +5,12 @@ SELECT C.*, U.*, City.*
 		INNER JOIN [dbo].[Address] A ON (U.IdA = A.IdA)
 		INNER JOIN [dbo].[City] City ON (City.IdC = A.IdC)
 
+-- addresses
+SELECT A.*, C.*
+	FROM [dbo].[Address] A
+		INNER JOIN [dbo].[City] C ON (C.IdC = A.IdC)
+
+
 -- stockrooms
 SELECT S.*, A.*, City.*
 	FROM [dbo].[Stockroom] S
