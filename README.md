@@ -1,9 +1,5 @@
-U folderu dokumentacija se nalaze opisi svih interface-a.
+# CourierService
 
-U okviru JAR fajla se nalaze interface-i koje je potrebno implementirati i javni test. Ovaj JAR fajl je potrebno importovati u projekat.
+Courier Service Management Application. The backend is made in Java, and the database is  Microsoft SQL Server.
 
-JAR se moze raspakovati radi lakseg testiranja. U tom slučaju je potrebno dodati sve klase koje se nalaze u okviru JAR fajla i sledeće dve biblioteke koje su potrebne za ispravan rad testova:
-	1. hamcrest-core-1.3.jar
-	2. junit-4.12.jar
-
-StudentMain.java je primer klase koja poziva izvršavanje testova. Potrebno je da svaki projekat ima ovakvu klasu koja će sadržati reference na klase sa implementiranim interface-ima.
+This application covers tracking of couriers and vehicles, receiving and accepting delivery packages as well as precise tracking for each delivery.
