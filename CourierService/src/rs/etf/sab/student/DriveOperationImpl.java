@@ -359,9 +359,7 @@ public class DriveOperationImpl implements DriveOperation {
         Long currentDrivePlanId = null;
         Long destinationAddressId = null;
         
-        while(!undeliveredUnstockedPackagesFromCourierCity.isEmpty()) {
-            ReducedPackage rp = undeliveredUnstockedPackagesFromCourierCity.remove(0);
-
+        for(ReducedPackage rp: undeliveredUnstockedPackagesFromCourierCity) {
             if(spaceLeft.compareTo(rp.getWeight()) > 0) {
                 spaceLeft = spaceLeft.subtract(rp.getWeight());
 
@@ -542,7 +540,6 @@ public class DriveOperationImpl implements DriveOperation {
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
             Long stockroomCourierCityId = stockroomOperationsImpl.fetchStockroomIdByCityId(courierCityId);            
             Long startAddressId = stockroomOperationsImpl.fetchAddressIdByStockroom(stockroomCourierCityId);
-            lastStopAddressId = startAddressId;
             
             // Courier is now driving -> status = 1 (drive)
             courierOperationsImpl.changeCourierStatus(courierId, CourierStatus_Courier.Drive.ordinal()); 
