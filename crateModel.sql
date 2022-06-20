@@ -82,7 +82,7 @@ CREATE TABLE [Courier]
 	[DeliveredPackagesNumber] integer  NULL 
 	CONSTRAINT [DF_DeliveredPackagesNumber]
 		 DEFAULT  0,
-	[Profit]             decimal(10,2)  NULL 
+	[Profit]             decimal(10,3)  NULL 
 	CONSTRAINT [DF_Profit]
 		 DEFAULT  0.0,
 	[CourierStatus]      integer  NULL 
@@ -167,7 +167,7 @@ CREATE TABLE [Package]
 	[PackageType]        integer  NOT NULL 
 	CONSTRAINT [CK1_PackageType]
 		CHECK  ( (PackageType IN (0, 1, 2, 3)) ),
-	[Weight]             decimal(10,2)  NOT NULL 
+	[Weight]             decimal(10,3)  NOT NULL 
 	CONSTRAINT [DF_Weight]
 		 DEFAULT  10.0,
 	[PackageStatus]      integer  NOT NULL 
@@ -175,7 +175,7 @@ CREATE TABLE [Package]
 		 DEFAULT  0
 	CONSTRAINT [CK1_PackageStatus]
 		CHECK  ( (PackageStatus IN (0, 1, 2, 3, 4)) ),
-	[Price]              decimal(10,2)  NULL 
+	[Price]              decimal(10,3)  NULL 
 	CONSTRAINT [DF_Price]
 		 DEFAULT  0.0,
 	[CreateTime]         datetime  NULL 
@@ -235,8 +235,8 @@ CREATE TABLE [Vehicle]
 	[FuelType]           integer  NOT NULL 
 	CONSTRAINT [CK1_FuelType]
 		CHECK  ( (FuelType IN (0, 1, 2)) ),
-	[FuelConsumption]    decimal(10,2)  NOT NULL ,
-	[Capacity]           decimal(10,2)  NOT NULL 
+	[FuelConsumption]    decimal(10,3)  NOT NULL ,
+	[Capacity]           decimal(10,3)  NOT NULL 
 )
 go
 
