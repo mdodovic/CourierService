@@ -19,7 +19,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import rs.etf.sab.operations.AddressOperations;
+import rs.etf.sab.operations.CityOperations;
+import rs.etf.sab.operations.CourierOperations;
+import rs.etf.sab.operations.CourierRequestOperation;
 import rs.etf.sab.operations.DriveOperation;
+import rs.etf.sab.operations.GeneralOperations;
+import rs.etf.sab.operations.PackageOperations;
+import rs.etf.sab.operations.StockroomOperations;
+import rs.etf.sab.operations.UserOperations;
+import rs.etf.sab.operations.VehicleOperations;
 import rs.etf.sab.student.utility.Pair;
 import rs.etf.sab.student.utility.ReducedPackage;
 import rs.etf.sab.student.utility.Util;
@@ -350,7 +359,9 @@ public class DriveOperationImpl implements DriveOperation {
         Long currentDrivePlanId = null;
         Long destinationAddressId = null;
         
-        for(ReducedPackage rp: undeliveredUnstockedPackagesFromCourierCity) {
+        while(!undeliveredUnstockedPackagesFromCourierCity.isEmpty()) {
+            ReducedPackage rp = undeliveredUnstockedPackagesFromCourierCity.remove(0);
+
             if(spaceLeft.compareTo(rp.getWeight()) > 0) {
                 spaceLeft = spaceLeft.subtract(rp.getWeight());
 
@@ -434,20 +445,34 @@ public class DriveOperationImpl implements DriveOperation {
     
     private List<ReducedPackage> fetchAllPackagesFromTheSameDestinationCity(Long currentCity) {
         List<ReducedPackage> packagesFromTheSameDestCity = new ArrayList<>();
-        List<Integer> packagesFromTheSameDestCityIndexes = new ArrayList<>();
+//        List<Integer> packagesFromTheSameDestCityIndexes = new ArrayList<>();
 
         for(int i = 0; i < allDestinationStops.size(); i++) {
             ReducedPackage rp = allDestinationStops.get(i);
             if(Objects.equals(rp.getEndCityId(), currentCity)) {
                 packagesFromTheSameDestCity.add(rp);
-                packagesFromTheSameDestCityIndexes.add(i);
+//                packagesFromTheSameDestCityIndexes.add(i);
             }
         }
-        for(int i: packagesFromTheSameDestCityIndexes) {
-            allDestinationStops.remove(i);
+        for(ReducedPackage rp: packagesFromTheSameDestCity) {
+            allDestinationStops.remove(rp);
         }
         
         return packagesFromTheSameDestCity;
+    }
+    
+    private int insertAllOthersPackagesFromTheSameDestinationCity(Long driveId, List<ReducedPackage> packagesForTheSameCity, int nextPlanPoint) throws Exception {
+        
+        while(!packagesForTheSameCity.isEmpty()) {
+           
+            sortByDestination(packagesForTheSameCity, lastStopAddressId); 
+            ReducedPackage rp = packagesForTheSameCity.remove(0);
+            
+            lastStopAddressId = rp.getEndAddressId();
+            insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, VisitReason_CurrentDrivePlan.DeliverPackage.ordinal(), rp.getPackageId(), lastStopAddressId);
+            nextPlanPoint += 1;
+        }
+        return nextPlanPoint;
     }
     
     private void addNextStopsAfterPickingUp(Long driveId, BigDecimal vehicleCapacity, Long currentCity) throws Exception {
@@ -455,7 +480,12 @@ public class DriveOperationImpl implements DriveOperation {
         int nextPlanPoint = fetchNextPlanPoint(driveId);
 //         TODO: SORT
         List<ReducedPackage> packagesForDeliveryToCourierCity = fetchAllPackagesFromTheSameDestinationCity(currentCity);
-        for(ReducedPackage rp : packagesForDeliveryToCourierCity) {
+
+        while(!packagesForDeliveryToCourierCity.isEmpty()) {
+
+            sortByDestination(packagesForDeliveryToCourierCity, lastStopAddressId); 
+            ReducedPackage rp = packagesForDeliveryToCourierCity.remove(0);
+
             lastStopAddressId = rp.getEndAddressId();
             insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, VisitReason_CurrentDrivePlan.DeliverPackage.ordinal(), rp.getPackageId(), lastStopAddressId);
             nextPlanPoint += 1;
@@ -467,8 +497,8 @@ public class DriveOperationImpl implements DriveOperation {
             // fetch first stop, add it to 
             ReducedPackage rp = allDestinationStops.remove(0);
             currentCity = rp.getEndCityId();
-//             TODO: EXTRACT PACKAGES FROM FIRST CITY TO DELIVER
-//            List<ReducedPackage> packagesForTheSameCity = fetchAllPackagesFromTheSameDestinationCity(currentCity);
+
+            List<ReducedPackage> packagesForTheSameCity = fetchAllPackagesFromTheSameDestinationCity(currentCity);
             
             lastStopAddressId = rp.getEndAddressId();
             insertNextStopInCurrentDrivingPlan(driveId, nextPlanPoint, VisitReason_CurrentDrivePlan.DeliverPackage.ordinal(), rp.getPackageId(), lastStopAddressId);
@@ -476,7 +506,7 @@ public class DriveOperationImpl implements DriveOperation {
             nextPlanPoint += 1;
                         
 //         TODO: SORT!
-//            nextPlanPoint = insertAllOthersPackagesFromTheSameDestinationCity(driveId, packagesForTheSameCity, nextPlanPoint);
+            nextPlanPoint = insertAllOthersPackagesFromTheSameDestinationCity(driveId, packagesForTheSameCity, nextPlanPoint);
             
             // Now all the packages for currentCity are delivered, so the following needs to be done:
             // Collect packages from currentCity - this is the city where (all of them if packagesForTheSameCity has anything) last package were delivered
@@ -998,5 +1028,72 @@ public class DriveOperationImpl implements DriveOperation {
         return listOfIds;        
 
     }    
+    
+    public static void main(String[] args) {
 
+        AddressOperations addressOperations = new AddressOperationsImpl();
+        CityOperations cityOperations = new CityOperationsImpl();
+        CourierOperations courierOperations = new CourierOperationsImpl();
+        CourierRequestOperation courierRequestOperation = new CourierRequestOperationsImpl();
+        DriveOperation driveOperation = new DriveOperationImpl();
+        GeneralOperations generalOperations = new GeneralOperationsImpl();
+        PackageOperations packageOperations = new PackageOperationsImpl();
+        StockroomOperations stockroomOperations = new StockroomOperationsImpl();
+        UserOperations userOperations = new UserOperationsImpl();
+        VehicleOperations vehicleOperations = new VehicleOperationsImpl();
+
+        
+        generalOperations.eraseAll();
+        
+        int BG = cityOperations.insertCity("Belgrade", "11000");
+        int KG = cityOperations.insertCity("Kragujevac", "550000");
+        int VA = cityOperations.insertCity("Valjevo", "14000");
+        int CA = cityOperations.insertCity("Cacak", "32000");
+        int idAddressBG1 = addressOperations.insertAddress("Kraljice Natalije", 37, BG, 11, 15);
+        int idAddressBG2 = addressOperations.insertAddress("Bulevar kralja Aleksandra", 73, BG, 10, 10);
+        int idAddressBG3 = addressOperations.insertAddress("Vojvode Stepe", 39, BG, 1, -1);
+        int idAddressBG4 = addressOperations.insertAddress("Takovska", 7, BG, 11, 12);
+        int idAddressBG5 = addressOperations.insertAddress("Bulevar kralja Aleksandra", 37, BG, 12, 12);
+        int idAddressKG1 = addressOperations.insertAddress("Daniciceva", 1, KG, 4, 310);
+        int idAddressKG2 = addressOperations.insertAddress("Dure Pucara Starog", 2, KG, 11, 320);
+        int idAddressVA1 = addressOperations.insertAddress("Cika Ljubina", 8, VA, 102, 101);
+        int idAddressVA2 = addressOperations.insertAddress("Karadjordjeva", 122, VA, 104, 103);
+        int idAddressVA3 = addressOperations.insertAddress("Milovana Glisica", 45, VA, 101, 101);
+        int idAddressCA1 = addressOperations.insertAddress("Zupana Stracimira", 1, CA, 110, 309);
+        int idAddressCA2 = addressOperations.insertAddress("Bulevar Vuka Karadzica", 1, CA, 111, 315);
+        int idStockroomBG = stockroomOperations.insertStockroom(idAddressBG1);
+        int idStockroomVA = stockroomOperations.insertStockroom(idAddressVA1);
+        
+        vehicleOperations.insertVehicle("BG1675DA", 2, new BigDecimal(6.3D), new BigDecimal(1000.5D));
+        vehicleOperations.parkVehicle("BG1675DA", idStockroomBG);
+
+        vehicleOperations.insertVehicle("VA1675DA", 1, new BigDecimal(7.3D), new BigDecimal(500.5D));
+        vehicleOperations.parkVehicle("VA1675DA", idStockroomVA);
+        
+        String username = "crno.dete";
+        userOperations.insertUser(username, "Svetislav", "Kisprdilov", "Test_123", idAddressBG1);
+        String courierUsernameBG = "postarBG";
+        userOperations.insertUser(courierUsernameBG, "Pera", "Peric", "Postar_73", idAddressBG2);
+        courierOperations.insertCourier(courierUsernameBG, "654321");
+
+        String courierUsernameVA = "postarVA";
+        userOperations.insertUser(courierUsernameVA, "Pera", "Peric", "Postar_73", idAddressVA2);
+        courierOperations.insertCourier(courierUsernameVA, "123456");
+
+        int type = 1;
+        BigDecimal weight = new BigDecimal(4);
+        int idPackage1 = packageOperations.insertPackage(idAddressBG1, idAddressVA1, username, type, weight);
+        packageOperations.acceptAnOffer(idPackage1);
+
+        int idPackage2 = packageOperations.insertPackage(idAddressBG2, idAddressVA2, username, type, weight);
+        packageOperations.acceptAnOffer(idPackage2);
+
+        int idPackage3 = packageOperations.insertPackage(idAddressBG3, idAddressVA3, username, type, weight);
+        packageOperations.acceptAnOffer(idPackage3);
+
+        
+        driveOperation.planingDrive(courierUsernameBG); 
+        
+    }
+    
 }
