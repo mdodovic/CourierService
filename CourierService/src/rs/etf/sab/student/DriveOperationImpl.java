@@ -542,6 +542,7 @@ public class DriveOperationImpl implements DriveOperation {
             Long courierCityId = addressOperationsImpl.fetchCityIdOfUser(courierId);
             Long stockroomCourierCityId = stockroomOperationsImpl.fetchStockroomIdByCityId(courierCityId);            
             Long startAddressId = stockroomOperationsImpl.fetchAddressIdByStockroom(stockroomCourierCityId);
+            lastStopAddressId = startAddressId;
             
             // Courier is now driving -> status = 1 (drive)
             courierOperationsImpl.changeCourierStatus(courierId, CourierStatus_Courier.Drive.ordinal()); 
