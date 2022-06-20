@@ -292,6 +292,10 @@ ALTER TABLE [CurrentDrive]
 	ADD CONSTRAINT [XPKCurrentDrive] PRIMARY KEY  CLUSTERED ([IdCD] ASC)
 go
 
+ALTER TABLE [CurrentDrive]
+	ADD CONSTRAINT [XAK1CurrentDrive] UNIQUE ([IdU]  ASC,[IdV]  ASC)
+go
+
 ALTER TABLE [CurrentDrivePackage]
 	ADD CONSTRAINT [XPKCurrentDrivePackage] PRIMARY KEY  CLUSTERED ([IdCDP] ASC)
 go
@@ -393,23 +397,17 @@ go
 
 
 ALTER TABLE [CurrentDrivePackage]
-	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePackage] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
-		ON DELETE NO ACTION
-		ON UPDATE NO ACTION
-go
-
-ALTER TABLE [CurrentDrivePackage]
 	ADD CONSTRAINT [FK_Package_CurrentDrivePackage] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
 go
 
-
-ALTER TABLE [CurrentDrivePlan]
-	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePlan] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
+ALTER TABLE [CurrentDrivePackage]
+	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePackage] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
 		ON DELETE NO ACTION
-		ON UPDATE CASCADE
+		ON UPDATE NO ACTION
 go
+
 
 ALTER TABLE [CurrentDrivePlan]
 	ADD CONSTRAINT [FK_Package_CurrentDrivePlan] FOREIGN KEY ([IdP]) REFERENCES [Package]([IdP])
@@ -421,6 +419,12 @@ ALTER TABLE [CurrentDrivePlan]
 	ADD CONSTRAINT [FK_Address_CurrentDrivePlan] FOREIGN KEY ([IdA]) REFERENCES [Address]([IdA])
 		ON DELETE NO ACTION
 		ON UPDATE NO ACTION
+go
+
+ALTER TABLE [CurrentDrivePlan]
+	ADD CONSTRAINT [FK_CurrentDrive_CurrentDrivePlan] FOREIGN KEY ([IdCD]) REFERENCES [CurrentDrive]([IdCD])
+		ON DELETE NO ACTION
+		ON UPDATE CASCADE
 go
 
 
