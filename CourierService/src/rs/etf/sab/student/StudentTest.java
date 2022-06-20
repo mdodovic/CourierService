@@ -755,10 +755,10 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
     // NEXT DRIVE (has storages)
 
         int idPackage5 = insertAndAcceptPackage(idAddressVA2, idAddressCA1, username, type, weight);
-        int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA3, username, type, weight);
+        int idPackage6 = insertAndAcceptPackage(idAddressBG3, idAddressVA2, username, type, weight);
 
         int idPackage7 = insertAndAcceptPackage(idAddressBG2, idAddressBG1, username, type, weight);
-        int idPackage8 = insertAndAcceptPackage(idAddressBG4, idAddressVA2, username, type, weight);
+        int idPackage8 = insertAndAcceptPackage(idAddressBG4, idAddressVA3, username, type, weight);
 
 
         this.driveOperation.planingDrive(courierUsernameBG);
@@ -766,153 +766,180 @@ int insertAndAcceptPackage(int addressFrom, int addressTo, String userName, int 
         if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
             System.err.println("BAD: PICK UP PACKAGE");
         }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage6)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage7)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
         if(2L != this.packageOperations.getDeliveryStatus(idPackage8)) {
             System.err.println("BAD: DELIVERED PACKAGE STATUS");            
         }
 
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage21)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage22)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }
 
-//        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size() == 1
-//                && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2)))) {
-//            System.err.println("BAD: STORAGED PACKAGE");                        
-//        }        
-//        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
-//                && !this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage6)))) {
-//            System.err.println("BAD: STORAGED PACKAGE");                        
-//        }
-//        
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage2)
-//              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
-//             && (2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }
-//        
-//        if(idPackage2 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: DELIVERY PACKAGE");
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }
-//
-//        if(idPackage6 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: DELIVERY PACKAGE");
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage6)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }        
-//        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD: VEHICLE HAS PACKAGES");                        
-//        }
-//        
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage5)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }        
-//        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).size() == 1
-//                && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)))) {
-//            System.err.println("BAD: STORAGED PACKAGE");                        
-//        }        
-//        
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(2L != this.packageOperations.getDeliveryStatus(idPackage4)) {
-//            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
-//        }        
-//        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage4)
-//              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage5)
-//             && (2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
-//            System.err.println("BAD: BAD PACKAGES IN VEHICLE");            
-//        }
-//        
-//        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6))
-//             && (1L == this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size()))) {
-//            System.err.println("BAD: BAD PACKAGES IN VEHICLE");            
-//        }
-//
-//        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            // FINISH courierUsernameBG
-//            System.err.println("BAD: END OF DRIVE");
-//        }
-//
-//        if(0L != this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size()) {
-//            System.err.println("BAD: UNDELIVERED PACKAGES");            
-//        }
-//        if(!(3L == this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()
-//              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2))
-//              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage4))
-//              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage5))
-//                )) {
-//            System.err.println("BAD: PACKAGE NUMBER IN CITY");                        
-//        }    
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size() == 1)
+                && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2))) {
+            System.err.println("BAD: ALL PACKAGES PICKED UP");                        
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
+                && !this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage6)))) {
+            System.err.println("BAD: NOT PICKED UP PACKAGE");                        
+        }
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage7)
+                && !this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage7)))) {
+            System.err.println("BAD: NOT PICKED UP PACKAGE");                        
+        }
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage8)
+                && !this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage8)))) {
+            System.err.println("BAD: NOT PICKED UP PACKAGE");                        
+        }
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage2)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage6)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage7)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage8)
+             && (4L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
+            System.err.println("BAD: PACKAGES IN VEHICLE");            
+        }
 
-//        /* NEXT DRIVE */
-//        
-//        this.driveOperation.planingDrive(courierUsernameBG);
-//        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
-//            System.err.println("BAD: PACKAGES IN VEHICLE");            
-//        }
-//        
-//        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: PICK UP PACKAGE");
-//        }
-//        if(!(2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()
-//              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4))
-//              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5))
-//                )) {
-//            System.err.println("BAD: PACKAGES IN VEHICLE");                        
-//        }   
-//        
-//        if(idPackage4 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: DELIVERY PACKAGE");
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage4)) {
-//            System.err.println("BAD: DELIVERY PACKAGE STATUS");
-//        }
-//        
-//        if(idPackage5 != this.driveOperation.nextStop(courierUsernameBG)) {
-//            System.err.println("BAD: DELIVERY PACKAGE");
-//        }
-//        if(3L != this.packageOperations.getDeliveryStatus(idPackage5)) {
-//            System.err.println("BAD: DELIVERY PACKAGE STATUS");
-//        }
-//
-//        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
-//            // FINISH courierUsernameBG
-//            System.err.println("BAD: END OF DRIVE");
-//        }
-//        
-//        if(0L != this.packageOperations.getAllUndeliveredPackages().size()) {
-//            System.err.println("BAD: NUMBER OF UNDELIVERED PACKAGES");            
-//        }
-//        if(2L != this.courierOperations.getCouriersWithStatus(0).size()) {
-//            System.err.println("BAD: NUMBER OF UNDELIVERED PACKAGES");            
-//        }
-//
-//        BigDecimal profit1 = this.courierOperations.getAverageCourierProfit(1);
-//        if(profit1.compareTo(new BigDecimal(0)) <= 0) {
-//            System.err.println("BAD: PROFIT");
-//        }
-//        BigDecimal profit2 = this.courierOperations.getAverageCourierProfit(5);
-//        if(profit2.compareTo(new BigDecimal(0)) <= 0) {
-//            System.err.println("BAD: PROFIT");
-//        }
+        // Deliver in BG
+        if(idPackage7 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage7)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+        if(idPackage2 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage2)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }        
+        if(2L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD: VEHICLE HAS NOT GOOD NUMBER OF PACKAGES");                        
+        }
+
+        // Deliver in VA
+
+        if(idPackage8 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage8)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }
+        if(idPackage6 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage6)) {
+            System.err.println("BAD: DELIVERED PACKAGE STATUS");            
+        }        
+        if(0L != this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()) {
+            System.err.println("BAD: VEHICLE HAS PACKAGES");                        
+        }
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage5)) {
+            System.err.println("BAD: PICKED UP PACKAGE STATUS");            
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).size() == 1
+                && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5)))) {
+            System.err.println("BAD: PACKAGE IN VEHICLE");                        
+        }        
+        
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(2L != this.packageOperations.getDeliveryStatus(idPackage4)) {
+            System.err.println("BAD: PICKED UP PACKAGE STATUS");            
+        }        
+        if(!(this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage4)
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(idPackage5)
+             && (2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()))) {
+            System.err.println("BAD: PACKAGE IN VEHICLE");                        
+        }
+        
+        if(!(this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage6))
+             && this.packageOperations.getAllPackagesCurrentlyAtCity(VA).contains(Integer.valueOf(idPackage8))
+             && (2L == this.packageOperations.getAllPackagesCurrentlyAtCity(VA).size()))) {
+            System.err.println("BAD: FINISHED PACKAGE");            
+        }
+
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            // FINISH courierUsernameBG
+            System.err.println("BAD: END OF DRIVE");
+        }
+        if(0L != this.packageOperations.getAllUndeliveredPackagesFromCity(BG).size()) {
+            System.err.println("BAD: UNDELIVERED PACKAGES");            
+        }
+
+        if(!(4L == this.packageOperations.getAllPackagesCurrentlyAtCity(BG).size()
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage2))
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage4))
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage5))
+              && this.packageOperations.getAllPackagesCurrentlyAtCity(BG).contains(Integer.valueOf(idPackage7))
+                )) {
+            System.err.println("BAD: PACKAGE NUMBER IN CITY");                        
+        }    
+
+        /* NEXT DRIVE */
+        
+        this.driveOperation.planingDrive(courierUsernameBG);
+
+        if(-2L != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: PICK UP PACKAGE");
+        }
+        if(!(2L == this.driveOperation.getPackagesInVehicle(courierUsernameBG).size()
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage4))
+              && this.driveOperation.getPackagesInVehicle(courierUsernameBG).contains(Integer.valueOf(idPackage5))
+                )) {
+            System.err.println("BAD: PACKAGES IN VEHICLE");                        
+        }   
+        
+        if(idPackage4 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage4)) {
+            System.err.println("BAD: DELIVERY PACKAGE STATUS");
+        }
+        
+        if(idPackage5 != this.driveOperation.nextStop(courierUsernameBG)) {
+            System.err.println("BAD: DELIVERY PACKAGE");
+        }
+        if(3L != this.packageOperations.getDeliveryStatus(idPackage5)) {
+            System.err.println("BAD: DELIVERY PACKAGE STATUS");
+        }
+
+        if(-1L != this.driveOperation.nextStop(courierUsernameBG)) {
+            // FINISH courierUsernameBG
+            System.err.println("BAD: END OF DRIVE");
+        }
+        
+        if(0L != this.packageOperations.getAllUndeliveredPackages().size()) {
+            System.err.println("BAD: NUMBER OF UNDELIVERED PACKAGES");            
+        }
+        if(2L != this.courierOperations.getCouriersWithStatus(0).size()) {
+            System.err.println("BAD: NUMBER OF UNDELIVERED PACKAGES");            
+        }
+
+        BigDecimal profit1 = this.courierOperations.getAverageCourierProfit(1);
+        if(profit1.compareTo(new BigDecimal(0)) <= 0) {
+            System.err.println("BAD: PROFIT");
+        }
+        BigDecimal profit2 = this.courierOperations.getAverageCourierProfit(7);
+        if(profit2.compareTo(new BigDecimal(0)) <= 0) {
+            System.err.println("BAD: PROFIT");
+        }
                 
     }
 
