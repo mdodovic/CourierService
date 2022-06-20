@@ -53,7 +53,7 @@ go
 CREATE TABLE [Address]
 ( 
 	[IdA]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[Street]             varchar(50)  NOT NULL ,
+	[Street]             varchar(100)  NOT NULL ,
 	[Number]             integer  NOT NULL ,
 	[Xcoord]             integer  NOT NULL ,
 	[Ycoord]             integer  NOT NULL ,
@@ -70,15 +70,15 @@ go
 CREATE TABLE [City]
 ( 
 	[IdC]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[Name]               varchar(50)  NOT NULL ,
-	[PostalCode]         varchar(20)  NOT NULL 
+	[Name]               varchar(100)  NOT NULL ,
+	[PostalCode]         varchar(100)  NOT NULL 
 )
 go
 
 CREATE TABLE [Courier]
 ( 
 	[IdU]                bigint  NOT NULL ,
-	[DrivingLicenceNumber] varchar(20)  NOT NULL ,
+	[DrivingLicenceNumber] varchar(100)  NOT NULL ,
 	[DeliveredPackagesNumber] integer  NULL 
 	CONSTRAINT [DF_DeliveredPackagesNumber]
 		 DEFAULT  0,
@@ -96,7 +96,7 @@ go
 CREATE TABLE [CourierRequest]
 ( 
 	[IdCR]               bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[DrivingLicenceNumber] varchar(20)  NULL ,
+	[DrivingLicenceNumber] varchar(100)  NULL ,
 	[IdU]                bigint  NOT NULL 
 )
 go
@@ -216,14 +216,14 @@ go
 CREATE TABLE [User]
 ( 
 	[IdU]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[Firstname]          varchar(20)  NOT NULL 
+	[Firstname]          varchar(100)  NOT NULL 
 	CONSTRAINT [CK1_Firstname]
 		CHECK  ( (ASCII(LEFT(Firstname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
-	[Lastname]           varchar(20)  NOT NULL 
+	[Lastname]           varchar(100)  NOT NULL 
 	CONSTRAINT [CK1_Lastname]
 		CHECK  ( (ASCII(LEFT(Lastname, 1)) BETWEEN ASCII('A') and ASCII('Z')) ),
-	[Username]           varchar(20)  NOT NULL ,
-	[Password]           varchar(20)  NOT NULL ,
+	[Username]           varchar(100)  NOT NULL ,
+	[Password]           varchar(100)  NOT NULL ,
 	[IdA]                bigint  NOT NULL 
 )
 go
@@ -231,7 +231,7 @@ go
 CREATE TABLE [Vehicle]
 ( 
 	[IdV]                bigint  IDENTITY ( 1,1 )  NOT NULL ,
-	[LicencePlateNumber] varchar(10)  NOT NULL ,
+	[LicencePlateNumber] varchar(100)  NOT NULL ,
 	[FuelType]           integer  NOT NULL 
 	CONSTRAINT [CK1_FuelType]
 		CHECK  ( (FuelType IN (0, 1, 2)) ),
